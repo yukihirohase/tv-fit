@@ -5,10 +5,12 @@ import { load } from 'cheerio';
 import { loadEnv } from 'vite';
 import { loadCatalog, isIndexableTelevision, televisionPath } from '../src/lib/data';
 import { getSeoConfig, canonicalUrl } from '../src/lib/seo';
+import { getManufacturers, isIndexableManufacturer } from '../src/lib/manufacturers';
 
 const root = resolve('dist');
 assert(existsSync(resolve(root, 'index.html')), '先に npm run build を実行してください');
 const catalog = loadCatalog();
+const manufacturers = getManufacturers(catalog.televisions);
 const config = getSeoConfig(loadEnv('production', process.cwd(), 'PUBLIC_'));
 const files = (directory: string): string[] => readdirSync(directory, { withFileTypes: true })
   .flatMap(entry => entry.isDirectory() ? files(resolve(directory, entry.name)) : [resolve(directory, entry.name)]);
@@ -39,7 +41,10 @@ for (const filename of htmlFiles) {
   assert(!seenCanonicals.has(canonical), `${route}: canonical が重複しています`);
   seenCanonicals.add(canonical);
   const tv = catalog.televisions.find(item => decodeURIComponent(televisionPath(item)) === route);
-  const indexable = !['/404/', '/privacy/'].includes(route) && (!tv || isIndexableTelevision(tv, catalog));
+  const manufacturer = manufacturers.find(item => decodeURIComponent(item.url) === route);
+  const indexable = !['/404/', '/privacy/'].includes(route)
+    && (!tv || isIndexableTelevision(tv, catalog))
+    && (!manufacturer || isIndexableManufacturer(manufacturer, catalog));
   assert.equal($('meta[name="robots"]').attr('content'), config.indexingEnabled && indexable ? 'index, follow' : 'noindex, follow', `${route}: robots が一致しません`);
   assert.equal($('h1').length, 1, `${route}: h1 は1件必要です`);
 
@@ -69,22 +74,51 @@ for (const filename of htmlFiles) {
     assert(src.startsWith('/_astro/'), `${route}: 予期しない初期スクリプト: ${src}`);
     assert(existsSync(resolve(root, src.slice(1))), `${route}: スクリプトが存在しません: ${src}`);
   });
+  $('a[href]').each((_, element) => {
+    const href = $(element).attr('href') ?? '';
+    if (!href.startsWith('/') && !href.startsWith('#')) return;
+    const target = new URL(href, canonicalUrl(route, config.siteUrl));
+    const pathname = decodeURIComponent(target.pathname);
+    const targetFile = pathname === route ? filename
+      : pathname === '/404/' ? resolve(root, '404.html')
+      : pathname.endsWith('/') ? resolve(root, pathname.slice(1), 'index.html')
+      : resolve(root, pathname.slice(1));
+    assert(existsSync(targetFile), `${route}: 内部リンク先が存在しません: ${href}`);
+    if (target.hash && targetFile.endsWith('.html')) {
+      const targetPage = load(readFileSync(targetFile, 'utf8'));
+      const fragment = decodeURIComponent(target.hash.slice(1));
+      assert(targetPage('[id]').toArray().some(node => targetPage(node).attr('id') === fragment), `${route}: 内部リンク先の位置が存在しません: ${href}`);
+    }
+  });
   if (tv) assert($('h1').text().includes(tv.model), `${route}: 正式な型番を表示してください`);
 }
 
 const home = load(readFileSync(resolve(root, 'index.html'), 'utf8'));
-const searchData = JSON.parse(home('[data-search-catalog]').text()) as { id: string }[];
-assert.deepEqual(searchData.map(item => item.id).sort(), catalog.televisions.map(item => item.id).sort(), '検索データは本番CSVと一致させてください');
-assert(!searchData.some(item => item.id.startsWith('fixture-')), '架空データを検索に公開できません');
-assert.equal(home('form[role="search"]').length, 1, 'トップページに検索フォームが必要です');
-assert(home('[data-search-model]').attr('maxlength') === '100', '検索文字数制限が必要です');
+assert.equal(home('#main form').length, 0, 'トップページはメーカー選択のみとし、検索フォームを置かないでください');
+assert.equal(home('#main input, #main select').length, 0, 'トップページに型番入力・メーカーの選択ボックスは不要です');
+assert.equal(home('[data-search-catalog]').length, 0, 'トップページへ全型番の検索データを埋め込まないでください');
+const manufacturerLinks = home('a.manufacturer-card').map((_, node) => home(node).attr('href')).get().sort();
+assert.deepEqual(manufacturerLinks, manufacturers.map(item => item.url).sort(), 'メーカーは型番一覧への実リンクにしてください');
+for (const manufacturer of manufacturers) {
+  const filename = resolve(root, decodeURIComponent(manufacturer.url).slice(1), 'index.html');
+  assert(existsSync(filename), `${manufacturer.name}: メーカー別型番一覧の静的HTMLがありません`);
+  const page = load(readFileSync(filename, 'utf8'));
+  assert(page('h1').text().includes(manufacturer.name), `${manufacturer.name}: メーカー名が必要です`);
+  const actualModels = page('[data-model-list] a[data-model-link]').map((_, node) => page(node).attr('href')).get().sort();
+  assert.deepEqual(actualModels, manufacturer.televisions.map(televisionPath).sort(), `${manufacturer.name}: 別メーカーの型番を一覧へ混入できません`);
+  assert(page('#main a[href="/#manufacturers"]').length > 0, `${manufacturer.name}: メーカーを選び直すリンクが必要です`);
+  if (manufacturer.televisions.length === 0) {
+    assert(page('.model-list-empty').text().includes('準備中'), `${manufacturer.name}: 未登録の案内が必要です`);
+    assert.equal(page('meta[name="robots"]').attr('content'), 'noindex, follow', `${manufacturer.name}: 未登録ページをインデックスできません`);
+  }
+}
 assert(htmlFiles.every(filename => !relative(root, filename).includes('fixture')), '架空ページを公開できません');
 for (const tv of catalog.televisions) assert(existsSync(resolve(root, decodeURIComponent(televisionPath(tv)).slice(1), 'index.html')), `${tv.id}: 型番別静的HTMLがありません`);
 
 const sitemap = load(readFileSync(resolve(root, 'sitemap.xml'), 'utf8'), { xmlMode: true });
 const actualLocations = sitemap('loc').map((_, node) => sitemap(node).text()).get().sort();
 const expectedLocations = config.indexingEnabled
-  ? ['/', '/guides/vesa/', '/about/', ...catalog.televisions.filter(tv => isIndexableTelevision(tv, catalog)).map(televisionPath)]
+  ? ['/', '/guides/vesa/', '/about/', ...manufacturers.filter(item => isIndexableManufacturer(item, catalog)).map(item => item.url), ...catalog.televisions.filter(tv => isIndexableTelevision(tv, catalog)).map(televisionPath)]
     .map(path => canonicalUrl(path, config.siteUrl)).sort()
   : [];
 assert.deepEqual(actualLocations, expectedLocations, 'サイトマップはインデックス可能なページのみにしてください');
@@ -93,4 +127,4 @@ assert(robots.includes('Allow: /'), 'noindex を読めるようクローラー�
 assert.equal(robots.includes('Sitemap:'), config.indexingEnabled, 'サイトマップ案内が公開設定と一致しません');
 const headers = readFileSync(resolve(root, '_headers'), 'utf8');
 for (const header of ['X-Content-Type-Options: nosniff', 'Content-Security-Policy:', 'Referrer-Policy:']) assert(headers.includes(header), `${header} がありません`);
-console.log(`静的HTML検証成功: ${htmlFiles.length} ページ / 型番 ${catalog.televisions.length} 件 / 外部リンク ${externalLinkCount} 件 / サイトマップ ${actualLocations.length} 件`);
+console.log(`静的HTML検証成功: ${htmlFiles.length} ページ / メーカー ${manufacturers.length} 件 / 型番 ${catalog.televisions.length} 件 / 外部リンク ${externalLinkCount} 件 / サイトマップ ${actualLocations.length} 件`);

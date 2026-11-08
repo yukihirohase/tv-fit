@@ -123,7 +123,8 @@ try {
     await navigate('/');
     const dimensions = await evaluate('({ viewport: innerWidth, content: document.documentElement.scrollWidth })');
     assert(dimensions.content <= dimensions.viewport + 1, `${viewport.name}: horizontal overflow ${JSON.stringify(dimensions)}`);
-    assert.equal(await evaluate('document.querySelector("[data-search-model]") !== null'), true);
+    assert.equal(await evaluate('document.querySelector("#main form, #main input, #main select, [data-search-catalog]") === null'), true);
+    assert.equal(await evaluate('document.querySelectorAll("a.manufacturer-card[data-manufacturer-link]").length > 0'), true);
     assert.equal(await evaluate('document.querySelector("meta[name=ga4-measurement-id]").content'), '');
     assert.equal(await evaluate('[...document.scripts].some(script => /googletagmanager|google-analytics/.test(script.src))'), false);
     assert.equal(await evaluate('typeof window.dataLayer'), 'undefined');
@@ -136,11 +137,29 @@ try {
     const path = resolve(outputDirectory, `tvfit-${viewport.name}.png`);
     await writeFile(path, Buffer.from(screenshot.data, 'base64'));
     screenshots.push(path);
-    await evaluate('document.querySelector("[data-manufacturer-pick]").click()');
-    assert.equal(await evaluate('document.querySelector("[data-search-manufacturer]").value === document.querySelector("[data-manufacturer-pick]").dataset.manufacturerPick'), true);
-    assert.equal(await evaluate('document.activeElement === document.querySelector("[data-search-model]")'), true);
-    await evaluate('document.querySelector("[data-search-model]").value = "FICTIONAL-NOT-REGISTERED"; document.querySelector("[data-search-form]").requestSubmit()');
-    await waitFor('document.querySelector("[data-search-status]").textContent.includes("まだ登録されていません")');
+    const makerSelection = await evaluate(`(() => {
+      const link = document.querySelector('a.manufacturer-card[data-manufacturer-link]');
+      return { path: link.pathname, name: link.querySelector('.manufacturer-wordmark').textContent.trim() };
+    })()`);
+    await evaluate('document.querySelector("a.manufacturer-card[data-manufacturer-link]").click()');
+    await waitFor(`location.pathname === ${JSON.stringify(makerSelection.path)} && document.readyState === 'complete'`);
+    assert((await evaluate('document.querySelector("h1").textContent')).includes(makerSelection.name));
+    const modelDimensions = await evaluate('({ viewport: innerWidth, content: document.documentElement.scrollWidth })');
+    assert(modelDimensions.content <= modelDimensions.viewport + 1, `${viewport.name}: model list horizontal overflow`);
+    const modelSelection = await evaluate(`(() => {
+      const link = document.querySelector('[data-model-list] a[data-model-link]');
+      return link ? { path: link.pathname, name: link.querySelector('.model-card-name').textContent.trim() } : null;
+    })()`);
+    if (modelSelection) {
+      await evaluate('document.querySelector("[data-model-list] a[data-model-link]").click()');
+      await waitFor(`location.pathname === ${JSON.stringify(modelSelection.path)} && document.readyState === 'complete'`);
+      assert.equal(await evaluate('document.querySelector("h1").textContent.trim()'), modelSelection.name);
+    } else {
+      assert.equal(await evaluate('document.querySelector(".model-list-empty").textContent.includes("準備中")'), true);
+      assert.equal(await evaluate('document.querySelector("meta[name=robots]").content'), 'noindex, follow');
+      await evaluate(`document.querySelector('.model-list-empty a[href="/#manufacturers"]').click()`);
+      await waitFor('location.pathname === "/" && location.hash === "#manufacturers" && document.readyState === "complete"');
+    }
     await evaluate('[...document.querySelectorAll(".header-nav a")].find(link => link.pathname === "/guides/vesa/").click()');
     await waitFor('location.pathname === "/guides/vesa/" && document.readyState === "complete"');
     assert((await evaluate('document.querySelector("h1").textContent')).includes('VESA'));
@@ -151,7 +170,7 @@ try {
   assert.deepEqual(exceptions, [], 'Unexpected JavaScript exceptions');
   assert.deepEqual(consoleErrors, [], 'Unexpected console errors');
   assert.deepEqual(failedResponses, [], 'Unexpected failed HTTP responses');
-  console.log(JSON.stringify({ passed: true, viewports: ['1440x1000', '390x844'], checks: ['responsive overflow', 'manufacturer selection and focus', 'empty search submit', 'guide navigation', 'GA unset isolation', 'JavaScript console and HTTP errors'], screenshots }, null, 2));
+  console.log(JSON.stringify({ passed: true, viewports: ['1440x1000', '390x844'], checks: ['responsive overflow', 'manufacturer page navigation', 'scoped model selection or empty state', 'guide navigation', 'GA unset isolation', 'JavaScript console and HTTP errors'], screenshots }, null, 2));
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));
   if (stderr) console.error(`Chromium stderr (tail):\n${stderr.slice(-1600)}`);

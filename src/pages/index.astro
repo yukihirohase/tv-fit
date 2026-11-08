@@ -1,33 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Search from '../components/Search.astro';
 import Icon from '../components/Icon.astro';
 import VesaIllustration from '../components/VesaIllustration.astro';
-import StatusBadge from '../components/StatusBadge.astro';
-import {loadCatalog, televisionPath} from '../lib/data';
-const catalog = loadCatalog();
-const commonManufacturers = ['SONY', 'Panasonic', 'SHARP', 'TVS REGZA', 'LG', 'Hisense', 'TCL'];
-const manufacturers = [...new Set([...catalog.televisions.map(tv=>tv.manufacturer), ...commonManufacturers])];
-const items = catalog.televisions.map(tv=>({id:tv.id, manufacturer:tv.manufacturer, model:tv.model, screen_inches:tv.screen_inches, url:televisionPath(tv)}));
+import {loadCatalog} from '../lib/data';
+import {getManufacturers} from '../lib/manufacturers';
+const manufacturers = getManufacturers(loadCatalog().televisions);
 ---
-<BaseLayout title="テレビの型番からスタンド・壁掛け金具を探す｜TV FIT" description="テレビのメーカー・型番から、テレビスタンドや壁掛け金具の適合情報を検索。個別適合確認済みと仕様上の候補を区別し、VESA・重量・出典を確認できます。">
-  <section class="hero container">
-    <div class="hero-copy"><p class="eyebrow"><span></span> テレビスタンド選びを、もっと確かに。</p><h1>そのテレビに、<br/><span>ぴったり</span>のスタンドを。</h1><p class="hero-description">テレビの型番から、スタンド・壁掛け金具の対応情報を検索。<br class="desktop-break"/>取付規格と確認の根拠を、ひとつずつ確かめられます。</p><div class="hero-points"><span><Icon name="check" size={16}/> メーカー・型番で検索</span><span><Icon name="check" size={16}/> 適合の根拠を表示</span></div></div>
+<BaseLayout title="テレビのメーカーからスタンド・壁掛け金具を探す｜TV FIT" description="お使いのテレビのメーカーを選び、型番一覧からテレビを選択。テレビスタンドや壁掛け金具の適合情報と、VESA・重量・確認の根拠を確認できます。">
+  <section class="hero manufacturer-home-hero container">
+    <div class="hero-copy"><p class="eyebrow"><span></span> テレビスタンド選びを、もっと確かに。</p><h1>まずは、テレビの<br/><span>メーカー</span>を選ぶ。</h1><p class="hero-description">メーカーを選んだら、次のページでテレビの型番を選択。<br class="desktop-break"/>対応するスタンド・壁掛け金具を確認できます。</p><ol class="selection-progress" aria-label="対応情報を確認する手順"><li aria-current="step"><span>1</span>メーカー</li><li><span>2</span>テレビの型番</li><li><span>3</span>対応情報</li></ol></div>
     <div class="hero-visual"><span class="visual-label">FIND YOUR TV’S PERFECT FIT</span><VesaIllustration /></div>
   </section>
-  <section id="search" class="container search-section"><Search items={items} manufacturers={manufacturers}/></section>
-  <div class="container assurance-strip"><span><Icon name="shield" size={18}/> 適合情報の見方</span><p>「個別適合確認済み」と「仕様上の候補」を明確に区別しています。</p><a href="/about/#statuses">詳しく見る <Icon name="arrow" size={16}/></a></div>
-  <section id="manufacturers" class="container manufacturer-section section-space">
-    <div class="section-heading"><div><p class="eyebrow">MANUFACTURERS</p><h2>メーカーから探す</h2></div><p>主なテレビメーカーから絞り込む</p></div>
-    <div class="manufacturer-grid">{manufacturers.map((name,index)=><button type="button" class="manufacturer-card" data-manufacturer-pick={name}><span class:list={['manufacturer-wordmark',`manufacturer-${index % 7}`]}>{name}</span><span class="manufacturer-card-bottom">型番から探す <Icon name="arrow" size={16}/></span></button>)}</div>
-    <p class="section-note">表示順は人気・販売台数の順位を示すものではありません。</p>
-    {catalog.televisions.length > 0 && <div class="registered-models"><h3>登録済みのテレビ型番</h3><ul>{catalog.televisions.map(tv=><li><a href={televisionPath(tv)}>{tv.manufacturer} {tv.model}<Icon name="arrow" size={15}/></a></li>)}</ul></div>}
+  <section id="manufacturers" class="container manufacturer-selection" aria-labelledby="manufacturer-title">
+    <div class="manufacturer-picker">
+      <div class="manufacturer-picker-heading"><span class="search-panel-number">01</span><div><p class="eyebrow">SELECT MANUFACTURER</p><h2 id="manufacturer-title">テレビのメーカーを選んでください</h2></div><span class="selection-step-label">STEP 1 / 3</span></div>
+      <p class="manufacturer-picker-description">お使いのテレビのメーカーをクリックすると、型番一覧に進みます。</p>
+      <div class="manufacturer-grid">{manufacturers.map((manufacturer,index)=><a class="manufacturer-card" href={manufacturer.url} data-manufacturer-link aria-label={`${manufacturer.name}のテレビ型番一覧へ`}><span class:list={['manufacturer-wordmark',`manufacturer-${index % 7}`]}>{manufacturer.name}</span><span class="manufacturer-card-bottom">型番一覧へ <Icon name="arrow" size={16}/></span></a>)}</div>
+      <p class="manufacturer-picker-note"><Icon name="info" size={15}/> メーカー名は、テレビ本体のロゴや背面ラベルで確認できます。</p>
+    </div>
   </section>
-  <section class="how-section"><div class="container section-space"><div class="section-heading"><div><p class="eyebrow">HOW TO FIND</p><h2>スタンド選びは、3つの確認から。</h2></div></div><div class="steps-grid">{[
-    {number:'01',icon:'tv' as const,title:'テレビの型番を調べる',text:'背面のラベルや取扱説明書で、メーカーと正式な型番を確認します。'},
-    {number:'02',icon:'search' as const,title:'型番で対応情報を検索',text:'画面サイズ・重量・VESAと、商品ごとの適合情報を確認します。'},
-    {number:'03',icon:'shield' as const,title:'根拠と取付条件を確かめる',text:'公式の適合表と取扱説明書を確認し、ネジ・背面形状も忘れずに。'}
-  ].map(step=><article class="step-card"><div class="step-top"><span>{step.number}</span><Icon name={step.icon} size={27}/></div><h3>{step.title}</h3><p>{step.text}</p></article>)}</div></div></section>
-  <section class="container section-space guide-section"><div class="guide-card"><div class="guide-card-icon"><Icon name="book" size={29}/></div><div><p class="eyebrow">BEFORE YOU CHOOSE</p><h2>「VESA」って何？ どこを測ればいい？</h2><p>テレビと金具をつなぐ、取付穴の間隔のこと。確認する場所と、購入前のチェックポイントをまとめました。</p></div><a class="button-secondary" href="/guides/vesa/">VESAの確認方法 <Icon name="arrow" size={17}/></a></div></section>
-  <section class="container status-explainer"><div><Icon name="info" size={20}/><h2>安心して比較するために</h2></div><p>VESAと重量が一致しても、取付けが保証されるわけではありません。購入前にメーカーの個別適合情報をご確認ください。</p><div class="status-explainer-badges"><StatusBadge status="confirmed"/><StatusBadge status="candidate"/><StatusBadge status="incompatible"/><StatusBadge status="unknown"/></div></section>
+  <section class="container manufacturer-home-help"><div class="guide-card"><div class="guide-card-icon"><Icon name="book" size={29}/></div><div><p class="eyebrow">BEFORE YOU CHOOSE</p><h2>型番やVESAの確認方法がわからないときは</h2><p>型番の確認場所と、テレビ背面の取付穴を確認する方法をご案内します。</p></div><a class="button-secondary" href="/guides/vesa/">確認方法を見る <Icon name="arrow" size={17}/></a></div></section>
 </BaseLayout>

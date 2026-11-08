@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import { televisionPath, type Television } from '../lib/data';
+interface Props {
+  televisions: Television[];
+  manufacturerName: string;
+}
+const { televisions, manufacturerName } = Astro.props;
+---
+<ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
+  {televisions.map(television => <li>
+    <a class="model-card" data-model-link data-tv-result-link data-tv-id={television.id} data-manufacturer={television.manufacturer} href={televisionPath(television)}>
+      <div class="model-card-body"><span class="model-card-name">{television.model}</span>
+        <span class="model-card-specs">
+          {television.screen_inches !== null && <span>{television.screen_inches}インチ</span>}
+          {television.vesa_width_mm !== null && television.vesa_height_mm !== null && <span>VESA {television.vesa_width_mm} × {television.vesa_height_mm} mm</span>}
+        </span>
+        <span class="model-card-action">対応情報を見る</span>
+      </div>
+      <Icon name="arrow" size={19}/>
+    </a>
+  </li>)}
+</ul>

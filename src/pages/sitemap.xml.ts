@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { loadCatalog, isIndexableTelevision, televisionPath } from '../lib/data';
 import { canonicalUrl, escapeXml, getSeoConfig } from '../lib/seo';
+import { getManufacturers, isIndexableManufacturer } from '../lib/manufacturers';
 
 export const prerender = true;
 
@@ -9,6 +10,7 @@ export const GET: APIRoute = () => {
   const catalog = loadCatalog();
   const paths = config.indexingEnabled ? [
     '/', '/guides/vesa/', '/about/',
+    ...getManufacturers(catalog.televisions).filter(manufacturer => isIndexableManufacturer(manufacturer, catalog)).map(manufacturer => manufacturer.url),
     ...catalog.televisions.filter(tv => isIndexableTelevision(tv, catalog)).map(televisionPath),
   ] : [];
   const body = '<?xml version="1.0" encoding="UTF-8"?>\n'

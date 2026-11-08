@@ -6,6 +6,7 @@ import ComparisonTable from '../../components/ComparisonTable.astro';
 import Icon from '../../components/Icon.astro';
 import {loadCatalog, manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, type Television, type Catalog} from '../../lib/data';
 import {breadcrumbSchema, canonicalUrl} from '../../lib/seo';
+import {manufacturerPath} from '../../lib/manufacturers';
 export function getStaticPaths(){
   const catalog=loadCatalog();
   return catalog.televisions.map(television=>({params:{manufacturer:manufacturerSlug(television.manufacturer),model:modelSlug(television.model)},props:{television,catalog}}));
@@ -20,11 +21,11 @@ const wall=entries.filter(entry=>entry.stand.stand_type==='wall'&&['confirmed','
 const other=entries.filter(entry=>!entry.compatibility||['incompatible','unknown'].includes(entry.compatibility.status));
 const checkedAt=pairs.flatMap(entry=>entry.checked_at?[entry.checked_at]:[]).sort().at(-1);
 const name=`${tv.manufacturer} ${tv.model}`;
-const breadcrumb=breadcrumbSchema([{name:'ホーム',path:'/'},{name,path:televisionPath(tv)}]);
+const breadcrumb=breadcrumbSchema([{name:'ホーム',path:'/'},{name:tv.manufacturer,path:manufacturerPath(tv.manufacturer)},{name,path:televisionPath(tv)}]);
 const schema={'@context':'https://schema.org','@type':'WebPage',name:`${name} のテレビスタンド・壁掛け金具の適合情報`,url:canonicalUrl(televisionPath(tv)),...(checkedAt?{dateModified:checkedAt}:{})};
 ---
 <BaseLayout title={`${name} 対応テレビスタンド・壁掛け金具・VESA｜TV FIT`} description={`${name}の画面サイズ、重量、VESA取付穴間隔とテレビスタンド・壁掛け金具の適合情報。個別適合確認済み、仕様上の候補、非対応、判断材料不足を区別して確認できます。`} indexable={isIndexableTelevision(tv,catalog)} structuredData={[breadcrumb,schema]}>
-  <div class="container detail-page"><Breadcrumbs items={[{name}]}/><header class="detail-header"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p><div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></header>
+  <div class="container detail-page"><Breadcrumbs items={[{name:tv.manufacturer,path:manufacturerPath(tv.manufacturer)},{name}]}/><header class="detail-header"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p><div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></header>
     <dl class="tv-specifications"><div><dt>画面サイズ</dt><dd>{tv.screen_inches??'未確認'}{tv.screen_inches!==null&&<small> インチ</small>}</dd></div><div><dt>テレビ本体の重量</dt><dd>{tv.weight_kg??'未確認'}{tv.weight_kg!==null&&<small> kg</small>}</dd></div><div><dt>VESA取付穴（横 × 縦）</dt><dd>{tv.vesa_width_mm!==null&&tv.vesa_height_mm!==null?`${tv.vesa_width_mm} × ${tv.vesa_height_mm}`:'未確認'}{tv.vesa_width_mm!==null&&<small> mm</small>}</dd></div></dl>
     <aside class="notice"><Icon name="info"/><p>重量は付属スタンドを除くテレビ本体の値を確認してください。VESAと耐荷重の一致だけでは、取付適合を保証できません。背面形状、ネジ径・長さ、スペーサー、端子の干渉を確認してください。</p></aside>
     <nav class="detail-toc" aria-label="このページの内容"><a href="#confirmed">確認済みスタンド</a><a href="#candidates">仕様上の候補</a><a href="#wall">壁掛け金具</a><a href="#comparison-title">比較する</a></nav>

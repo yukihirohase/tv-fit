@@ -39,6 +39,12 @@ document.querySelectorAll<HTMLButtonElement>('[data-analytics-settings]').forEac
 document.addEventListener('click', event => {
   const target = event.target;
   if (!(target instanceof Element)) return;
+  const resultLink = target.closest<HTMLAnchorElement>('a[data-tv-result-link]');
+  if (resultLink) {
+    trackEvent('tv_result_click', {
+      tv_id: resultLink.dataset.tvId, manufacturer: resultLink.dataset.manufacturer, match: 'selection',
+    });
+  }
   const link = target.closest<HTMLAnchorElement>('a[data-affiliate-link]');
   if (!link) return;
   trackEvent('affiliate_click', {
