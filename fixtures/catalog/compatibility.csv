@@ -1,0 +1,6 @@
+television_id,stand_id,status,evidence_type,evidence_url,checked_at,notes
+fixture-tv-one,fixture-stand-confirmed,confirmed,manufacturer_individual,https://stand.invalid/compatibility,2026-01-01,架空の個別確認済みテスト行。実際の適合情報ではありません。
+fixture-tv-one,fixture-stand-candidate,candidate,specification,https://stand.invalid/table,2026-01-01,架空の仕様候補。ネジ・背面・スペーサーは未確認。
+fixture-tv-one,fixture-stand-wall,candidate,specification,https://stand.invalid/wall,2026-01-01,架空の壁掛け候補。壁下地と施工条件を要確認。
+fixture-tv-one,fixture-stand-incompatible,incompatible,specification,https://stand.invalid/small,2026-01-01,架空の非対応例。耐荷重とVESAが一致しません。
+fixture-tv-one,fixture-stand-unknown,unknown,insufficient,,2026-01-01,架空の判断材料不足例。

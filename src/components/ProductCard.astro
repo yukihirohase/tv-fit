@@ -1,0 +1,20 @@
+---
+import type {Television, Stand, Compatibility} from '../lib/data';
+import StatusBadge from './StatusBadge.astro';
+import Icon from './Icon.astro';
+interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; }
+const {television,stand,compatibility} = Astro.props;
+const status = compatibility?.status ?? 'unknown';
+const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド', wall:'壁掛け金具'};
+---
+<article class:list={['product-card', `product-${status}`]} data-compatibility-view data-tv-id={television.id} data-status={status}>
+  <div class="product-card-heading"><StatusBadge status={status}/><span class="product-type">{standType[stand.stand_type]}</span></div>
+  <p class="product-manufacturer">{stand.manufacturer}</p><h3>{stand.sku}</h3>
+  <dl class="product-specs"><div><dt>耐荷重</dt><dd>{stand.max_weight_kg} kg</dd></div><div><dt>対応VESA（横×縦）</dt><dd>{stand.vesa_patterns.map(p=>`${p.width} × ${p.height} mm`).join(' / ')}</dd></div></dl>
+  {status === 'candidate' && <p class="candidate-warning">仕様上の候補です。背面形状・ネジ・スペーサーを含めた個別の取付適合は未確認です。</p>}
+  {status === 'unknown' && <p class="candidate-warning">このテレビとの適合を判断できる情報が不足しています。</p>}
+  {status === 'incompatible' && <p class="incompatible-warning">この組み合わせは非対応として記録されています。購入候補から除外してください。</p>}
+  {compatibility?.notes && <p class="product-notes">{compatibility.notes}</p>}
+  <div class="product-sources"><a href={stand.source_url} target="_blank" rel="noopener noreferrer">公式の商品詳細 <Icon name="external" size={13}/></a>{compatibility?.evidence_url && <a href={compatibility.evidence_url} target="_blank" rel="noopener noreferrer">適合判断の出典 <Icon name="external" size={13}/></a>}{compatibility?.checked_at && <span>確認日：<time datetime={compatibility.checked_at}>{compatibility.checked_at}</time></span>}</div>
+  {stand.product_url && status !== 'incompatible' && <a class="button affiliate-button" href={stand.product_url} target="_blank" rel="sponsored nofollow noopener noreferrer" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>購入先で確認する <Icon name="external" size={16}/><span class="ad-label">広告</span></a>}
+</article>

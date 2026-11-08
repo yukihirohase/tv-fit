@@ -1,0 +1,56 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { canonicalUrl, robotsMeta, safeJsonLd, websiteSchema } from '../lib/seo';
+interface Props { title: string; description: string; indexable?: boolean; structuredData?: unknown[]; }
+const { title, description, indexable = true, structuredData = [] } = Astro.props;
+const canonical = canonicalUrl(Astro.url.pathname);
+const measurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID ?? '';
+const path = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robotsMeta(indexable)} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TV FIT｜テレビスタンド対応検索" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#1262ce" />
+    <meta name="ga4-measurement-id" content={measurementId} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {[websiteSchema(), ...structuredData].map((data) => <script type="application/ld+json" set:html={safeJsonLd(data)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label="TV FIT テレビスタンド対応検索 トップページ"><span class="brand-mark"><Icon name="tv" size={25}/></span><span><span class="brand-name">TV FIT<span class="brand-dot">.</span></span><span class="brand-subtitle">テレビスタンド対応検索</span></span></a>
+        <nav class="header-nav" aria-label="メインメニュー">
+          <a href="/#search" aria-current={path === '/' ? 'page' : undefined}>型番から探す</a>
+          <a href="/guides/vesa/" aria-current={path === '/guides/vesa/' ? 'page' : undefined}>VESAの確認方法</a>
+          <a class="nav-about" href="/about/" aria-current={path === '/about/' ? 'page' : undefined}>このサイトについて <Icon name="arrow" size={15}/></a>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-top">
+        <div><a class="brand footer-brand" href="/"><span class="brand-mark"><Icon name="tv" size={23}/></span><span><span class="brand-name">TV FIT<span class="brand-dot">.</span></span><span class="brand-subtitle">テレビスタンド対応検索</span></span></a><p class="footer-description">テレビとスタンドの、確かな接点を。<br/>型番・仕様・根拠を確認して、納得できる一台選びへ。</p></div>
+        <nav class="footer-links" aria-label="フッターメニュー"><a href="/guides/vesa/">VESAの確認方法</a><a href="/about/">運営方針・適合情報について</a><a href="/privacy/">プライバシーポリシー</a></nav>
+      </div>
+      <div class="container footer-bottom"><p>広告：購入先リンクにはアフィリエイトリンクを使用する場合があります。</p><p>© {new Date().getFullYear()} TV FIT</p></div>
+    </footer>
+    {measurementId && <aside class="consent-banner" data-analytics-consent-banner hidden aria-label="アクセス解析の設定"><p>サイト改善のため、同意いただいた場合に Google Analytics を使用します。<a href="/privacy/">詳しく見る</a></p><div><button type="button" class="button button-small" data-analytics-consent="allow">同意する</button><button type="button" class="button-secondary button-small" data-analytics-consent="deny">使用しない</button></div></aside>}
+    <script>
+      import '../scripts/analytics';
+    </script>
+  </body>
+</html>

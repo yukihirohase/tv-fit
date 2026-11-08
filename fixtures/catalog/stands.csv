@@ -1,0 +1,6 @@
+id,manufacturer,sku,stand_type,max_weight_kg,vesa_patterns,source_url,product_url
+fixture-stand-confirmed,架空金具メーカー,FICTION-FLOOR-A,floor,30,200x200;300x200,https://stand.invalid/floor,https://shop.invalid/floor
+fixture-stand-candidate,架空金具メーカー,FICTION-TABLE-B,tabletop,20,200x200,https://stand.invalid/table,https://shop.invalid/table
+fixture-stand-wall,架空金具メーカー,FICTION-WALL-C,wall,35,200x200;300x200,https://stand.invalid/wall,https://shop.invalid/wall
+fixture-stand-incompatible,架空金具メーカー,FICTION-SMALL-D,floor,5,100x100,https://stand.invalid/small,
+fixture-stand-unknown,架空金具メーカー,FICTION-UNKNOWN-E,wall,25,200x200,https://stand.invalid/unknown,

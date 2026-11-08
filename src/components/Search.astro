@@ -1,0 +1,41 @@
+---
+import type { SearchItem } from '../lib/search';
+interface Props {
+  items: SearchItem[];
+  manufacturers?: string[];
+}
+const { items, manufacturers = [...new Set(items.map((item) => item.manufacturer))] } = Astro.props;
+const safeCatalog = JSON.stringify(items)
+  .replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')
+  .replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+---
+<section class="search-panel" data-search-root aria-label="テレビ型番検索">
+  <div class="search-panel-heading"><span class="search-panel-number">01</span><h2>テレビの型番から探す</h2><span class="search-panel-tag">無料で検索</span></div>
+  <form class="search-form" data-search-form role="search">
+    <div class="search-field search-field-manufacturer">
+      <label class="search-label" for="tv-manufacturer">メーカー</label>
+      <select class="search-select" id="tv-manufacturer" name="manufacturer" data-search-manufacturer>
+        <option value="">すべてのメーカー</option>
+        {manufacturers.map((name) => <option value={name}>{name}</option>)}
+      </select>
+    </div>
+    <div class="search-field search-field-model">
+      <label class="search-label" for="tv-model">テレビの型番</label>
+      <div class="search-input-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input class="search-input" id="tv-model" name="model" type="search" placeholder="型番を入力してください" maxlength="100" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="tv-search-help tv-search-status" data-search-model />
+      </div>
+    </div>
+    <button class="search-submit" type="submit"><span>対応商品を検索</span><span aria-hidden="true">→</span></button>
+  </form>
+  <p id="tv-search-help" class="search-help"><span aria-hidden="true">ⓘ</span> 型番はテレビの背面ラベルや取扱説明書に記載されています。全角・半角、ハイフンの有無は問いません。</p>
+  <div class="search-feedback" aria-live="polite" aria-atomic="false">
+    <p id="tv-search-status" class="search-status" data-search-status>{items.length === 0 ? '確認済みの型番データを準備中です。現在、検索対象の型番は登録されていません。' : '型番を入力すると候補が表示されます。'}</p>
+    <ul class="search-results" data-search-results hidden></ul>
+  </div>
+  <noscript><p class="search-empty">型番検索には JavaScript が必要です。<a href="/#manufacturers">メーカー一覧</a>から登録済みの型番をご確認ください。</p></noscript>
+  <script type="application/json" data-search-catalog set:html={safeCatalog} />
+</section>
+<script>
+  import '../scripts/search';
+</script>

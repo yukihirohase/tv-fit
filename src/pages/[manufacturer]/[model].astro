@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import Icon from '../../components/Icon.astro';
+import {loadCatalog, manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, type Television, type Catalog} from '../../lib/data';
+import {breadcrumbSchema, canonicalUrl} from '../../lib/seo';
+export function getStaticPaths(){
+  const catalog=loadCatalog();
+  return catalog.televisions.map(television=>({params:{manufacturer:manufacturerSlug(television.manufacturer),model:modelSlug(television.model)},props:{television,catalog}}));
+}
+interface Props { television:Television;catalog:Catalog; }
+const {television:tv,catalog}=Astro.props;
+const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
+const entries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null}));
+const confirmed=entries.filter(entry=>entry.stand.stand_type!=='wall'&&entry.compatibility?.status==='confirmed');
+const candidates=entries.filter(entry=>entry.stand.stand_type!=='wall'&&entry.compatibility?.status==='candidate');
+const wall=entries.filter(entry=>entry.stand.stand_type==='wall'&&['confirmed','candidate'].includes(entry.compatibility?.status??'unknown'));
+const other=entries.filter(entry=>!entry.compatibility||['incompatible','unknown'].includes(entry.compatibility.status));
+const checkedAt=pairs.flatMap(entry=>entry.checked_at?[entry.checked_at]:[]).sort().at(-1);
+const name=`${tv.manufacturer} ${tv.model}`;
+const breadcrumb=breadcrumbSchema([{name:'ホーム',path:'/'},{name,path:televisionPath(tv)}]);
+const schema={'@context':'https://schema.org','@type':'WebPage',name:`${name} のテレビスタンド・壁掛け金具の適合情報`,url:canonicalUrl(televisionPath(tv)),...(checkedAt?{dateModified:checkedAt}:{})};
+---
+<BaseLayout title={`${name} 対応テレビスタンド・壁掛け金具・VESA｜TV FIT`} description={`${name}の画面サイズ、重量、VESA取付穴間隔とテレビスタンド・壁掛け金具の適合情報。個別適合確認済み、仕様上の候補、非対応、判断材料不足を区別して確認できます。`} indexable={isIndexableTelevision(tv,catalog)} structuredData={[breadcrumb,schema]}>
+  <div class="container detail-page"><Breadcrumbs items={[{name}]}/><header class="detail-header"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p><div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></header>
+    <dl class="tv-specifications"><div><dt>画面サイズ</dt><dd>{tv.screen_inches??'未確認'}{tv.screen_inches!==null&&<small> インチ</small>}</dd></div><div><dt>テレビ本体の重量</dt><dd>{tv.weight_kg??'未確認'}{tv.weight_kg!==null&&<small> kg</small>}</dd></div><div><dt>VESA取付穴（横 × 縦）</dt><dd>{tv.vesa_width_mm!==null&&tv.vesa_height_mm!==null?`${tv.vesa_width_mm} × ${tv.vesa_height_mm}`:'未確認'}{tv.vesa_width_mm!==null&&<small> mm</small>}</dd></div></dl>
+    <aside class="notice"><Icon name="info"/><p>重量は付属スタンドを除くテレビ本体の値を確認してください。VESAと耐荷重の一致だけでは、取付適合を保証できません。背面形状、ネジ径・長さ、スペーサー、端子の干渉を確認してください。</p></aside>
+    <nav class="detail-toc" aria-label="このページの内容"><a href="#confirmed">確認済みスタンド</a><a href="#candidates">仕様上の候補</a><a href="#wall">壁掛け金具</a><a href="#comparison-title">比較する</a></nav>
+    <p class="advertising-notice">広告：購入先へのリンクにはアフィリエイトリンクを含む場合があります。</p>
+    <section id="confirmed" class="product-section"><p class="eyebrow">CONFIRMED</p><h2>個別適合確認済みのスタンド</h2><p>メーカー等による、この型番と商品の個別適合の根拠があるものです。</p><div class="product-grid">{confirmed.map(entry=><ProductCard television={tv} {...entry}/>)}</div>{confirmed.length===0&&<div class="empty-state">個別適合確認済みのスタンドは登録されていません。</div>}</section>
+    <section id="candidates" class="product-section"><p class="eyebrow">SPECIFICATION CANDIDATES</p><h2>仕様上の候補・個別適合未確認</h2><p>VESAと耐荷重の仕様を満たす候補です。取付適合は確認されていません。</p><div class="product-grid">{candidates.map(entry=><ProductCard television={tv} {...entry}/>)}</div>{candidates.length===0&&<div class="empty-state">仕様上の候補は登録されていません。</div>}</section>
+    <section id="wall" class="product-section"><p class="eyebrow">WALL MOUNTS</p><h2>壁掛け金具</h2><p>商品の適合ステータスに加え、壁の下地・強度と施工条件を専門業者に確認してください。</p><div class="product-grid">{wall.map(entry=><ProductCard television={tv} {...entry}/>)}</div>{wall.length===0&&<div class="empty-state">確認済み・候補の壁掛け金具は登録されていません。</div>}</section>
+    {other.length>0&&<details class="other-products"><summary>非対応・判断材料不足の商品を見る（{other.length}件）</summary><div class="product-grid">{other.map(entry=><ProductCard television={tv} {...entry}/>)}</div></details>}
+    <ComparisonTable television={tv} entries={entries}/>
+    <section class="installation-notes"><h2>取り付け前の確認事項</h2><ul><li>公式適合表でテレビと金具の正式型番・末尾記号まで確認してください。</li><li>取扱説明書でネジの径・長さ・本数、締付条件、スペーサーの指定を確認してください。</li><li>テレビ背面の段差、突起、端子・配線と金具が干渉しないか確認してください。</li><li>床置きは設置面と転倒防止策、壁掛けは壁の下地・強度と施工条件を確認してください。</li><li>情報は確認日時点のものです。判断できない場合はメーカーまたは施工業者へご相談ください。</li></ul><a class="text-link" href="/guides/vesa/">VESAと取付条件の確認方法 <Icon name="arrow" size={16}/></a></section>
+  </div>
+</BaseLayout>
