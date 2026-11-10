@@ -33,6 +33,7 @@ async function fixture() {
     writeFile(resolve(client, '_astro/app.js'), scriptBody),
     writeFile(resolve(client, '_astro/app.css'), 'body { color: blue; }\n'),
     writeFile(resolve(client, 'favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>'),
+    writeFile(resolve(client, 'robots.txt'), 'User-agent: *\nAllow: /\n'),
     writeFile(resolve(client, '.env'), 'FICTIONAL_SECRET=do-not-publish'),
     writeFile(resolve(client, '_astro/app.js.map'), '{"sourcesContent":["private source"]}'),
     writeFile(resolve(client, 'catalog.csv'), 'id,model\nfixture,FICTION\n'),
@@ -50,7 +51,7 @@ describe('Sites Worker embedded public assets', () => {
   it('packs only approved client assets and keeps source, CSV, configuration and links private', async () => {
     const { client } = await fixture();
     const assets = await helpers.collectClientAssets(client);
-    expect(Object.keys(assets).sort()).toEqual(['/_astro/app.css', '/_astro/app.js', '/favicon.svg']);
+    expect(Object.keys(assets).sort()).toEqual(['/_astro/app.css', '/_astro/app.js', '/favicon.svg', '/robots.txt']);
     const script = assets['/_astro/app.js'];
     expect(script).toBeDefined();
     expect(script?.type).toMatch(/javascript/);
@@ -59,6 +60,7 @@ describe('Sites Worker embedded public assets', () => {
     expect(gunzipSync(Buffer.from(script!.body, 'base64')).toString()).toBe(scriptBody);
     expect(assets['/_astro/app.css']?.type).toMatch(/text\/css/);
     expect(assets['/favicon.svg']?.type).toMatch(/image\/svg\+xml/);
+    expect(assets['/robots.txt']?.type).toBe('text/plain; charset=utf-8');
   });
 
   it('serves an exact public path with safe MIME headers and ignores only its query string', async () => {

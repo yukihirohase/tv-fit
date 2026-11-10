@@ -25,10 +25,11 @@ const MIME = {
   '.woff2': 'font/woff2',
   '.ttf': 'font/ttf',
   '.json': 'application/json; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
 };
 const ASSET_PREFIXES = ['_astro/', '_emdash/', 'assets/', 'images/', 'fonts/'];
-const ROOT_ASSETS = new Set(['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'site.webmanifest', '404.html']);
+const ROOT_ASSETS = new Set(['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'site.webmanifest', 'robots.txt', '404.html']);
 
 /** Package only emitted browser assets, never the server tree or source data. */
 export async function collectClientAssets(clientDirectory) {
