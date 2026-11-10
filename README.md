@@ -10,7 +10,7 @@ EmDash 1.4.0 の管理画面とデータベースを備えた、Astro・TypeScri
 - EmDash 管理画面： https://tv-fit.com/_emdash/admin/
 - Sites の予備 URL： https://tv-fit-stand-search-mvp.workspace-240263.chatgpt.site/
 
-`tv-fit.com` の取得と DNS 設定が完了するまでは予備 URL を使用します。パスキーはホスト名に結び付くため、初回の管理者作成とパスキー登録は独自ドメインが有効になってから行います。管理者や実在製品のデータを自動作成する処理はありません。移行版の配信状況と最終検証結果は、納品時の案内を確認してください。
+`tv-fit.com` は 2026-11-10 に DNS・SSL・Sites の検証が完了しています。パスキーはホスト名に結び付くため、初回の管理者作成とパスキー登録には独自ドメインの管理画面を使用します。管理者や実在製品のデータを自動作成する処理はありません。
 
 詳しい導入・編集・CSV 取込・バックアップ・直接 Cloudflare 配信の手順は [EmDash 運用ガイド](docs/EMDASH.md) にまとめています。
 
@@ -129,4 +129,4 @@ wrangler.jsonc                 直接Cloudflareへ配信する設定
 - [EmDash のフィールド型](https://docs.emdashcms.com/reference/field-types/)
 - [EmDash の REST API](https://docs.emdashcms.com/reference/rest-api/)
 
-最終テスト・ビルド・配信結果は、移行作業完了時に追記します。既存の工程別記録は [IMPLEMENTATION.md](docs/IMPLEMENTATION.md) に残しています。
+最終確認では型チェック 0 エラー、テスト 145 件、本番 Worker 検証、`tv-fit.com` のトップ・EmDash 初期設定 API・管理画面の HTTP 200 を確認しました。既存の工程別記録は [IMPLEMENTATION.md](docs/IMPLEMENTATION.md) に残しています。
