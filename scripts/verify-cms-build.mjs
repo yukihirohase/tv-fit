@@ -35,6 +35,20 @@ try {
     assert(homeHtml.includes(manufacturer), `homepage is missing ${manufacturer}`);
   }
   assert(!homeHtml.includes('<form'), 'homepage should guide visitors through manufacturer buttons');
+  assert(homeHtml.includes('<meta name="robots" content="index, follow">'), 'production homepage must be indexable');
+  assert(homeHtml.includes('<link rel="canonical" href="https://tv-fit.com/">'), 'production canonical URL is missing');
+
+  const stylesheetPath = homeHtml.match(/href="([^\"]+\.css)"/)?.[1];
+  assert(stylesheetPath, 'homepage stylesheet is missing');
+  const stylesheet = await request(stylesheetPath);
+  assert.equal(stylesheet.status, 200);
+  assert.match(stylesheet.headers.get('content-type') ?? '', /^text\/css\b/);
+  assert((await stylesheet.text()).startsWith('/*! tailwindcss'), 'stylesheet was not decoded as CSS text');
+
+  const robots = await request('/robots.txt');
+  assert.equal(robots.status, 200);
+  assert.match(robots.headers.get('content-type') ?? '', /^text\/plain\b/);
+  assert((await robots.text()).includes('Sitemap: https://tv-fit.com/sitemap.xml'), 'production robots.txt is missing its sitemap');
 
   const manufacturer = await request('/sony/');
   assert.equal(manufacturer.status, 200);
