@@ -1,4 +1,4 @@
-import { isPrivateSessionRequest } from '../src/lib/private-session-guard';
+import { emdashAdminSlashRedirect, isPrivateSessionRequest } from '../src/lib/private-session-guard';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -127,5 +127,13 @@ describe('private R2 session URLs', () => {
   });
   it('fails closed for malformed input instead of throwing before routing', () => {
     expect(isPrivateSessionRequest('not a URL')).toBe(true);
+  });
+});
+
+describe('EmDash admin routing', () => {
+  it('normalizes setup redirects for trailing-slash routing', () => {
+    expect(emdashAdminSlashRedirect('https://example.test/_emdash/admin/setup')?.pathname).toBe('/_emdash/admin/setup/');
+    expect(emdashAdminSlashRedirect('https://example.test/_emdash/admin/setup/')).toBeNull();
+    expect(emdashAdminSlashRedirect('https://example.test/_emdash/api/setup/status')).toBeNull();
   });
 });

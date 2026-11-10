@@ -27,3 +27,11 @@ export function isPrivateSessionRequest(input: string | { url: string }): boolea
   }
   return value.toLowerCase().includes(PRIVATE_SESSION_PREFIX);
 }
+
+/** EmDash setup redirects omit the slash required by this Astro site. */
+export function emdashAdminSlashRedirect(input: string | { url: string }): URL | null {
+  const url = new URL(typeof input === 'string' ? input : input.url);
+  if (!url.pathname.startsWith('/_emdash/admin') || url.pathname.endsWith('/')) return null;
+  url.pathname += '/';
+  return url;
+}
