@@ -1,4 +1,4 @@
-import { emdashAdminSlashRedirect, isPrivateSessionRequest } from '../src/lib/private-session-guard';
+import { emdashAdminSlashRedirect, emdashApiSlashRedirect, isPrivateSessionRequest } from '../src/lib/private-session-guard';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -141,5 +141,13 @@ describe('EmDash admin routing', () => {
     expect(emdashAdminSlashRedirect('https://example.test/_emdash/admin/setup')?.pathname).toBe('/_emdash/admin/setup/');
     expect(emdashAdminSlashRedirect('https://example.test/_emdash/admin/setup/')).toBeNull();
     expect(emdashAdminSlashRedirect('https://example.test/_emdash/api/setup/status')).toBeNull();
+  });
+
+  it('normalizes CMS API requests while retaining their query strings', () => {
+    const redirected = emdashApiSlashRedirect('https://example.test/_emdash/api/setup/status?source=admin');
+    expect(redirected?.pathname).toBe('/_emdash/api/setup/status/');
+    expect(redirected?.search).toBe('?source=admin');
+    expect(emdashApiSlashRedirect('https://example.test/_emdash/api/setup/status/')).toBeNull();
+    expect(emdashApiSlashRedirect('https://example.test/api/setup/status')).toBeNull();
   });
 });
