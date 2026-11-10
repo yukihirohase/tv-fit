@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { lstat, readFile, readdir, rename, writeFile } from 'node:fs/promises';
+import { lstat, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import { builtinModules } from 'node:module';
 import { dirname, extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -167,6 +167,21 @@ export async function buildSitesWorker(projectDirectory = process.cwd()) {
   const temporary = resolve(dirname(output), '.sites-worker.tmp');
   await writeFile(temporary, code);
   await rename(temporary, output);
+
+  // The final Worker contains the Astro server graph and gzip-compressed
+  // browser assets. Keeping Vite's intermediate chunks beside it would make
+  // Sites upload the same code and assets twice.
+  const distDirectory = resolve(project, 'dist');
+  for (const name of await readdir(distDirectory)) {
+    const path = resolve(distDirectory, name);
+    if (name !== 'server') {
+      await rm(path, { recursive: true, force: true });
+      continue;
+    }
+    for (const serverEntry of await readdir(path)) {
+      if (serverEntry !== 'index.js') await rm(resolve(path, serverEntry), { recursive: true, force: true });
+    }
+  }
   const report = {
     entrypoint: relative(project, output),
     asset_count: Object.keys(assets).length,
