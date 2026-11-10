@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tv-fit-stand-search-mvp",
+  "main": "./src/worker.ts",
+  "compatibility_date": "2026-11-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "tv-fit-emdash" }
+  ],
+  "r2_buckets": [
+    { "binding": "MEDIA", "bucket_name": "tv-fit-emdash-media" }
+  ]
+}

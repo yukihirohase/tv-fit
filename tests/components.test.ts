@@ -1,10 +1,11 @@
+import { loadCatalog } from '../src/lib/csv';
 import { describe, expect, it } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { load } from 'cheerio';
 import Search from '../src/components/Search.astro';
 import StatusBadge from '../src/components/StatusBadge.astro';
 import Breadcrumbs from '../src/components/Breadcrumbs.astro';
-import { loadCatalog, televisionPath } from '../src/lib/data';
+import { televisionPath } from '../src/lib/data';
 
 const fixtures = loadCatalog('fixtures/catalog', { allowFixtures: true });
 

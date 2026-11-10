@@ -7,3 +7,10 @@ dist/
 work/
 *.log
 .DS_Store
+.wrangler/
+.dev.vars*
+*.db
+*.db-shm
+*.db-wal
+uploads/
+emdash-env.d.ts

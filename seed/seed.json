@@ -1,0 +1,327 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "defaultLocale": "ja",
+  "meta": {
+    "name": "TV FIT テレビスタンド対応検索",
+    "description": "実在製品を創作せず、確認した仕様・根拠を管理するテレビ対応情報CMS。製品のサンプルデータは含みません。"
+  },
+  "settings": {
+    "title": "TV FIT｜テレビスタンド対応検索",
+    "tagline": "テレビとスタンドの、確かな接点を。",
+    "timezone": "Asia/Tokyo"
+  },
+  "collections": [
+    {
+      "slug": "televisions",
+      "label": "テレビ",
+      "labelSingular": "テレビ",
+      "description": "テレビの正式型番と公式仕様を登録します。管理IDは一度登録したら変更しません。未確認の数値は空欄にしてください。",
+      "titleField": "model",
+      "routable": false,
+      "supports": [
+        "drafts",
+        "revisions",
+        "no-scheduling"
+      ],
+      "sortOrder": 10,
+      "group": "テレビ対応データ",
+      "fields": [
+        {
+          "slug": "external_id",
+          "label": "管理ID（CSVのid）",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "validation": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}$",
+            "maxLength": 100
+          }
+        },
+        {
+          "slug": "manufacturer",
+          "label": "テレビメーカー",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "validation": {
+            "maxLength": 300
+          }
+        },
+        {
+          "slug": "model",
+          "label": "正式型番",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "searchable": true,
+          "indexed": true,
+          "validation": {
+            "maxLength": 300
+          }
+        },
+        {
+          "slug": "screen_inches",
+          "label": "画面サイズ（インチ）",
+          "type": "number",
+          "translatable": false,
+          "required": false,
+          "validation": {
+            "min": 1e-06,
+            "max": 300
+          }
+        },
+        {
+          "slug": "weight_kg",
+          "label": "テレビ本体重量（kg）",
+          "type": "number",
+          "translatable": false,
+          "required": false,
+          "validation": {
+            "min": 1e-06,
+            "max": 2000
+          }
+        },
+        {
+          "slug": "vesa_width_mm",
+          "label": "VESA 横（mm）",
+          "type": "integer",
+          "translatable": false,
+          "required": false,
+          "validation": {
+            "min": 1,
+            "max": 5000
+          }
+        },
+        {
+          "slug": "vesa_height_mm",
+          "label": "VESA 縦（mm）",
+          "type": "integer",
+          "translatable": false,
+          "required": false,
+          "validation": {
+            "min": 1,
+            "max": 5000
+          }
+        },
+        {
+          "slug": "source_url",
+          "label": "公式仕様の出典URL",
+          "type": "url",
+          "translatable": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "stands",
+      "label": "スタンド・壁掛け金具",
+      "labelSingular": "スタンド・壁掛け金具",
+      "description": "公式仕様で確認した商品のみを登録します。VESAは200x200;400x400形式、重量はkgで入力します。",
+      "titleField": "sku",
+      "routable": false,
+      "supports": [
+        "drafts",
+        "revisions",
+        "no-scheduling"
+      ],
+      "sortOrder": 20,
+      "group": "テレビ対応データ",
+      "fields": [
+        {
+          "slug": "external_id",
+          "label": "管理ID（CSVのid）",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "unique": true,
+          "indexed": true,
+          "validation": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}$",
+            "maxLength": 100
+          }
+        },
+        {
+          "slug": "manufacturer",
+          "label": "商品メーカー",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "validation": {
+            "maxLength": 300
+          }
+        },
+        {
+          "slug": "sku",
+          "label": "正式商品型番",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "searchable": true,
+          "indexed": true,
+          "validation": {
+            "maxLength": 300
+          }
+        },
+        {
+          "slug": "stand_type",
+          "label": "タイプ（floor＝床置き／tabletop＝卓上／wall＝壁掛け）",
+          "type": "select",
+          "translatable": false,
+          "required": true,
+          "validation": {
+            "options": [
+              "floor",
+              "tabletop",
+              "wall"
+            ]
+          }
+        },
+        {
+          "slug": "max_weight_kg",
+          "label": "耐荷重（kg）",
+          "type": "number",
+          "translatable": false,
+          "required": true,
+          "validation": {
+            "min": 1e-06,
+            "max": 2000
+          }
+        },
+        {
+          "slug": "vesa_patterns",
+          "label": "対応VESA（例：200x200;400x400）",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "validation": {
+            "pattern": "^\\d+x\\d+(;\\d+x\\d+)*$",
+            "maxLength": 2000
+          }
+        },
+        {
+          "slug": "source_url",
+          "label": "公式仕様の出典URL",
+          "type": "url",
+          "translatable": false,
+          "required": true
+        },
+        {
+          "slug": "product_url",
+          "label": "購入先URL（広告リンク）",
+          "type": "url",
+          "translatable": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "compatibility",
+      "label": "適合確認",
+      "labelSingular": "適合確認",
+      "description": "confirmed＝個別適合確認済み、candidate＝仕様上の候補、incompatible＝非対応、unknown＝判断材料不足。VESAと重量の一致だけでconfirmedにしないでください。テレビ・商品の管理IDを指定します。公開前に両方を公開してください。",
+      "titleField": "television_id",
+      "routable": false,
+      "supports": [
+        "drafts",
+        "revisions",
+        "no-scheduling"
+      ],
+      "sortOrder": 30,
+      "group": "テレビ対応データ",
+      "fields": [
+        {
+          "slug": "television_id",
+          "label": "テレビの管理ID",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "validation": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}$",
+            "maxLength": 100
+          }
+        },
+        {
+          "slug": "stand_id",
+          "label": "商品の管理ID",
+          "type": "string",
+          "translatable": false,
+          "required": true,
+          "unique": false,
+          "indexed": true,
+          "validation": {
+            "pattern": "^[a-z0-9][a-z0-9-]{0,99}$",
+            "maxLength": 100
+          }
+        },
+        {
+          "slug": "compatibility_status",
+          "label": "適合ステータス",
+          "type": "select",
+          "translatable": false,
+          "required": true,
+          "defaultValue": "unknown",
+          "validation": {
+            "options": [
+              "confirmed",
+              "candidate",
+              "incompatible",
+              "unknown"
+            ]
+          }
+        },
+        {
+          "slug": "evidence_type",
+          "label": "根拠の種類",
+          "type": "select",
+          "translatable": false,
+          "required": true,
+          "defaultValue": "insufficient",
+          "validation": {
+            "options": [
+              "manufacturer_individual",
+              "official_individual",
+              "specification",
+              "insufficient"
+            ]
+          }
+        },
+        {
+          "slug": "evidence_url",
+          "label": "適合判断の出典URL",
+          "type": "url",
+          "translatable": false,
+          "required": false
+        },
+        {
+          "slug": "checked_at",
+          "label": "確認日（YYYY-MM-DD）",
+          "type": "string",
+          "translatable": false,
+          "validation": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "maxLength": 10
+          }
+        },
+        {
+          "slug": "notes",
+          "label": "根拠と取り付け時の注意事項",
+          "type": "text",
+          "translatable": false,
+          "defaultValue": "",
+          "validation": {
+            "maxLength": 3000
+          },
+          "options": {
+            "rows": 5
+          }
+        }
+      ]
+    }
+  ],
+  "content": {}
+}

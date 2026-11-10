@@ -4,15 +4,14 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import ComparisonTable from '../../components/ComparisonTable.astro';
 import Icon from '../../components/Icon.astro';
-import {loadCatalog, manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, type Television, type Catalog} from '../../lib/data';
+import {manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, type Television, type Catalog} from '../../lib/data';
 import {breadcrumbSchema, canonicalUrl} from '../../lib/seo';
 import {manufacturerPath} from '../../lib/manufacturers';
-export function getStaticPaths(){
-  const catalog=loadCatalog();
-  return catalog.televisions.map(television=>({params:{manufacturer:manufacturerSlug(television.manufacturer),model:modelSlug(television.model)},props:{television,catalog}}));
-}
-interface Props { television:Television;catalog:Catalog; }
-const {television:tv,catalog}=Astro.props;
+import {getPublishedCatalog} from '../../lib/cms-catalog';
+interface Props { television?:Television;catalog?:Catalog; }
+const catalog=Astro.props.catalog??await getPublishedCatalog();
+const tv=Astro.props.television??catalog.televisions.find(item=>manufacturerSlug(item.manufacturer)===Astro.params.manufacturer&&modelSlug(item.model)===Astro.params.model);
+if(!tv)return Astro.rewrite('/404/');
 const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
 const entries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null}));
 const confirmed=entries.filter(entry=>entry.stand.stand_type!=='wall'&&entry.compatibility?.status==='confirmed');

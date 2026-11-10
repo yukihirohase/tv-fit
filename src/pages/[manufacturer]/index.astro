@@ -3,19 +3,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
 import ModelList from '../../components/ModelList.astro';
-import { loadCatalog, televisionPath, type Catalog } from '../../lib/data';
+import { televisionPath, type Catalog } from '../../lib/data';
+import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { getManufacturers, isIndexableManufacturer, type Manufacturer } from '../../lib/manufacturers';
 import { breadcrumbSchema, canonicalUrl } from '../../lib/seo';
 
-export function getStaticPaths() {
-  const catalog = loadCatalog();
-  return getManufacturers(catalog.televisions).map(manufacturer => ({
-    params: { manufacturer: manufacturer.slug },
-    props: { manufacturer, catalog },
-  }));
-}
-interface Props { manufacturer: Manufacturer; catalog: Catalog; }
-const { manufacturer, catalog } = Astro.props;
+interface Props { manufacturer?: Manufacturer; catalog?: Catalog; }
+const catalog = Astro.props.catalog ?? await getPublishedCatalog();
+const manufacturer = Astro.props.manufacturer ?? getManufacturers(catalog.televisions).find(item => item.slug === Astro.params.manufacturer);
+if (!manufacturer) return Astro.rewrite('/404/');
 const televisions = manufacturer.televisions;
 const structuredData: unknown[] = [breadcrumbSchema([
   { name: 'ホーム', path: '/' },

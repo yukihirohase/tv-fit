@@ -1,4 +1,4 @@
-import { loadCatalog } from '../src/lib/data';
+import { loadCatalog } from '../src/lib/csv';
 
 try {
   const catalog = loadCatalog();

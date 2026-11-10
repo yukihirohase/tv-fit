@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import {breadcrumbSchema} from '../lib/seo';
-import {loadCatalog} from '../lib/data';
-const hasTelevisions=loadCatalog().televisions.length>0;
+import {getPublishedCatalog} from '../lib/cms-catalog';
+const hasTelevisions=(await getPublishedCatalog()).televisions.length>0;
 ---
 <BaseLayout title="このサイトについて・適合情報の運営方針｜TV FIT" description="TV FITの適合情報の扱い、4種類の適合ステータス、情報源と確認日の見方、広告・アフィリエイトの運営方針を説明します。" structuredData={[breadcrumbSchema([{name:'ホーム',path:'/'},{name:'このサイトについて',path:'/about/'}])]}>
   <article class="container article-page narrow"><Breadcrumbs items={[{name:'このサイトについて'}]}/><header class="article-header"><p class="eyebrow">ABOUT TV FIT</p><h1>テレビとスタンドの、<br/>確かな接点を。</h1><p>型番と仕様、その根拠から、納得できる商品選びをお手伝いします。</p></header>

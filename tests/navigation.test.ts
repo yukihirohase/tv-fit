@@ -1,7 +1,8 @@
+import { loadCatalog } from '../src/lib/csv';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { load } from 'cheerio';
-import { loadCatalog, televisionPath, type Catalog } from '../src/lib/data';
+import { televisionPath, type Catalog } from '../src/lib/data';
 import { getManufacturers } from '../src/lib/manufacturers';
 import { getSeoConfig } from '../src/lib/seo';
 
@@ -12,7 +13,7 @@ describe('manufacturer-first navigation', () => {
   it('offers real manufacturer-page links on the homepage without model inputs', async () => {
     const { default: HomePage } = await import('../src/pages/index.astro');
     const container = await AstroContainer.create();
-    const $ = load(await container.renderToString(HomePage, { request: new Request('https://example.invalid/') }));
+    const $ = load(await container.renderToString(HomePage, { props: { catalog: loadCatalog() }, request: new Request('https://example.invalid/') }));
     const manufacturers = getManufacturers(loadCatalog().televisions);
     expect($('#main form, #main input, #main select, [data-search-catalog]').length).toBe(0);
     expect($('button[data-manufacturer-pick]').length).toBe(0);

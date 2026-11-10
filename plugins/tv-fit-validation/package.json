@@ -1,0 +1,8 @@
+{
+  "name": "@tv-fit/validation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./index.ts" },
+  "peerDependencies": { "emdash": "^1.4.0" }
+}

@@ -1,6 +1,7 @@
+import { loadCatalog } from '../src/lib/csv';
 import { describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
-import { loadCatalog, type Catalog, type Television } from '../src/lib/data';
+import { type Catalog, type Television } from '../src/lib/data';
 import { commonManufacturers, getManufacturers, isIndexableManufacturer, manufacturerPath } from '../src/lib/manufacturers';
 
 const fixtures = loadCatalog(resolve('fixtures/catalog'), { allowFixtures: true });

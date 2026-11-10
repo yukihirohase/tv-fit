@@ -2,8 +2,9 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { isIndexableTelevision, loadCatalog, specificationsMatch, televisionPath, validateCatalog, type Catalog } from '../src/lib/data';
+import { isIndexableTelevision, specificationsMatch, televisionPath, validateCatalog, type Catalog } from '../src/lib/data';
 import { normalizeModel } from '../src/lib/normalize';
+import { loadCatalog } from '../src/lib/csv';
 
 const now = new Date('2026-11-08T10:00:00Z');
 const options = { allowFixtures: true, now };

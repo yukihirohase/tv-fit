@@ -1,25 +1,27 @@
-# テレビスタンド対応検索サイト
+# TV FIT｜テレビスタンド対応検索
 
-Astro・TypeScript・Tailwind CSS による静的サイトの MVP です。トップでテレビのメーカーを選び、メーカー別の型番一覧から正式型番を選択して、適合情報・商品比較へ進みます。個別適合確認済み・仕様上の候補・非対応・判断材料不足を区別して表示します。確認済みの実在データはまだ提供されていないため、`data/` の本番 CSV はヘッダーのみです。現在のメーカー別ページには、型番データを準備中であることを表示します。
+EmDash 1.4.0 の管理画面とデータベースを備えた、Astro・TypeScript 製のサイトです。テレビ・スタンド・適合情報を CMS で編集し、公開した内容をページ表示時に読み込みます。画面は「メーカーを選ぶ → 型番一覧から選ぶ → 対応情報・商品比較を見る」の順です。
 
-テスト専用の架空データは `fixtures/` に隔離しています。本番の検索インデックス、生成 HTML、サイトマップには含めません。VESA と重量の一致だけで `confirmed` に変更する機能はありません。
+実在する製品データは提供されていないため、初期カタログは空です。メーカーの一覧には SONY、Panasonic、SHARP、TVS REGZA、LG、Hisense、TCL を表示しますが、架空の型番で一覧を埋めません。`fixtures/` は自動テスト専用です。
 
-## 画面の使い方
+## サイトと管理画面
 
-1. トップページでテレビのメーカーを選びます。型番の入力やメーカーのプルダウン操作はありません。
-2. 選んだメーカーの型番一覧ページへ移動します。例：SONY は `/sony/`、Panasonic は `/panasonic/` です。
-3. 一覧の正式型番を選ぶと、仕様・適合情報・商品比較の詳細ページへ移動します。
+- 本番サイト（独自ドメイン）： https://tv-fit.com/
+- EmDash 管理画面： https://tv-fit.com/_emdash/admin/
+- Sites の予備 URL： https://tv-fit-stand-search-mvp.workspace-240263.chatgpt.site/
 
-メーカーのカードと型番は通常のリンクです。JavaScript が無効でもページを移動できます。メーカー別一覧には、そのメーカーの登録済み型番だけを表示します。該当型番がないメーカーでは準備中の案内とメーカー選択へ戻るリンクを表示し、架空の型番で一覧を埋めません。
+`tv-fit.com` の取得と DNS 設定が完了するまでは予備 URL を使用します。パスキーはホスト名に結び付くため、初回の管理者作成とパスキー登録は独自ドメインが有効になってから行います。管理者や実在製品のデータを自動作成する処理はありません。移行版の配信状況と最終検証結果は、納品時の案内を確認してください。
 
-SONY、Panasonic、SHARP、TVS REGZA、LG、Hisense、TCL のメーカー別ページは初期状態でも生成します。本番 CSV に別のメーカーを登録した場合も、そのメーカーの一覧ページを生成します。空の一覧や、インデックス対象となる型番がない一覧は `noindex` とし、サイトマップに掲載しません。
+詳しい導入・編集・CSV 取込・バックアップ・直接 Cloudflare 配信の手順は [EmDash 運用ガイド](docs/EMDASH.md) にまとめています。
 
 ## 開発環境
 
-- Node.js **22.23.4 以上**。開発・CI では Node.js 24 を使用
-- npm（`package-lock.json` を管理）
-- Astro 7.4.7 / Tailwind CSS 4.3.5 / Fuse.js 7.5.0 / Zod 4.6.7
-- Tailwind は `@tailwindcss/vite` で統合。静的出力のため Cloudflare アダプターやデータベースサーバーは不要
+- Node.js 24 推奨（最低 22.23.4）
+- Astro 7.4.7、EmDash / `@emdash-cms/cloudflare` 1.4.0
+- TypeScript、Tailwind CSS 4、Zod、Fuse.js（既存検索処理を保持）
+- Cloudflare Workers、D1（CMS）、R2（メディア等）
+
+EmDash の管理画面には React を使用します。公開画面の Astro コンポーネントとデザインは引き継ぎます。静的 HTML だけを配置する Cloudflare Pages 構成から、サーバー処理を実行する Workers 構成に変更しています。
 
 ```sh
 npm ci
@@ -27,55 +29,36 @@ cp .env.example .env
 npm run dev
 ```
 
-開発サーバーは通常 `http://localhost:4321` です。
+開発用シークレットの用意は [運用ガイド](docs/EMDASH.md#開発環境の準備) に従ってください。ホームディレクトリが読み取り専用の環境では、Astro・Wrangler の設定・ログ・キャッシュを、書き込み可能な作業ディレクトリへ向ける必要があります。
 
-ホームディレクトリが読み取り専用のクラウド環境では、`ASTRO_TELEMETRY_DISABLED=1 npm run dev` のように各 Astro コマンドのテレメトリーを無効にしてください。npm キャッシュも書き込み可能な作業ディレクトリに指定します（例：`npm_config_cache=/workspace/work/npm-cache npm ci`）。
+`localhost:4321` は起動した環境のアドレスです。クラウド上の開発サーバーへ、自分のパソコンの `localhost` で接続することはできません。普段のブラウザーで確認する場合は、上の Sites 配信 URL を使用してください。
+
+## 主なコマンド
 
 ```sh
-npm run validate:data  # 本番 CSV の検証
 npm run check          # Astro / TypeScript 型チェック
-npm test               # メーカー導線・型番選択・データ検証・SEO・計測等のテスト
-npm run build          # CSV 検証後、dist/ に静的 HTML を生成
-npm run verify:build   # 生成 HTML・XML・headers・架空データ混入を検証（ビルド後）
-npm run preview        # 生成サイトのローカル確認
-npm run verify         # 型チェック → テスト → 本番ビルド → 生成物検証
+npm test               # CMS・データ・メーカー導線・SEO・計測等のテスト
+npm run validate:data  # 取込用の本番 CSV を検証
+npm run cms:import     # CSV の検証だけ（通信・書込なし）
+npm run cms:import -- --directory data --apply  # 認証済み CMS へ下書き取込
+npm run cms:export -- --out work/cms-export     # 公開済み CMS を3つの CSV に書出し
+npm run build          # EmDash を含む Worker と公開アセットをビルド
+npm run verify         # プロジェクトで定義した型・テスト・ビルド・生成物検証
 ```
 
-## 環境変数
+取込の `--apply` と書出しには `EMDASH_BASE_URL`・`EMDASH_API_TOKEN` が必要です。API トークンは環境変数へ設定し、チャット・Git・コマンド引数へ記載しないでください。本人限定 Sites の外側の ChatGPT ログインと、EmDash の API トークン認証は別です。この CLI は、直接配信する Cloudflare ドメイン、または信頼できるローカル開発環境で使用します。Sites の本人限定版はブラウザーの管理画面から編集できます。
 
-| 変数 | 設定内容 |
-| --- | --- |
-| `PUBLIC_SITE_URL` | 本番サイトの HTTPS オリジン。末尾にパスを含めない。未設定時は `https://example.invalid` |
-| `PUBLIC_INDEXING_ENABLED` | 検索インデックスを許可するときのみ `true`。未設定・`false` は全ページ `noindex` |
-| `PUBLIC_GA4_MEASUREMENT_ID` | 任意の GA4 測定 ID（`G-...`）。未設定でもサイトは動作 |
+## コンテンツと CSV の対応
 
-これらはビルド時に使用します。変更後は再ビルドが必要です。`PUBLIC_` の値はブラウザーへ公開されるため、秘密情報を設定しないでください。
+EmDash の公開済みコンテンツを表示の正本とします。`data/*.csv` は検証・取込・交換用です。CSV を編集しただけでは CMS の表示は更新されません。CMS の保存と「公開」を行うと、公開ページの次の読込に反映されます。
 
-初期データが空の間は `PUBLIC_INDEXING_ENABLED=false` のまま運用してください。本番 URL を設定しても、それだけではインデックスを許可しません。
+| CMS コレクション | CSV | CMS 固有の対応 |
+| --- | --- | --- |
+| `televisions` | `televisions.csv` | CSV の `id` → `external_id` |
+| `stands` | `stands.csv` | CSV の `id` → `external_id` |
+| `compatibility` | `compatibility.csv` | CSV の `status` → `compatibility_status` |
 
-## ディレクトリ
-
-```text
-├── data/                  本番用 CSV（初期状態はヘッダーのみ）
-├── fixtures/              架空と明記したテスト専用 CSV
-├── src/
-│   ├── components/        メーカー別型番一覧・商品一覧・比較 UI
-│   ├── config/indexing.ts 内容重複等の手動 noindex 設定
-│   ├── layouts/           共通レイアウト・メタ情報
-│   ├── lib/               メーカー導線・CSV 検証・検索ライブラリ・SEO・GA4
-│   ├── pages/             トップ・メーカー別一覧・型番詳細・ガイド・XML 等
-│   ├── scripts/           ブラウザーの検索・計測処理
-│   └── styles/            Tailwind CSS・共通スタイル
-├── scripts/               CSV 検証 CLI
-├── tests/                 自動テスト
-├── public/                favicon・Cloudflare 用ヘッダー等
-├── docs/IMPLEMENTATION.md  工程別の実装と検証内容
-└── .github/workflows/ci.yml
-```
-
-## CSV の管理
-
-UTF-8 の CSV を使用し、列名・列順は以下に合わせてください。セルにカンマや改行がある場合は通常の CSV と同様にダブルクォートで囲みます。数値の単位は列名どおりです。
+EmDash 自身の `id` と `status` は、CMS の識別子・下書き／公開状態です。商品の適合判定には使用しません。適合情報の `television_id` と `stand_id` は、元の CSV と同じ外部 ID を入力する文字列項目です。保存・公開時に参照関係を検証します。
 
 ```csv
 id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url
@@ -89,122 +72,61 @@ id,manufacturer,sku,stand_type,max_weight_kg,vesa_patterns,source_url,product_ur
 television_id,stand_id,status,evidence_type,evidence_url,checked_at,notes
 ```
 
-### テレビ・スタンドの仕様
+UTF-8・上記の列順を使用します。`stand_type` は `floor` / `tabletop` / `wall`、VESA は `200x200;400x400` のような確認済みパターンの列挙です。テレビの不明な仕様は空欄にします。重量は、取り付け対象となる本体重量かどうかを出典で確認してください。
 
-- `id` は変更しない内部識別子。正式型番は `model` / `sku` に原表記のまま保存します。
-- `stand_type` は `floor`（床置き）、`tabletop`（卓上）、`wall`（壁掛け）のいずれか。
-- `vesa_patterns` は `200x200;400x400` のように、幅と高さを小文字 `x`、複数パターンをセミコロンで区切ります。連続範囲の記号として使わず、確認できた穴間隔を列挙してください。
-- テレビの未確認仕様は空欄にし、推測で埋めないでください。情報が不足した型番はインデックス対象から除外します。
-- `weight_kg` は取付対象となるテレビ本体の重量を確認してください。付属卓上スタンド込みか、本体のみかを公式仕様で区別し、判断が必要な点は適合行の `notes` に記録します。
-- `source_url` は公式仕様の参照先、`product_url` は購入先です。URL は HTTPS のみ許可し、認証情報付き URL や `javascript:` 等は拒否します。
+## 適合情報の品質
 
-### 適合区分と根拠
-
-| `status` | 意味 | 運用 |
-| --- | --- | --- |
-| `confirmed` | メーカー等による、そのテレビと商品の個別適合確認済み | 個別確認の出典・確認日・注記が必須 |
-| `candidate` | 仕様上の候補。個別適合は未確認 | VESA・重量が合っても対応を保証しない |
-| `incompatible` | 明確な非対応 | 非対応と確認した根拠を記録 |
-| `unknown` | 判断材料不足 | 根拠不足を非対応と扱わない |
-
-`evidence_type` は `manufacturer_individual`、`official_individual`、`specification`、`insufficient` を使います。`confirmed` に使用できるのは前二者のみです。`checked_at` は実在する `YYYY-MM-DD` の日付にします。これは適合情報を確認した日であり、テレビ仕様の更新日ではありません。
-
-CSV 検証は根拠の形式や欠落を検出しますが、参照先が本当にメーカー公式であるか、ページに個別適合が記載されているかまでは認証しません。運営者が原文を確認し、型番・対象商品・条件・出典・確認日を記録してから登録してください。
-
-### データ追加の手順
-
-1. テレビ・スタンドの公式仕様と個別適合情報を確認する。公開前に引用方法や情報の利用条件も確認する。
-2. 原表記の型番、仕様、出典を `data/televisions.csv` / `stands.csv` に入力する。
-3. `compatibility.csv` に組み合わせと根拠を記録する。情報がない組み合わせは `unknown` として扱う。
-4. `npm run verify` を実行する。ID 重複、参照切れ、正規化衝突、URL、日付、適合根拠のエラーを解消する。
-5. `npm run preview` でメーカー選択から型番一覧・詳細へ進み、メーカーの絞り込み、正式型番・適合区分・注意事項・公式リンク・比較表を確認する。
-6. 本番用 CSV だけをコミットし、Cloudflare Pages で再ビルドする。
-
-検索用の正規化は NFKC・大文字小文字・ハイフン等の差を吸収し、正式型番そのものは変更しません。同じメーカー内で正規化した型番が衝突した場合は、黙って統合せずビルドを止めます。URL はメーカー名・正式型番を NFKC と小文字化で整え、記号の連続をハイフンに置換して生成します。日本語等の文字は URL エンコードします。生成規則は `src/lib/data.ts` のルートヘルパーに集約しています。公開後にメーカー表記や正式型番を変更する場合は URL の変更とリダイレクトを確認してください。
-
-## SEO と安全性
-
-- メーカー別一覧と型番詳細ページは `getStaticPaths()` で静的 HTML を生成します。メーカー一覧に掲載するのは、そのメーカーの CSV に登録済みの型番だけです。
-- ページ別 title・description・canonical、パンくず、実際の内容に沿った JSON-LD を出力します。架空の価格・レビュー評価は生成しません。
-- サイトマップはインデックス許可済みページのみを掲載し、空のメーカー一覧、インデックス可能な型番がないメーカー一覧、情報不足の型番・架空データ・404 等を除外します。
-- 内容が重複する型番・別名・確認中のページは、`src/config/indexing.ts` の `indexExclusions` にテレビ ID と除外理由を登録します。ページは閲覧可能なまま `noindex` となり、サイトマップからも除外します。重複を自動で意味判定する仕組みではないため、編集時に内容を確認してください。
-- プレビュー環境は `PUBLIC_INDEXING_ENABLED=false` にします。`robots.txt` のクロール許可と検索インデックス許可は別で、除外の中心はページの `noindex` です。
-- VESA・耐荷重に加え、背面の凹凸、ネジ径・長さ、スペーサー、配線、壁下地等を確認するよう案内します。
-- CSV の文字列は通常の Astro エスケープ、ブラウザーの検索結果は `textContent` で表示します。JSON-LD 等の埋め込みも安全にシリアライズします。
-- 購入リンクには広告表記と `rel="sponsored nofollow noopener noreferrer"` を付けます。購入先 URL は運営者自身のアフィリエイト契約に従って登録してください。
-
-## GA4
-
-測定 ID が有効で、利用者が計測に同意した場合にのみ GA4 を読み込みます。未設定・未同意時も検索やページ表示は動作します。Do Not Track の設定を尊重します。同意状態はブラウザーの `localStorage`（`tv-stand:analytics-consent`）に `granted` / `denied` として保存します。
-
-| イベント | 発生箇所 |
+| 適合区分 | 表示・運用 |
 | --- | --- |
-| `tv_search` | 既存検索コンポーネントでの型番検索（現在のメーカー選択画面では未使用） |
-| `tv_result_click` | メーカー別一覧からの型番選択 |
+| `confirmed` | メーカー等による個別適合確認。根拠 URL・確認日・注記が必須 |
+| `candidate` | 仕様上の候補。個別の取付適合は未確認 |
+| `incompatible` | 明確な非対応。購入候補から除外 |
+| `unknown` | 判断材料不足。非対応とは区別 |
+
+VESA・重量の一致だけで `confirmed` に変更する機能はありません。`evidence_type` は `manufacturer_individual` / `official_individual` / `specification` / `insufficient`。前二者だけが `confirmed` の根拠種別になります。`checked_at` は適合情報を確認した `YYYY-MM-DD` で、テレビ仕様の更新日ではありません。
+
+独自の CMS 検証プラグインと公開データの検証により、不正値・参照切れ・正規化や URL の衝突・根拠不足を拒否します。出典が実際に公式であるか、対象型番の適合が記載されているかは、運営者が原文を確認します。スキーマで出典の真偽を認証するものではありません。
+
+## SEO・広告・計測
+
+- メーカー一覧・型番詳細は、公開済みの CMS データから HTML を生成します。下書きは公開ページへ表示しません。
+- 固有の title・description・canonical、パンくず、実表示に合う構造化データ、XML サイトマップを提供します。価格・評価を創作しません。
+- 空の一覧、情報不足、架空データ、手動除外対象は noindex とし、サイトマップに含めません。重複ページの除外は `src/config/indexing.ts` で管理します。
+- `PUBLIC_SITE_URL` と `PUBLIC_INDEXING_ENABLED=true` がそろうまで全ページを noindex にします。初期の本人限定版ではインデックスを許可しません。
+- 購入リンクに広告表示と `sponsored nofollow noopener noreferrer` を付与します。背面形状・ネジ・スペーサー・配線・設置面も確認するよう案内します。
+- GA4 は `PUBLIC_GA4_MEASUREMENT_ID` が有効で、利用者が同意した後に読み込みます。DNT を尊重し、生の検索文字列や購入先の完全 URL を送信しません。
+
+| GA4 イベント | 発生箇所 |
+| --- | --- |
+| `tv_result_click` | 型番一覧からの選択 |
+| `compatibility_view` | 同意後、表示中の適合情報ごとに1回 |
 | `affiliate_click` | 購入先リンクの選択 |
-| `compatibility_view` | 同意後に適合情報が表示領域に入ったとき（各表示ブロックにつき 1 回） |
+| `tv_search` | 保持している検索コンポーネントを利用した場合。現在のメーカー選択導線では未使用 |
 
-検索語の生データは送信せず、文字数・件数等を使用します。アフィリエイト URL のクエリ文字列や秘密情報もイベントへ含めません。公開前に運営者のプライバシー方針・GA4 設定・広告表記を実際の運用に合わせてください。
+`PUBLIC_` 変数は公開情報です。シークレットを設定しないでください。CMS の暗号化キーと API トークンは別の非公開設定として管理します。
 
-## 検証状況と任意のブラウザーテスト
+## ソース構成
 
-初回版では Node.js 24.22.1 / npm 11.9.0 で固定バージョン指定の `npm install` と lockfile からの `npm ci` が成功しています。メーカー選択方式への変更後の型チェック・自動テスト・本番ビルド・生成物検証の結果は、[工程別の実装と検証](docs/IMPLEMENTATION.md) に記録します。
-
-Chromium がある環境では、通常の CI に加えて任意のブラウザーテストを実行できます。まず別ターミナルでプレビューを起動してください。
-
-```sh
-npm run preview -- --port 4321
+```text
+seed/seed.json                 空のCMSコレクション定義（製品データなし）
+plugins/tv-fit-validation/      適合根拠・参照・衝突等の保存検証
+src/lib/data.ts                純粋なカタログスキーマ・検証・URL生成
+src/lib/csv.ts                 オフラインCSV読込
+src/lib/cms-mapping.ts         CMSとCSVの明示的な項目対応
+src/lib/cms-catalog.ts         公開済みCMSカタログの取得・検証
+src/live.config.ts             EmDash Live Collection
+src/pages/                    既存のメーカー選択・型番一覧・詳細・ガイド
+scripts/cms-import.ts          検証後の下書き取込
+scripts/cms-export.ts          公開済みデータのCSV書出し
+wrangler.jsonc                 直接Cloudflareへ配信する設定
+.openai/hosting.json            SitesのWorker・D1・R2配信設定
 ```
 
-続いて次を実行します。
+## 参考資料
 
-```sh
-node scripts/browser-smoke.mjs
-```
+- [EmDash を既存 Astro プロジェクトへ追加](https://docs.emdashcms.com/existing-project/)
+- [EmDash の Cloudflare Workers 配信](https://docs.emdashcms.com/deployment/cloudflare/)
+- [EmDash のフィールド型](https://docs.emdashcms.com/reference/field-types/)
+- [EmDash の REST API](https://docs.emdashcms.com/reference/rest-api/)
 
-`CHROMIUM_BIN`（既定 `/usr/bin/chromium`）、`SMOKE_ORIGIN`（既定 `http://127.0.0.1:4321`）、`SMOKE_OUTPUT_DIR`（既定 `work/browser`）で実行環境を変更できます。デスクトップとスマートフォンの表示・メーカー選択から型番一覧への遷移・空一覧・ガイド遷移・測定 ID 未設定時の GA4 未送信・JavaScript/HTTP エラーを確認し、スクリーンショットを保存します。Chromium はこのリポジトリの npm 依存には含みません。
-
-## GitHub と Cloudflare Pages への公開
-
-本人限定で閲覧する Sites 版を用意しています。所有する GitHub リポジトリへの登録と Cloudflare Pages の一般公開は、以下の手順で行います。
-
-1. GitHub に空のリポジトリを作成し、このプロジェクトをアップロードする。`.env`、`node_modules/`、`dist/` はコミットしない。
-2. Cloudflare ダッシュボードで **Workers & Pages → Create application → Pages → Connect to Git** を選び、リポジトリを接続する。
-3. 以下のビルド設定を登録する。
-
-| 項目 | 値 |
-| --- | --- |
-| フレームワーク | Astro |
-| 本番ブランチ | `main`（リポジトリに合わせて変更） |
-| ルートディレクトリ | この `package.json` があるディレクトリ |
-| ビルドコマンド | `npm run build` |
-| 出力ディレクトリ | `dist` |
-| `NODE_VERSION` | `24.22.1`、または要件を満たす Node.js 24 の安定版 |
-
-4. Production の環境変数に `PUBLIC_SITE_URL=https://自分のドメイン` を設定する。確認済みコンテンツを登録し、公開内容をレビューするまでは `PUBLIC_INDEXING_ENABLED=false` にする。任意で `PUBLIC_GA4_MEASUREMENT_ID` を設定する。
-5. Preview の環境変数には `PUBLIC_INDEXING_ENABLED=false` を明示する。本番値をコピーして `true` にしない。
-6. デプロイ後に独自ドメインを接続し、HTTPS、canonical、`robots.txt`、`sitemap.xml`、スマートフォンの検索・比較表を確認する。
-7. 確認済みデータと運用方針がそろった段階で Production の `PUBLIC_INDEXING_ENABLED=true` を設定し、再デプロイする。Google Search Console に本番サイトマップを登録する。
-
-プレビューのアクセス制限や公開範囲は Cloudflare 側で必要に応じて設定してください。静的サイトなのでアダプター、Workers の実行環境、永続 DB は不要です。GitHub Actions は push / pull request で `npm ci` と `npm run verify` を実行します。
-
-## 公式ドキュメント
-
-2026-11-08 に公式ドキュメントと npm の安定版を確認した構成です。依存バージョンは `package.json` と lockfile で固定しています。
-
-- [Astro のインストールと必要な Node.js](https://docs.astro.build/en/install-and-setup/)
-- [Astro の Tailwind CSS 統合](https://docs.astro.build/en/guides/styling/#tailwind)
-- [Tailwind CSS の Vite プラグイン](https://tailwindcss.com/docs/installation/using-vite)
-- [Cloudflare Pages の Astro 公開手順](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/)
-
-## 本人限定の閲覧版
-
-Sites の本人限定サイトとして配信します。一般公開の Cloudflare Pages とは別の配信先です。
-
-- 閲覧先： https://tv-fit-stand-search-mvp.workspace-240263.chatgpt.site
-- 配信設定： `.openai/hosting.json`（静的 `dist`）
-- 検索エンジンへの掲載：無効（`PUBLIC_INDEXING_ENABLED=false`）
-- 実在する製品データ・GA4 測定 ID：未設定
-- この版のビルド時には `PUBLIC_SITE_URL` に上記 URL を指定します。
-
-`localhost` はブラウザーを開いている環境の住所です。お手元のブラウザーでは上の閲覧用 URL を使用してください。
+最終テスト・ビルド・配信結果は、移行作業完了時に追記します。既存の工程別記録は [IMPLEMENTATION.md](docs/IMPLEMENTATION.md) に残しています。

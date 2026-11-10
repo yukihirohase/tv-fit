@@ -1,9 +1,10 @@
+import { loadCatalog } from '../src/lib/csv';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { load } from 'cheerio';
 import { loadEnv } from 'vite';
-import { loadCatalog, isIndexableTelevision, televisionPath } from '../src/lib/data';
+import { isIndexableTelevision, televisionPath } from '../src/lib/data';
 import { getSeoConfig, canonicalUrl } from '../src/lib/seo';
 import { getManufacturers, isIndexableManufacturer } from '../src/lib/manufacturers';
 
