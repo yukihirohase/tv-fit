@@ -57,10 +57,19 @@ try {
   const missing = await request('/sony/not-a-real-model/');
   assert.equal(missing.status, 404);
 
-  const setup = await request('/_emdash/api/setup/status/');
+  const setup = await request('/_emdash/api/setup/status');
   assert.equal(setup.status, 200);
   const setupText = await setup.text();
   assert(/setup|admin|complete|required/i.test(setupText), 'EmDash setup status response is missing');
+
+  const authMode = await request('/_emdash/api/auth/mode');
+  assert.equal(authMode.status, 200, 'public auth mode endpoint must work without a session');
+  const passkeyOptions = await miniflare.dispatchFetch('https://tv-fit.com/_emdash/api/auth/passkey/options', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://tv-fit.com', 'X-Emdash-Request': '1' },
+    body: '{}',
+  });
+  assert.equal(passkeyOptions.status, 200, 'public passkey endpoint must work without a session');
   const adminCandidates = await Promise.all(
     ['/_emdash/admin/', '/_emdash/admin/setup/', '/_emdash/admin/login/'].map(async path => {
       const response = await request(path);

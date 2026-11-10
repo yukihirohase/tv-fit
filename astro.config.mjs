@@ -8,7 +8,7 @@ import { tvFitValidation } from './plugins/tv-fit-validation/index.ts';
 
 export default defineConfig({
   output: 'server',
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
   session: { driver: { entrypoint: new URL('./src/lib/session-storage.ts', import.meta.url) } },
   adapter: cloudflare({ imageService: 'passthrough' }),
   integrations: [

@@ -125,14 +125,12 @@ export async function buildSitesWorker(projectDirectory = process.cwd()) {
   const sessionGuard = fileURLToPath(new URL('../src/lib/private-session-guard.ts', import.meta.url));
   const source = `import application from ${JSON.stringify(sourceMain)};\n`
     + `import {ungzip as decompress} from 'pako';\n`
-    + `import {emdashApiSlashRedirect,isPrivateSessionRequest} from ${JSON.stringify(sessionGuard)};\n`
+    + `import {isPrivateSessionRequest} from ${JSON.stringify(sessionGuard)};\n`
     + `const assets = ${JSON.stringify(assets)};\n`
     + `const fetchAsset = (${createAssetFetch.toString()})(assets, decompress);\n`
     + `const embeddedAssets = { fetch(input, init) { return fetchAsset(input instanceof Request ? input : new Request(input, init)); } };\n`
     + `export default { ...application, async fetch(request, env, context) {\n`
     + ` if (isPrivateSessionRequest(request)) return new Response('Not found', {status:404,headers:{'Cache-Control':'no-store'}});\n`
-    + ` const apiRedirect = emdashApiSlashRedirect(request);\n`
-    + ` if (apiRedirect) return Response.redirect(apiRedirect, 308);\n`
     + ` const asset = await fetchAsset(request);\n`
     + ` if (asset.status !== 404) return asset;\n`
     + ` return application.fetch(request, { ...env, ASSETS: env.ASSETS ?? embeddedAssets }, context);\n`

@@ -35,11 +35,3 @@ export function emdashAdminSlashRedirect(input: string | { url: string }): URL |
   url.pathname += '/';
   return url;
 }
-
-/** EmDash's browser client omits slashes that Astro's directory routes require. */
-export function emdashApiSlashRedirect(input: string | { url: string }): URL | null {
-  const url = new URL(typeof input === 'string' ? input : input.url);
-  if (!url.pathname.startsWith('/_emdash/api/') || url.pathname.endsWith('/')) return null;
-  url.pathname += '/';
-  return url;
-}
