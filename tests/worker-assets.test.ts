@@ -4,7 +4,6 @@ import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { gunzipSync } from 'node:zlib';
 
 interface PackedAsset { body: string; type: string; etag: string; size: number }
 interface AssetHelpers {
@@ -57,7 +56,7 @@ describe('Sites Worker embedded public assets', () => {
     expect(script?.type).toMatch(/javascript/);
     expect(script?.etag).toBeTruthy();
     expect(script?.size).toBe(Buffer.byteLength(scriptBody));
-    expect(gunzipSync(Buffer.from(script!.body, 'base64')).toString()).toBe(scriptBody);
+    expect(Buffer.from(script!.body, 'base64').toString()).toBe(scriptBody);
     expect(assets['/_astro/app.css']?.type).toMatch(/text\/css/);
     expect(assets['/favicon.svg']?.type).toMatch(/image\/svg\+xml/);
     expect(assets['/robots.txt']?.type).toBe('text/plain; charset=utf-8');
@@ -78,14 +77,14 @@ describe('Sites Worker embedded public assets', () => {
     expect((await fetchAsset(new Request('https://site.example.invalid/.env'))).status).toBe(404);
   });
 
-  it('uses gzip only when accepted and provides bodyless HEAD and cache validation responses', async () => {
+  it('leaves transfer compression to the hosting edge and provides bodyless HEAD and cache validation responses', async () => {
     const { client } = await fixture();
     const assets = await helpers.collectClientAssets(client);
     const fetchAsset = helpers.createAssetFetch(assets);
     const requestUrl = 'https://site.example.invalid/_astro/app.js';
-    const compressed = await fetchAsset(new Request(requestUrl, { headers: { 'accept-encoding': 'gzip' } }));
-    expect(compressed.headers.get('content-encoding')).toBe('gzip');
-    expect(gunzipSync(Buffer.from(await compressed.arrayBuffer())).toString()).toBe(scriptBody);
+    const response = await fetchAsset(new Request(requestUrl, { headers: { 'accept-encoding': 'gzip' } }));
+    expect(response.headers.get('content-encoding')).toBeNull();
+    expect(await response.text()).toBe(scriptBody);
     const head = await fetchAsset(new Request(requestUrl, { method: 'HEAD' }));
     expect(head.status).toBe(200);
     expect(await head.text()).toBe('');

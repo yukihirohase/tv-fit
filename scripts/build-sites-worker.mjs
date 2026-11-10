@@ -52,7 +52,7 @@ export async function collectClientAssets(clientDirectory) {
       if (!type || (!ROOT_ASSETS.has(path) && !ASSET_PREFIXES.some(prefix => path.startsWith(prefix)))) continue;
       const bytes = await readFile(filename);
       const packed = {
-        body: gzipSync(bytes, { level: 9, mtime: 0 }).toString('base64'),
+        body: bytes.toString('base64'),
         type,
         etag: `W/"${createHash('sha256').update(bytes).digest('hex')}"`,
         size: bytes.byteLength,
@@ -84,25 +84,15 @@ export function createAssetFetch(assets) {
       'X-Content-Type-Options': 'nosniff',
       'Cache-Control': pathname.startsWith('/_astro/') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600',
       ETag: asset.etag,
-      Vary: 'Accept-Encoding',
     });
     const match = request.headers.get('If-None-Match');
     if (match && (match.trim() === '*' || match.split(',').some(value => value.trim() === asset.etag))) {
       return new Response(null, { status: 304, headers });
     }
-    const gzip = (request.headers.get('Accept-Encoding') ?? '').split(',').some(value => {
-      const parts = value.trim().toLowerCase().split(';');
-      if (parts[0]?.trim() !== 'gzip') return false;
-      const quality = parts.slice(1).find(part => part.trim().startsWith('q='));
-      return quality === undefined || Number(quality.trim().slice(2)) > 0;
-    });
-    const compressed = decode(asset.body);
-    headers.set('Content-Length', String(gzip ? compressed.byteLength : asset.size));
-    if (gzip) headers.set('Content-Encoding', 'gzip');
+    const body = decode(asset.body);
+    headers.set('Content-Length', String(body.byteLength));
     if (request.method === 'HEAD') return new Response(null, { headers });
-    if (gzip) return new Response(compressed, { headers });
-    const stream = new Response(compressed).body.pipeThrough(new DecompressionStream('gzip'));
-    return new Response(stream, { headers });
+    return new Response(body, { headers });
   };
 }
 
