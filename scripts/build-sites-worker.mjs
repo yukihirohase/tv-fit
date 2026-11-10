@@ -52,7 +52,7 @@ export async function collectClientAssets(clientDirectory) {
       if (!type || (!ROOT_ASSETS.has(path) && !ASSET_PREFIXES.some(prefix => path.startsWith(prefix)))) continue;
       const bytes = await readFile(filename);
       const packed = {
-        body: bytes.toString('base64'),
+        body: gzipSync(bytes, { level: 9, mtime: 0 }).toString('base64'),
         type,
         etag: `W/"${createHash('sha256').update(bytes).digest('hex')}"`,
         size: bytes.byteLength,
@@ -69,7 +69,7 @@ export async function collectClientAssets(clientDirectory) {
 }
 
 /** This function is self-contained because its source is embedded in the Worker. */
-export function createAssetFetch(assets) {
+export function createAssetFetch(assets, decompress) {
   const hasOwn = (key) => Object.prototype.hasOwnProperty.call(assets, key);
   const decode = (body) => Uint8Array.from(atob(body), character => character.charCodeAt(0));
   return async function fetchAsset(request) {
@@ -89,7 +89,7 @@ export function createAssetFetch(assets) {
     if (match && (match.trim() === '*' || match.split(',').some(value => value.trim() === asset.etag))) {
       return new Response(null, { status: 304, headers });
     }
-    const body = decode(asset.body);
+    const body = decompress(decode(asset.body));
     headers.set('Content-Length', String(body.byteLength));
     if (request.method === 'HEAD') return new Response(null, { headers });
     return new Response(body, { headers });
@@ -124,9 +124,10 @@ export async function buildSitesWorker(projectDirectory = process.cwd()) {
   const assets = await collectClientAssets(clientDirectory);
   const sessionGuard = fileURLToPath(new URL('../src/lib/private-session-guard.ts', import.meta.url));
   const source = `import application from ${JSON.stringify(sourceMain)};\n`
+    + `import {ungzip as decompress} from 'pako';\n`
     + `import {isPrivateSessionRequest} from ${JSON.stringify(sessionGuard)};\n`
     + `const assets = ${JSON.stringify(assets)};\n`
-    + `const fetchAsset = (${createAssetFetch.toString()})(assets);\n`
+    + `const fetchAsset = (${createAssetFetch.toString()})(assets, decompress);\n`
     + `const embeddedAssets = { fetch(input, init) { return fetchAsset(input instanceof Request ? input : new Request(input, init)); } };\n`
     + `export default { ...application, async fetch(request, env, context) {\n`
     + ` if (isPrivateSessionRequest(request)) return new Response('Not found', {status:404,headers:{'Cache-Control':'no-store'}});\n`
