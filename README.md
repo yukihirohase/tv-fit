@@ -40,7 +40,7 @@ npm run dev
 | 項目 | 値 |
 | --- | --- |
 | ビルドコマンド | `npm run build:cloudflare` |
-| デプロイコマンド | `npx --yes wrangler@4.162.0 deploy` |
+| デプロイコマンド | `npm run deploy:cloudflare`（`emdash migrate` → `wrangler deploy`） |
 | シークレット | `EMDASH_ENCRYPTION_KEY`（Cloudflare ダッシュボードの Worker 設定にのみ保存） |
 | D1 / R2 | `tv-fit-emdash`（`DB`）/ `tv-fit-emdash-media`（`MEDIA`） |
 

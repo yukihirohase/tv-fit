@@ -1,11 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   // 自分の Cloudflare アカウントで配信する Worker。
-  // Workers Builds（GitHub 連携）: ビルド `npm run build:cloudflare` / デプロイ `npx --yes wrangler@4.162.0 deploy`
+  // Workers Builds（GitHub 連携）: ビルド `npm run build:cloudflare` / デプロイ `npm run deploy:cloudflare`
+  // （デプロイ前に `emdash migrate` で D1 のコアマイグレーションを適用する）
   "name": "tv-fit",
   "main": "./src/worker.ts",
   "compatibility_date": "2026-11-08",
   "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
   "observability": { "enabled": true },
   "vars": {
     "EMDASH_SITE_URL": "https://tv-fit.com",
