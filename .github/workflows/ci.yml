@@ -18,5 +18,17 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run verify
-        env:
-          PUBLIC_INDEXING_ENABLED: 'false'
+
+  cloudflare-build:
+    # 自分の Cloudflare へ配信する標準ビルドが通り、Wrangler が束ねられることを確認する（デプロイはしない）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build:cloudflare
+      - run: npx --yes wrangler@4.162.0 deploy --dry-run --outdir work/wrangler-dry-run
+      - run: du -sh work/wrangler-dry-run && ls -la work/wrangler-dry-run

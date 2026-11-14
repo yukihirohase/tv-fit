@@ -1,9 +1,17 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tv-fit-stand-search-mvp",
+  // 自分の Cloudflare アカウントで配信する Worker。
+  // Workers Builds（GitHub 連携）: ビルド `npm run build:cloudflare` / デプロイ `npx --yes wrangler@4.162.0 deploy`
+  "name": "tv-fit",
   "main": "./src/worker.ts",
   "compatibility_date": "2026-11-08",
   "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "vars": {
+    "EMDASH_SITE_URL": "https://tv-fit.com",
+    "PUBLIC_SITE_URL": "https://tv-fit.com"
+  },
+  // database_id / bucket は初回デプロイ時に Wrangler が自動作成する。
   "d1_databases": [
     { "binding": "DB", "database_name": "tv-fit-emdash" }
   ],
