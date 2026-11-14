@@ -35,25 +35,25 @@ npm run dev
 
 ## GitHub とデプロイ
 
-ソースコードの正本は [yukihirohase/tv-fit](https://github.com/yukihirohase/tv-fit) の `main` ブランチです。Sites で保存・デプロイする場合も、対象のコミットを先にこのブランチへ push します。
+ソースコードの正本は [yukihirohase/tv-fit](https://github.com/yukihirohase/tv-fit) の `main` ブランチです。本番は自分の Cloudflare アカウントの Worker `tv-fit` で配信し、Cloudflare Workers Builds が `main` への push ごとに自動でビルド・デプロイします（**main への push = 本番公開**）。
+
+| 項目 | 値 |
+| --- | --- |
+| ビルドコマンド | `npm run build:cloudflare` |
+| デプロイコマンド | `npx --yes wrangler@4.162.0 deploy` |
+| シークレット | `EMDASH_ENCRYPTION_KEY`（Cloudflare ダッシュボードの Worker 設定にのみ保存） |
+| D1 / R2 | `tv-fit-emdash`（`DB`）/ `tv-fit-emdash-media`（`MEDIA`） |
+
+変更はブランチで行い、PR の CI（`Verify`）が通ってから `main` にマージします。
 
 ```sh
-git checkout main
-git pull --ff-only origin main
+git checkout -b my-change
 npm ci
-cp .env.example .env
 npm run verify
-git push origin main
+git push -u origin my-change   # PR を作成 → CI 確認 → main にマージで本番反映
 ```
 
-ChatGPT Sites では、追跡済みの [`.openai/hosting.json`](.openai/hosting.json) にある既存プロジェクトIDを使用し、`main` に push 済みの同じコミットから本番ビルドを作成して保存・デプロイします。Sitesの実行環境では `EMDASH_ENCRYPTION_KEY`、`EMDASH_SITE_URL` などの値をランタイム環境変数として設定します。シークレットを `.env`、README、Gitのコミット、デプロイ用アーカイブへ直接書き込まないでください。
-
-自分のCloudflareアカウントへ直接デプロイする場合は、D1・R2とシークレットを準備してから次を実行します。初回設定を含む詳しい手順は [EmDash 運用ガイド](docs/EMDASH.md#自分の-cloudflare-アカウントへ直接配信する) を参照してください。
-
-```sh
-npm run verify
-npx wrangler deploy
-```
+`npm run build`（`scripts/build-sites-worker.mjs`）は旧 ChatGPT Sites 向けの単一ファイル Worker を作るビルドで、Cloudflare 配信には使いません。
 
 ## 主なコマンド
 

@@ -5,7 +5,8 @@
 ## 配信の流れ
 
 - 正本は GitHub `yukihirohase/tv-fit` の `main`。
-- `main` に push すると Cloudflare Workers Builds が `npm run build:cloudflare` → `npx wrangler deploy` を実行し、本番（https://tv-fit.com）に反映される。**main への push = 本番公開**。
+- `main` に push すると Cloudflare Workers Builds が `npm run build:cloudflare` → `npx --yes wrangler@4.162.0 deploy` を実行し、本番（https://tv-fit.com）に反映される。**main への push = 本番公開**。
+- Wrangler は新しいサイズ上限（非圧縮64MiB）に対応した版を使うため、デプロイだけ `wrangler@4.162.0` を明示している（package.json の wrangler は 4.125.0 のまま）。
 - 作業はブランチ → PR → CI（`.github/workflows/ci.yml`）が緑になってから `main` にマージする。
 - Worker 名 `tv-fit`、D1 `tv-fit-emdash`（binding `DB`）、R2 `tv-fit-emdash-media`（binding `MEDIA`）。名前を変えると別のDB・バケットが作られてデータが見えなくなるので変更しない。
 - シークレット `EMDASH_ENCRYPTION_KEY` は Cloudflare ダッシュボード側にだけ置く。Git・README・チャットに書かない。
