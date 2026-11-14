@@ -33,6 +33,28 @@ npm run dev
 
 `localhost:4321` は起動した環境のアドレスです。クラウド上の開発サーバーへ、自分のパソコンの `localhost` で接続することはできません。普段のブラウザーで確認する場合は、上の Sites 配信 URL を使用してください。
 
+## GitHub とデプロイ
+
+ソースコードの正本は [yukihirohase/tv-fit](https://github.com/yukihirohase/tv-fit) の `main` ブランチです。Sites で保存・デプロイする場合も、対象のコミットを先にこのブランチへ push します。
+
+```sh
+git checkout main
+git pull --ff-only origin main
+npm ci
+cp .env.example .env
+npm run verify
+git push origin main
+```
+
+ChatGPT Sites では、追跡済みの [`.openai/hosting.json`](.openai/hosting.json) にある既存プロジェクトIDを使用し、`main` に push 済みの同じコミットから本番ビルドを作成して保存・デプロイします。Sitesの実行環境では `EMDASH_ENCRYPTION_KEY`、`EMDASH_SITE_URL` などの値をランタイム環境変数として設定します。シークレットを `.env`、README、Gitのコミット、デプロイ用アーカイブへ直接書き込まないでください。
+
+自分のCloudflareアカウントへ直接デプロイする場合は、D1・R2とシークレットを準備してから次を実行します。初回設定を含む詳しい手順は [EmDash 運用ガイド](docs/EMDASH.md#自分の-cloudflare-アカウントへ直接配信する) を参照してください。
+
+```sh
+npm run verify
+npx wrangler deploy
+```
+
 ## 主なコマンド
 
 ```sh
@@ -129,4 +151,4 @@ wrangler.jsonc                 直接Cloudflareへ配信する設定
 - [EmDash のフィールド型](https://docs.emdashcms.com/reference/field-types/)
 - [EmDash の REST API](https://docs.emdashcms.com/reference/rest-api/)
 
-最終確認では型チェック 0 エラー、テスト 145 件、本番 Worker 検証、`tv-fit.com` のトップ・EmDash 初期設定 API・管理画面の HTTP 200 を確認しました。既存の工程別記録は [IMPLEMENTATION.md](docs/IMPLEMENTATION.md) に残しています。
+最終確認では型チェック 0 エラー、テスト 146 件、本番 Worker 検証、`tv-fit.com` のトップ・EmDash 認証 API・管理画面の HTTP 200 を確認しました。既存の工程別記録は [IMPLEMENTATION.md](docs/IMPLEMENTATION.md) に残しています。
