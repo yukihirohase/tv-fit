@@ -13,9 +13,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "npm run validate:data && astro build && node scripts/build-sites-worker.mjs",
+    "build:cloudflare": "npm run validate:data && astro build",
     "preview": "astro preview --host 0.0.0.0",
     "verify": "npm run check && npm test && npm run build && npm run verify:build",
     "verify:build": "node scripts/verify-cms-build.mjs",
+    "deploy": "npm run build:cloudflare && wrangler deploy",
     "cms:import": "tsx scripts/cms-import.ts",
     "cms:export": "tsx scripts/cms-export.ts"
   },
