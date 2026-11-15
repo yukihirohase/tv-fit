@@ -1,0 +1,46 @@
+name: CMS import
+
+# data/*.csv を EmDash（https://tv-fit.com）へ「下書き」として一括登録する。
+# - main に CSV の変更がマージされたとき自動実行
+# - Actions 画面の「Run workflow」から手動実行も可能
+# 公開操作は行わない。取り込んだ下書きは管理画面で確認してから公開する。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/*.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cms-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    env:
+      EMDASH_BASE_URL: ${{ vars.EMDASH_BASE_URL || 'https://tv-fit.com' }}
+      EMDASH_API_TOKEN: ${{ secrets.EMDASH_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+
+      - name: CSV を検証（書込なし）
+        run: npm run cms:import -- --directory data
+
+      - name: CMS へ下書きとして登録
+        if: env.EMDASH_API_TOKEN != ''
+        run: npm run cms:import -- --directory data --apply
+
+      - name: API トークン未設定の案内
+        if: env.EMDASH_API_TOKEN == ''
+        run: |
+          echo "::warning::EMDASH_API_TOKEN が未設定のため、検証だけ行い登録はしていません。GitHub の Settings → Secrets and variables → Actions に EMDASH_API_TOKEN を追加してください（docs/CSV.md 参照）。"

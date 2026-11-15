@@ -55,6 +55,10 @@ git push -u origin my-change   # PR を作成 → CI 確認 → main にマー�
 
 `npm run build`（`scripts/build-sites-worker.mjs`）は旧 ChatGPT Sites 向けの単一ファイル Worker を作るビルドで、Cloudflare 配信には使いません。
 
+## CSV 一括登録
+
+`data/*.csv` を更新して `main` にマージすると、GitHub Actions が EmDash に下書きとして登録します。列の仕様と初回設定（API トークン）は [CSV 一括登録ガイド](docs/CSV.md) を参照してください。
+
 ## 主なコマンド
 
 ```sh
