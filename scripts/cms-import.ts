@@ -14,7 +14,7 @@ export interface ImportItem {
 }
 export interface ImportPlan { create: ImportItem[]; skipped: number }
 type Fetch = typeof globalThis.fetch;
-interface ApiOptions { origin: string; token: string; fetch?: Fetch; retryDelayMs?: number; writeIntervalMs?: number }
+interface ApiOptions { origin: string; token: string; fetch?: Fetch; retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }
 
 /** Only a site origin is accepted; authenticated redirects are never followed. */
 export function validateCmsOrigin(value: string): string {
@@ -80,7 +80,7 @@ const retryableStatuses = new Set([429, 502, 503, 504]);
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /** GET is safe to retry; POST is never retried so a timed-out write cannot be duplicated. */
-async function requestJson(url: URL, init: RequestInit, options: ReturnType<typeof authenticated> & { retryDelayMs?: number }): Promise<Record<string, unknown>> {
+async function requestJson(url: URL, init: RequestInit, options: ReturnType<typeof authenticated> & { retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }): Promise<Record<string, unknown>> {
   const retries = (init.method ?? 'GET') === 'GET' ? 5 : 0;
   let response: Response | undefined;
   for (let attempt = 0; ; attempt += 1) {
