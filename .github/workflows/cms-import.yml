@@ -11,6 +11,15 @@ on:
     paths:
       - 'data/*.csv'
   workflow_dispatch:
+    inputs:
+      fill_blanks:
+        description: 'CMSで空欄の項目だけCSVの値で埋める（下書きのみ・既存値は変更しない）'
+        type: boolean
+        default: false
+      fill_limit:
+        description: '空欄補完の最大件数（試行用。空欄なら全件）'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -38,7 +47,10 @@ jobs:
 
       - name: CMS へ下書きとして登録
         if: env.EMDASH_API_TOKEN != ''
-        run: npm run cms:import -- --directory data --apply
+        env:
+          FILL_BLANKS: ${{ inputs.fill_blanks && '--fill-blanks' || '' }}
+          FILL_LIMIT: ${{ inputs.fill_limit && format('--fill-limit {0}', inputs.fill_limit) || '' }}
+        run: npm run cms:import -- --directory data --apply $FILL_BLANKS $FILL_LIMIT
 
       - name: API トークン未設定の案内
         if: env.EMDASH_API_TOKEN == ''
