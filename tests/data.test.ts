@@ -11,8 +11,9 @@ const options = { allowFixtures: true, now };
 const fixture = () => loadCatalog(resolve('fixtures/catalog'), options);
 
 describe('CSV data validation and production boundaries', () => {
-  it('accepts empty production CSVs without exposing test fixtures', () => {
-    expect(loadCatalog()).toEqual({ televisions: [], stands: [], compatibility: [] });
+  it('loads production CSVs without exposing test fixtures', () => {
+    const production = loadCatalog();
+    expect(production.televisions.every((tv) => !/^fixture-|FICTION-/u.test(`${tv.id} ${tv.model}`))).toBe(true);
     expect(() => loadCatalog(resolve('fixtures/catalog'))).toThrow(/架空データ|テストURL/u);
   });
 
