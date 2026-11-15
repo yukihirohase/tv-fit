@@ -104,7 +104,9 @@ describe('validated CSV import into EmDash', () => {
     const puts: Record<string, unknown>[] = [];
     const fetch = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
       const id = String(input).split('/').pop()!;
-      if (init?.method === 'PUT') { const body = JSON.parse(String(init.body)); puts.push(body); stored[id] = { status: body.status, data: body.data }; }
+      const parts = String(input).split('/');
+      if (parts.at(-1) === 'publish') return Response.json({ success: true, data: { item: { id: parts.at(-2) } } });
+      if (init?.method === 'PUT') { const body = JSON.parse(String(init.body)); puts.push(body); stored[id] = { status: stored[id]!.status, data: { ...stored[id]!.data, ...body.data } }; }
       return Response.json({ success: true, data: { item: { id, ...stored[id] } } });
     }) as unknown as typeof globalThis.fetch;
     const fields = { vesa_width_mm: 300, vesa_height_mm: 300 };
@@ -113,7 +115,7 @@ describe('validated CSV import into EmDash', () => {
       { collection: 'televisions' as const, key: 'b', id: 'b', fields },
     ] };
     expect(await applyFillPlan(plan, { origin: 'https://cms.example.org', token: 'test-token', fetch, writeIntervalMs: 0 })).toEqual({ filled: 1, published: ['b'] });
-    expect(puts).toEqual([{ data: { external_id: 'a', vesa_width_mm: 300, vesa_height_mm: 300, model: 'A' }, status: 'draft' }]);
+    expect(puts).toEqual([{ data: { vesa_width_mm: 300, vesa_height_mm: 300 } }]);
     expect(stored.b!.data.vesa_width_mm).toBeNull();
     expect(await applyFillPlan({ ...plan, fill: plan.fill.slice(1) }, { origin: 'https://cms.example.org', token: 'test-token', fetch, writeIntervalMs: 0 }, Infinity, true)).toEqual({ filled: 1, published: [] });
     expect(stored.b).toEqual({ status: 'published', data: { external_id: 'b', vesa_width_mm: 300, vesa_height_mm: 300, model: 'B' } });
