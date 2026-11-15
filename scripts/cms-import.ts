@@ -175,10 +175,10 @@ function itemOf(data: Record<string, unknown>): { status?: unknown; data: Record
 }
 
 /**
- * Fill CMS fields that are still blank. Only draft entries are touched, the status is
- * kept as draft, and every write is read back; anything unexpected stops the run.
+ * Fill CMS fields that are still blank. Drafts only by default (published entries with
+ * includePublished); the status is kept, and every write is read back; anything unexpected stops the run.
  */
-export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit = Infinity): Promise<{ filled: number; published: string[] }> {
+export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit = Infinity, includePublished = false): Promise<{ filled: number; published: string[] }> {
   const api = authenticated(options);
   let filled = 0;
   const published: string[] = [];
@@ -186,16 +186,17 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
     if (filled >= limit) break;
     const url = new URL(`/_emdash/api/content/${item.collection}/${encodeURIComponent(item.id)}`, api.origin);
     const current = itemOf(await requestJson(url, { headers: api.headers }, api));
-    if (current.status !== 'draft') { published.push(item.key); continue; }
+    const allowed = includePublished ? ['draft', 'published'] : ['draft'];
+    if (typeof current.status !== 'string' || !allowed.includes(current.status)) { published.push(item.key); continue; }
     for (const [field, value] of Object.entries(item.fields)) {
       const now = current.data[field] ?? null;
       if (now !== null && now !== value) throw new Error(`${item.collection}/${item.key}: CMSの${field}が空欄ではなくなっているため中止しました。`);
     }
-    const body: Record<string, unknown> = { data: { ...current.data, ...item.fields }, status: 'draft' };
+    const body: Record<string, unknown> = { data: { ...current.data, ...item.fields }, status: current.status };
     if (current.rev !== undefined) body._rev = current.rev;
     await requestJson(url, { method: 'PUT', headers: { ...api.headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, api);
     const after = itemOf(await requestJson(url, { headers: api.headers }, api));
-    if (after.status !== 'draft') throw new Error(`${item.collection}/${item.key}: 更新後に下書き以外の状態(${String(after.status)})になったため中止しました。管理画面で確認してください。`);
+    if (after.status !== current.status) throw new Error(`${item.collection}/${item.key}: 更新後に状態が${String(current.status)}から${String(after.status)}に変わったため中止しました。管理画面で確認してください。`);
     for (const [field, value] of Object.entries(item.fields)) {
       if ((after.data[field] ?? null) !== value) throw new Error(`${item.collection}/${item.key}: ${field}の更新を確認できないため中止しました。`);
     }
@@ -205,7 +206,7 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
       }
     }
     filled += 1;
-    console.log(`空欄補完 ${filled}件目: ${item.collection}/${item.key} (${Object.keys(item.fields).join(', ')})`);
+    console.log(`空欄補完 ${filled}件目: ${item.collection}/${item.key} [${String(current.status)}] (${Object.keys(item.fields).join(', ')})`);
     if (options.writeIntervalMs !== 0) await sleep(options.writeIntervalMs ?? 300);
   }
   return { filled, published };
@@ -213,8 +214,8 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
 
 export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = process.env): Promise<void> {
   const valued = ['--directory', '--fill-limit'];
-  const unknown = args.filter((arg, index) => !['--apply', '--fill-blanks', ...valued].includes(arg) && !valued.includes(args[index - 1] ?? ''));
-  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--fill-limit N]]');
+  const unknown = args.filter((arg, index) => !['--apply', '--fill-blanks', '--include-published', ...valued].includes(arg) && !valued.includes(args[index - 1] ?? ''));
+  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--include-published] [--fill-limit N]]');
   const fillBlanks = args.includes('--fill-blanks');
   const limitIndex = args.indexOf('--fill-limit');
   const fillLimit = limitIndex >= 0 ? Number(args[limitIndex + 1]) : Infinity;
@@ -238,7 +239,7 @@ export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = proc
   try {
     if (plan.fill.length) {
       console.log(`空欄補完の対象 ${plan.fill.length}件${Number.isFinite(fillLimit) ? `（今回は最大${fillLimit}件）` : ''}`);
-      const result = await applyFillPlan(plan, options, fillLimit);
+      const result = await applyFillPlan(plan, options, fillLimit, args.includes('--include-published'));
       console.log(`空欄補完: 更新 ${result.filled}件。`);
       if (result.published.length) console.log(`::warning::公開済み（または下書き以外）のため更新しなかった項目: ${result.published.join(', ')}。管理画面で更新してください。`);
       if (Number.isFinite(fillLimit)) { console.log('件数指定のため新規登録は行っていません。'); return; }

@@ -115,6 +115,8 @@ describe('validated CSV import into EmDash', () => {
     expect(await applyFillPlan(plan, { origin: 'https://cms.example.org', token: 'test-token', fetch, writeIntervalMs: 0 })).toEqual({ filled: 1, published: ['b'] });
     expect(puts).toEqual([{ data: { external_id: 'a', vesa_width_mm: 300, vesa_height_mm: 300, model: 'A' }, status: 'draft' }]);
     expect(stored.b!.data.vesa_width_mm).toBeNull();
+    expect(await applyFillPlan({ ...plan, fill: plan.fill.slice(1) }, { origin: 'https://cms.example.org', token: 'test-token', fetch, writeIntervalMs: 0 }, Infinity, true)).toEqual({ filled: 1, published: [] });
+    expect(stored.b).toEqual({ status: 'published', data: { external_id: 'b', vesa_width_mm: 300, vesa_height_mm: 300, model: 'B' } });
     let call = 0;
     const publishing = vi.fn(async () => {
       call += 1;
