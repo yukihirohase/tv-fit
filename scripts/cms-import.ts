@@ -14,7 +14,7 @@ export interface ImportItem {
 }
 export interface ImportPlan { create: ImportItem[]; skipped: number }
 type Fetch = typeof globalThis.fetch;
-interface ApiOptions { origin: string; token: string; fetch?: Fetch }
+interface ApiOptions { origin: string; token: string; fetch?: Fetch; retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }
 
 /** Only a site origin is accepted; authenticated redirects are never followed. */
 export function validateCmsOrigin(value: string): string {
@@ -73,13 +73,22 @@ function authenticated(options: ApiOptions) {
   if (!options.token || /\s|[\u0000-\u001f\u007f]/u.test(options.token) || options.token.length > 4096) {
     throw new Error('EMDASH_API_TOKENに有効なAPIトークンを設定してください。');
   }
-  return { origin, fetch: options.fetch ?? globalThis.fetch, headers: { Authorization: `Bearer ${options.token}` } };
+  return { origin, fetch: options.fetch ?? globalThis.fetch, retryDelayMs: options.retryDelayMs, headers: { Authorization: `Bearer ${options.token}` } };
 }
 
-async function requestJson(url: URL, init: RequestInit, options: ReturnType<typeof authenticated>): Promise<Record<string, unknown>> {
-  let response: Response;
-  try { response = await options.fetch(url, { ...init, redirect: 'error', signal: AbortSignal.timeout(30_000) }); }
-  catch { throw new Error('CMS APIへ接続できませんでした。URL・ログイン制限・接続環境を確認してください。'); }
+const retryableStatuses = new Set([429, 502, 503, 504]);
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/** GET is safe to retry; POST is never retried so a timed-out write cannot be duplicated. */
+async function requestJson(url: URL, init: RequestInit, options: ReturnType<typeof authenticated> & { retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }): Promise<Record<string, unknown>> {
+  const retries = (init.method ?? 'GET') === 'GET' ? 5 : 0;
+  let response: Response | undefined;
+  for (let attempt = 0; ; attempt += 1) {
+    try { response = await options.fetch(url, { ...init, redirect: 'error', signal: AbortSignal.timeout(30_000) }); }
+    catch { if (attempt < retries) { await sleep((options.retryDelayMs ?? 2_000) * 2 ** attempt); continue; } throw new Error('CMS APIへ接続できませんでした。URL・ログイン制限・接続環境を確認してください。'); }
+    if (!retryableStatuses.has(response.status) || attempt >= retries) break;
+    await sleep((options.retryDelayMs ?? 2_000) * 2 ** attempt);
+  }
   if (!response.ok) throw new Error(`CMS APIがHTTP ${response.status}を返したため、取込を中止しました。`);
   let envelope: unknown;
   try { envelope = await response.json(); } catch { throw new Error('CMS APIがJSON以外を返しました。ログイン画面等への遷移がないか確認してください。'); }
@@ -99,7 +108,7 @@ export async function listExistingCmsRows(options: ApiOptions, status: 'all' | '
     for (let page = 0; page < 1000; page += 1) {
       const url = new URL(`/_emdash/api/content/${collection}`, api.origin);
       url.searchParams.set('status', status);
-      url.searchParams.set('limit', '100');
+      url.searchParams.set('limit', '25');
       if (cursor) url.searchParams.set('cursor', cursor);
       const data = await requestJson(url, { headers: api.headers }, api);
       if (!Array.isArray(data.items)) throw new Error('CMS APIの一覧形式が不正です。');
@@ -118,7 +127,7 @@ export async function listExistingCmsRows(options: ApiOptions, status: 'all' | '
 }
 
 export async function applyImportPlan(plan: ImportPlan, options: ApiOptions): Promise<number> {
-  const api = authenticated(options);
+  const api = { ...authenticated(options), writeIntervalMs: options.writeIntervalMs };
   let created = 0;
   for (const item of plan.create) {
     const url = new URL(`/_emdash/api/content/${item.collection}`, api.origin);
@@ -131,6 +140,8 @@ export async function applyImportPlan(plan: ImportPlan, options: ApiOptions): Pr
       throw new Error('CMS APIの保存結果を確認できませんでした。管理画面で下書きを確認してください。');
     }
     created += 1;
+    if (created % 50 === 0) console.log(`下書き保存 ${created}/${plan.create.length}件`);
+    if (options.writeIntervalMs !== 0) await sleep(options.writeIntervalMs ?? 300);
   }
   return created;
 }

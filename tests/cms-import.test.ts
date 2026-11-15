@@ -74,4 +74,15 @@ describe('validated CSV import into EmDash', () => {
     const html = vi.fn(async () => new Response('<html>sign in</html>')) as unknown as typeof globalThis.fetch;
     await expect(listExistingCmsRows({ origin: 'https://cms.example.org', token: 'test-token', fetch: html })).rejects.toThrow('JSON以外');
   });
+  it('retries transient 503 responses on reads but never retries writes', async () => {
+    let reads = 0;
+    const flaky = vi.fn(async () => (reads += 1) <= 2
+      ? new Response('busy', { status: 503 })
+      : Response.json({ success: true, data: { items: [] } })) as unknown as typeof globalThis.fetch;
+    expect(await listExistingCmsRows({ origin: 'https://cms.example.org', token: 'test-token', fetch: flaky, retryDelayMs: 1 })).toEqual(empty());
+    const busy = vi.fn(async () => new Response('busy', { status: 503 })) as unknown as typeof globalThis.fetch;
+    const plan = buildImportPlan(fixtures);
+    await expect(applyImportPlan(plan, { origin: 'https://cms.example.org', token: 'test-token', fetch: busy, retryDelayMs: 1, writeIntervalMs: 0 })).rejects.toThrow('HTTP 503');
+    expect(busy).toHaveBeenCalledTimes(1);
+  });
 });
