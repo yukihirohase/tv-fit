@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import { catalogCsvFiles } from '../scripts/cms-export';
 import { loadCatalog } from '../src/lib/csv';
 import { catalogCollections, toCmsRecord, type CmsCatalogRows } from '../src/lib/cms-mapping';
-import { applyImportPlan, buildImportPlan, listExistingCmsRows, validateCmsOrigin } from '../scripts/cms-import';
+import { applyFillPlan, applyImportPlan, buildImportPlan, listExistingCmsRows, validateCmsOrigin } from '../scripts/cms-import';
 const fixtures = loadCatalog('fixtures/catalog', { allowFixtures: true });
 const empty = (): CmsCatalogRows => ({ televisions: [], stands: [], compatibility: [] });
 
@@ -18,7 +18,7 @@ describe('validated CSV import into EmDash', () => {
   });
   it('is idempotent for identical external IDs but rejects differing existing content before any writes', () => {
     const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map(row => ({ data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
-    expect(buildImportPlan(fixtures, rows)).toEqual({ create: [], skipped: fixtures.televisions.length + fixtures.stands.length + fixtures.compatibility.length });
+    expect(buildImportPlan(fixtures, rows)).toEqual({ create: [], fill: [], skipped: fixtures.televisions.length + fixtures.stands.length + fixtures.compatibility.length });
     const changed = { ...rows, televisions: [{ data: { ...toCmsRecord('televisions', fixtures.televisions[0]!), model: 'FICTION-CHANGED' } }] };
     expect(() => buildImportPlan(fixtures, changed)).toThrow('既存データと異なる');
   });
@@ -33,7 +33,7 @@ describe('validated CSV import into EmDash', () => {
       calls.push({ url: String(input), init: init ?? {} });
       return Response.json({ success: true, data: { item: { id: 'cms-id' } } }, { status: 201 });
     }) as unknown as typeof globalThis.fetch;
-    const plan = { create: buildImportPlan(fixtures).create.slice(0, 1), skipped: 0 };
+    const plan = { create: buildImportPlan(fixtures).create.slice(0, 1), skipped: 0, fill: [] };
     expect(await applyImportPlan(plan, { origin: 'https://cms.example.org', token: 'private-test-token', fetch })).toBe(1);
     const call = calls[0]!;
     expect(call.url).toBe('https://cms.example.org/_emdash/api/content/televisions');
@@ -84,5 +84,43 @@ describe('validated CSV import into EmDash', () => {
     const plan = buildImportPlan(fixtures);
     await expect(applyImportPlan(plan, { origin: 'https://cms.example.org', token: 'test-token', fetch: busy, retryDelayMs: 1, writeIntervalMs: 0 })).rejects.toThrow('HTTP 503');
     expect(busy).toHaveBeenCalledTimes(1);
+  });
+  it('fills only CMS fields that are blank, and only with --fill-blanks', () => {
+    const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map((row, i) => ({ id: `${collection}-${i}`, data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
+    const tv = toCmsRecord('televisions', fixtures.televisions[0]!);
+    const blank = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, vesa_width_mm: null, vesa_height_mm: null } }, ...rows.televisions.slice(1)] };
+    expect(() => buildImportPlan(fixtures, blank)).toThrow('既存データと異なる');
+    const plan = buildImportPlan(fixtures, blank, { fillBlanks: true });
+    expect(plan.create).toEqual([]);
+    expect(plan.fill).toEqual([{ collection: 'televisions', key: fixtures.televisions[0]!.id, id: 'cms-tv', fields: { vesa_width_mm: tv.vesa_width_mm, vesa_height_mm: tv.vesa_height_mm } }]);
+    const overwritten = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, model: 'FICTION-CHANGED', vesa_width_mm: null, vesa_height_mm: null } }, ...rows.televisions.slice(1)] };
+    expect(() => buildImportPlan(fixtures, overwritten, { fillBlanks: true })).toThrow('既存データと異なる');
+  });
+  it('keeps drafts as drafts, skips published entries, and verifies every fill', async () => {
+    const stored: Record<string, { status: string; data: Record<string, unknown> }> = {
+      a: { status: 'draft', data: { external_id: 'a', vesa_width_mm: null, vesa_height_mm: null, model: 'A' } },
+      b: { status: 'published', data: { external_id: 'b', vesa_width_mm: null, vesa_height_mm: null, model: 'B' } },
+    };
+    const puts: Record<string, unknown>[] = [];
+    const fetch = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const id = String(input).split('/').pop()!;
+      if (init?.method === 'PUT') { const body = JSON.parse(String(init.body)); puts.push(body); stored[id] = { status: body.status, data: body.data }; }
+      return Response.json({ success: true, data: { item: { id, ...stored[id] } } });
+    }) as unknown as typeof globalThis.fetch;
+    const fields = { vesa_width_mm: 300, vesa_height_mm: 300 };
+    const plan = { create: [], skipped: 0, fill: [
+      { collection: 'televisions' as const, key: 'a', id: 'a', fields },
+      { collection: 'televisions' as const, key: 'b', id: 'b', fields },
+    ] };
+    expect(await applyFillPlan(plan, { origin: 'https://cms.example.org', token: 'test-token', fetch, writeIntervalMs: 0 })).toEqual({ filled: 1, published: ['b'] });
+    expect(puts).toEqual([{ data: { external_id: 'a', vesa_width_mm: 300, vesa_height_mm: 300, model: 'A' }, status: 'draft' }]);
+    expect(stored.b!.data.vesa_width_mm).toBeNull();
+    let call = 0;
+    const publishing = vi.fn(async () => {
+      call += 1;
+      const after = call > 1;
+      return Response.json({ success: true, data: { item: { status: call > 2 ? 'published' : 'draft', data: { external_id: 'c', vesa_width_mm: after ? 300 : null, vesa_height_mm: after ? 300 : null } } } });
+    }) as unknown as typeof globalThis.fetch;
+    await expect(applyFillPlan({ create: [], skipped: 0, fill: [{ collection: 'televisions', key: 'c', id: 'c', fields }] }, { origin: 'https://cms.example.org', token: 'test-token', fetch: publishing, writeIntervalMs: 0 })).rejects.toThrow('下書き以外');
   });
 });
