@@ -108,7 +108,16 @@ async function requestJson(url: URL, init: RequestInit, options: ReturnType<type
     if (!retryableStatuses.has(response.status) || attempt >= retries) break;
     await sleep((options.retryDelayMs ?? 2_000) * 2 ** attempt);
   }
-  if (!response.ok) throw new Error(`CMS APIがHTTP ${response.status}を返したため、取込を中止しました。`);
+  if (!response.ok) {
+    let detail = '';
+    try {
+      const body = await response.json() as { error?: { code?: unknown; message?: unknown } };
+      const code = typeof body.error?.code === 'string' ? body.error.code : '';
+      const message = typeof body.error?.message === 'string' ? body.error.message.slice(0, 200) : '';
+      if (code || message) detail = ` (${[code, message].filter(Boolean).join(': ')})`;
+    } catch { /* non-JSON error body */ }
+    throw new Error(`CMS APIがHTTP ${response.status}を返したため、取込を中止しました。${detail}`);
+  }
   let envelope: unknown;
   try { envelope = await response.json(); } catch { throw new Error('CMS APIがJSON以外を返しました。ログイン画面等への遷移がないか確認してください。'); }
   if (!envelope || typeof envelope !== 'object' || !('success' in envelope) || envelope.success !== true
@@ -192,9 +201,14 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
       const now = current.data[field] ?? null;
       if (now !== null && now !== value) throw new Error(`${item.collection}/${item.key}: CMSの${field}が空欄ではなくなっているため中止しました。`);
     }
-    const body: Record<string, unknown> = { data: { ...current.data, ...item.fields }, status: current.status };
+    // EmDash: send only the changed fields with the read's _rev. Saving a published entry
+    // stages a draft while the live version stays; publish it to keep the entry published.
+    const body: Record<string, unknown> = { data: item.fields };
     if (current.rev !== undefined) body._rev = current.rev;
     await requestJson(url, { method: 'PUT', headers: { ...api.headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, api);
+    if (current.status === 'published') {
+      await requestJson(new URL(`${url.pathname}/publish`, api.origin), { method: 'POST', headers: { ...api.headers, 'Content-Type': 'application/json' }, body: '{}' }, api);
+    }
     const after = itemOf(await requestJson(url, { headers: api.headers }, api));
     if (after.status !== current.status) throw new Error(`${item.collection}/${item.key}: 更新後に状態が${String(current.status)}から${String(after.status)}に変わったため中止しました。管理画面で確認してください。`);
     for (const [field, value] of Object.entries(item.fields)) {
