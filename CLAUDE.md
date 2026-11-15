@@ -29,7 +29,7 @@ npm run verify         # 型・テスト・ビルド・生成物検証（CI と�
 ## コンテンツ
 
 - 表示の正本は EmDash（D1）の公開済みコンテンツ。管理画面は https://tv-fit.com/_emdash/admin/ 。
-- `data/*.csv` は検証・取込用。CSV を直しても表示は変わらない（`npm run cms:import` で下書き取込 → 管理画面で公開）。
+- `data/*.csv` は一括登録用。`main` にマージすると GitHub Actions（`cms-import.yml`）が CMS に**下書き**として登録する（要 GitHub シークレット `EMDASH_API_TOKEN`）。公開は管理画面で人が行う。既存行の内容変更は取込が中止されるので、修正は管理画面で行い CSV も合わせる。列の仕様は `docs/CSV.md`。
 - 架空の型番・製品データを作らない。適合区分を推測で `confirmed` にしない。
 - 詳細は `docs/EMDASH.md`。
 
