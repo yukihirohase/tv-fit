@@ -65,8 +65,10 @@ jobs:
           set -o pipefail
           for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
             echo "::group::取込 ${attempt}回目"
+            set +e
             npm run cms:import -- --directory data --apply $FILL_BLANKS $INCLUDE_PUBLISHED $FILL_LIMIT 2>&1 | tee import.log
             status=${PIPESTATUS[0]}
+            set -e
             if [ "$status" -eq 0 ] && grep -qE '取込完了|空欄補完: 更新|件数指定のため' import.log; then
               echo "::endgroup::"
               grep -E '取込完了|空欄補完' import.log || true
