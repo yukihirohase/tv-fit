@@ -10,6 +10,9 @@
   "workers_dev": true,
   "preview_urls": false,
   "observability": { "enabled": true },
+  // Workers Paid（2026-11-17 契約）。1リクエストあたりのCPU時間上限を 30 秒にする。
+  // 無料プラン（10ms）では EmDash の一覧・保存が頻繁に「CPU時間制限超過」で失敗していた。
+  "limits": { "cpu_ms": 30000 },
   "vars": {
     "EMDASH_SITE_URL": "https://tv-fit.com",
     "PUBLIC_SITE_URL": "https://tv-fit.com"
