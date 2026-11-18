@@ -81,7 +81,12 @@ function contentAccess(context: Pick<PluginContext, 'content'>): ContentAccess {
   return context.content;
 }
 
-/** Read every page. Truncation or a broken cursor rejects the write rather than skipping validation. */
+/**
+ * Read every page. Truncation or a broken cursor rejects the write rather than skipping validation.
+ * 適合情報（数千件）は下書きリビジョンを1件ずつ読むと保存1回ごとに数千回の読み取りになり、
+ * フックの制限時間を超えて保存できなくなる。参照先（テレビ・スタンド）の検証に要るのは
+ * 一覧の値で足りるため、適合情報だけは一覧の値で検証する。
+ */
 async function collectSnapshot(
   context: Pick<PluginContext, 'content'>,
   mode: 'working' | 'published',
@@ -102,7 +107,7 @@ async function collectSnapshot(
         if (seenIds.has(entry.id)) throw new Error('検証用の一覧でコンテンツが重複しています。もう一度お試しください。');
         seenIds.add(entry.id);
         let data = entry.data;
-        if (mode === 'working' && entry.draftRevisionId) {
+        if (mode === 'working' && entry.draftRevisionId && collection !== 'compatibility') {
           if (!content.getRevision) throw new Error('下書きの検証に必要なリビジョン読み取り権限がありません。');
           const revision = await content.getRevision(collection, entry.id, entry.draftRevisionId);
           if (!revision) throw new Error('下書きリビジョンを読み取れません。保存を中止しました。');
@@ -111,7 +116,7 @@ async function collectSnapshot(
         snapshot[collection].push({ id: entry.id, status: entry.status, data });
       }
       if (!result.hasMore) break;
-      if (!result.cursor || seenCursors.has(result.cursor) || ++pageCount >= 100) {
+      if (!result.cursor || seenCursors.has(result.cursor) || ++pageCount >= 1000) {
         throw new Error('検証用の一覧を最後まで取得できません。保存を中止しました。');
       }
       seenCursors.add(result.cursor);
@@ -161,7 +166,7 @@ export function createPlugin() {
     id: 'tv-fit-validation', version: '1.0.0',
     capabilities: ['content:read', 'content:write', 'content:revisions:read', 'hooks.content-policy:register'],
     hooks: {
-      'content:beforeSave': { timeout: 10000, handler: beforeSave },
+      'content:beforeSave': { timeout: 25000, handler: beforeSave },
       'content:beforePublish': {
         timeout: 10000,
         async handler(event, context) {

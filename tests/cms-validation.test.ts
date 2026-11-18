@@ -166,6 +166,14 @@ describe('registered hook behavior', () => {
     expect(ctx.content!.getRevision).toHaveBeenCalledWith('televisions', stored.id, 'revision-test');
   });
 
+  it('does not read compatibility draft revisions one by one, so large catalogs stay within the hook time limit', async () => {
+    const hook = createPlugin().hooks['content:beforeSave']!;
+    const pair: ValidationEntry = { id: 'cms-test-pair', status: 'draft', draftRevisionId: 'revision-pair', data: { television_id: 'test-television-not-real', stand_id: 'test-stand-not-real' } };
+    const ctx = context({ ...empty(), compatibility: [pair] });
+    await hook.handler({ collection: 'televisions', isNew: true, content: thinTestTelevision }, ctx).catch(() => undefined);
+    expect(ctx.content!.getRevision).not.toHaveBeenCalled();
+  });
+
   it('rejects a malformed partial update with a human-readable EmDash save rejection', async () => {
     const hook = createPlugin().hooks['content:beforeSave']!;
     const ctx = context({ ...empty(), televisions: [{ id: 'cms-test-row', status: 'draft', data: thinTestTelevision }] });
