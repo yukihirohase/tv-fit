@@ -90,12 +90,13 @@ function contentAccess(context: Pick<PluginContext, 'content'>): ContentAccess {
 async function collectSnapshot(
   context: Pick<PluginContext, 'content'>,
   mode: 'working' | 'published',
+  collections: readonly CmsCollection[] = catalogCollections,
 ): Promise<ValidationSnapshot> {
   const content = contentAccess(context);
   const snapshot: Record<CmsCollection, ValidationEntry[]> = {
     televisions: [], stands: [], compatibility: [],
   };
-  for (const collection of catalogCollections) {
+  for (const collection of collections) {
     let cursor: string | undefined;
     const seenCursors = new Set<string>();
     const seenIds = new Set<string>();
@@ -136,10 +137,34 @@ function policyMutation(event: ContentPolicyEvent): CmsMutation {
   return { collection: event.collection, id, data: data as Record<string, unknown> };
 }
 
+/**
+ * 適合情報の保存は、その1行だけを検証する（参照先のテレビ・スタンドは全件読む）。
+ * 全適合情報を毎回読むと件数に比例して遅くなり、数千件で制限時間を超えて保存できなくなるため。
+ * 適合ペアの重複は、一括取込（scripts/cms-import.ts）が書き込み前に確認し、公開時の検証
+ * （content:beforePublish）でも公開済み全体に対して確認する。
+ */
+async function compatibilitySnapshot(event: ContentHookEvent, context: PluginContext): Promise<ValidationSnapshot> {
+  const snapshot = await collectSnapshot(context, 'working', ['televisions', 'stands']);
+  if (event.isNew || !event.id) return snapshot;
+  const content = contentAccess(context);
+  const entry = await content.get('compatibility', event.id);
+  if (!entry || !['draft', 'published'].includes(entry.status)) return snapshot;
+  let data = entry.data;
+  if (entry.draftRevisionId) {
+    if (!content.getRevision) throw new Error('下書きの検証に必要なリビジョン読み取り権限がありません。');
+    const revision = await content.getRevision('compatibility', entry.id, entry.draftRevisionId);
+    if (!revision) throw new Error('下書きリビジョンを読み取れません。保存を中止しました。');
+    data = { ...data, ...revision.data };
+  }
+  return { ...snapshot, compatibility: [{ id: entry.id, status: entry.status, data }] };
+}
+
 async function beforeSave(event: ContentHookEvent, context: PluginContext): Promise<void> {
   if (!isCatalogCollection(event.collection)) return;
   try {
-    const snapshot = await collectSnapshot(context, 'working');
+    const snapshot = event.collection === 'compatibility'
+      ? await compatibilitySnapshot(event, context)
+      : await collectSnapshot(context, 'working');
     if (!event.isNew && (!event.id || !snapshot[event.collection].some(entry => entry.id === event.id))) {
       throw new Error('更新対象のコンテンツを読み取れません。保存を中止しました。');
     }

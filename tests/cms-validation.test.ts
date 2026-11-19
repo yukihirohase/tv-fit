@@ -197,6 +197,17 @@ describe('registered hook behavior', () => {
     expect(decision && decision.reason).toContain('存在しません');
   });
 
+  it('validates a compatibility save against products without listing every compatibility row', async () => {
+    const hook = createPlugin().hooks['content:beforeSave']!;
+    const rows = snapshot();
+    const ctx = context(rows);
+    const pair = rows.compatibility[0]!;
+    await hook.handler({ collection: 'compatibility', id: pair.id, isNew: false, content: { notes: '取り付け条件の追記テスト。' } }, ctx).catch(() => undefined);
+    expect(ctx.content!.list).not.toHaveBeenCalledWith('compatibility', expect.anything());
+    expect(ctx.content!.get).toHaveBeenCalledWith('compatibility', pair.id);
+    await expect(hook.handler({ collection: 'compatibility', isNew: true, content: { ...pair.data, television_id: 'fixture-tv-missing' } }, ctx)).rejects.toBeInstanceOf(ContentSaveRejectedError);
+  });
+
   it('reads multiple catalog pages before checking the prospective write', async () => {
     const hook = createPlugin().hooks['content:beforeSave']!;
     const ctx = context(empty());
