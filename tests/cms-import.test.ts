@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import { catalogCsvFiles } from '../scripts/cms-export';
 import { loadCatalog } from '../src/lib/csv';
 import { catalogCollections, toCmsRecord, type CmsCatalogRows } from '../src/lib/cms-mapping';
-import { applyFillPlan, applyImportPlan, buildImportPlan, listExistingCmsRows, validateCmsOrigin } from '../scripts/cms-import';
+import { applyFillPlan, applyImportPlan, applyPublishPlan, buildImportPlan, buildPublishPlan, listExistingCmsRows, validateCmsOrigin } from '../scripts/cms-import';
 const fixtures = loadCatalog('fixtures/catalog', { allowFixtures: true });
 const empty = (): CmsCatalogRows => ({ televisions: [], stands: [], compatibility: [] });
 
@@ -126,5 +126,31 @@ describe('validated CSV import into EmDash', () => {
       return Response.json({ success: true, data: { item: { status: call > 2 ? 'published' : 'draft', data: { external_id: 'c', vesa_width_mm: after ? 300 : null, vesa_height_mm: after ? 300 : null } } } });
     }) as unknown as typeof globalThis.fetch;
     await expect(applyFillPlan({ create: [], skipped: 0, fill: [{ collection: 'televisions', key: 'c', id: 'c', fields }] }, { origin: 'https://cms.example.org', token: 'test-token', fetch: publishing, writeIntervalMs: 0 })).rejects.toThrow('状態がdraftからpublished');
+  });
+});
+
+describe('publishing compatibility drafts', () => {
+  const rowsWith = (status: (collection: string, index: number) => string) => Object.fromEntries(catalogCollections.map(collection => [
+    collection, fixtures[collection].map((row, i) => ({ id: `${collection}-${i}`, status: status(collection, i), data: toCmsRecord(collection, row) })),
+  ])) as unknown as CmsCatalogRows;
+
+  it('publishes only drafts whose television and stand are published, and leaves the rest', () => {
+    const plan = buildPublishPlan(fixtures, rowsWith(collection => collection === 'compatibility' ? 'draft' : 'published'));
+    expect(plan.publish).toHaveLength(fixtures.compatibility.length);
+    expect(plan.blocked).toEqual([]);
+    const blocked = buildPublishPlan(fixtures, rowsWith(collection => collection === 'compatibility' || collection === 'stands' ? 'draft' : 'published'));
+    expect(blocked.publish).toEqual([]);
+    expect(blocked.blocked).toHaveLength(fixtures.compatibility.length);
+    const done = buildPublishPlan(fixtures, rowsWith(() => 'published'));
+    expect(done).toMatchObject({ publish: [], alreadyPublished: fixtures.compatibility.length });
+  });
+
+  it('calls the publish endpoint for each planned entry, up to the limit', async () => {
+    const calls: string[] = [];
+    const fetch = vi.fn(async (url: URL | string) => { calls.push(String(url)); return new Response(JSON.stringify({ success: true, data: { item: {} } }), { status: 200 }); });
+    const count = await applyPublishPlan({ publish: [{ id: 'a', key: 'k1' }, { id: 'b', key: 'k2' }], alreadyPublished: 0, blocked: [] },
+      { origin: 'https://cms.example.org', token: 'test-token', fetch: fetch as unknown as typeof globalThis.fetch, writeIntervalMs: 0 }, 1);
+    expect(count).toBe(1);
+    expect(calls).toEqual(['https://cms.example.org/_emdash/api/content/compatibility/a/publish']);
   });
 });
