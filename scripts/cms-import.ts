@@ -226,10 +226,55 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
   return { filled, published };
 }
 
+export interface PublishPlan { publish: { id: string; key: string }[]; alreadyPublished: number; blocked: string[] }
+
+/**
+ * 公開予定の適合情報を選ぶ。CSVと同じ内容の下書きで、参照先のテレビ・スタンドが公開済みのものだけ。
+ * CMS内のペア重複は buildImportPlan と同じく中止する（公開済み同士の重複を作らないため）。
+ */
+export function buildPublishPlan(catalog: Catalog, existing: CmsCatalogRows): PublishPlan {
+  buildImportPlan(catalog, existing);
+  const statusOf = (entry: CmsEntryRow) => (entry as { status?: unknown }).status;
+  const publishedIds = (collection: 'televisions' | 'stands') => new Set(existing[collection]
+    .filter(entry => statusOf(entry) === 'published')
+    .map(entry => toCatalogRecord(collection, entry.data).id as string));
+  const tvs = publishedIds('televisions');
+  const stands = publishedIds('stands');
+  const csvKeys = new Set(catalog.compatibility.map(row => keyOf('compatibility', toCmsRecord('compatibility', row))));
+  const plan: PublishPlan = { publish: [], alreadyPublished: 0, blocked: [] };
+  for (const entry of existing.compatibility) {
+    const status = statusOf(entry);
+    const record = toCatalogRecord('compatibility', entry.data);
+    const key = keyOf('compatibility', toCmsRecord('compatibility', compatibilitySchema.parse(record)));
+    if (status === 'published') { plan.alreadyPublished += 1; continue; }
+    if (status !== 'draft' || !entry.id || !csvKeys.has(key)) continue;
+    if (!tvs.has(String(record.television_id)) || !stands.has(String(record.stand_id))) { plan.blocked.push(key); continue; }
+    plan.publish.push({ id: entry.id, key });
+  }
+  return plan;
+}
+
+export async function applyPublishPlan(plan: PublishPlan, options: ApiOptions, limit = Infinity): Promise<number> {
+  const api = authenticated(options);
+  let published = 0;
+  for (const item of plan.publish) {
+    if (published >= limit) break;
+    const url = new URL(`/_emdash/api/content/compatibility/${encodeURIComponent(item.id)}/publish`, api.origin);
+    await requestJson(url, { method: 'POST', headers: { ...api.headers, 'Content-Type': 'application/json' }, body: '{}' }, api);
+    published += 1;
+    if (published % 50 === 0) console.log(`公開 ${published}/${Math.min(plan.publish.length, limit)}件`);
+    if (options.writeIntervalMs !== 0) await sleep(options.writeIntervalMs ?? 300);
+  }
+  return published;
+}
+
 export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = process.env): Promise<void> {
-  const valued = ['--directory', '--fill-limit'];
-  const unknown = args.filter((arg, index) => !['--apply', '--fill-blanks', '--include-published', ...valued].includes(arg) && !valued.includes(args[index - 1] ?? ''));
-  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--include-published] [--fill-limit N]]');
+  const valued = ['--directory', '--fill-limit', '--publish-limit'];
+  const unknown = args.filter((arg, index) => !['--apply', '--fill-blanks', '--include-published', '--publish-compatibility', ...valued].includes(arg) && !valued.includes(args[index - 1] ?? ''));
+  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--include-published] [--fill-limit N]] [--publish-compatibility [--publish-limit N]]');
+  const publishIndex = args.indexOf('--publish-limit');
+  const publishLimit = publishIndex >= 0 ? Number(args[publishIndex + 1]) : Infinity;
+  if (publishIndex >= 0 && (!Number.isInteger(publishLimit) || publishLimit < 1)) throw new Error('--publish-limitには1以上の整数を指定してください。');
   const fillBlanks = args.includes('--fill-blanks');
   const limitIndex = args.indexOf('--fill-limit');
   const fillLimit = limitIndex >= 0 ? Number(args[limitIndex + 1]) : Infinity;
@@ -249,6 +294,14 @@ export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = proc
   if (!origin || !token) throw new Error('--applyにはEMDASH_BASE_URLとEMDASH_API_TOKENが必要です。');
   const options = { origin, token };
   const existing = await listExistingCmsRows(options);
+  if (args.includes('--publish-compatibility')) {
+    const publishPlan = buildPublishPlan(catalog, existing);
+    console.log(`公開対象の適合情報 ${publishPlan.publish.length}件 / 公開済み ${publishPlan.alreadyPublished}件 / 参照先のテレビ・スタンドが未公開のため保留 ${publishPlan.blocked.length}件`);
+    if (publishPlan.blocked.length) console.log(`::warning::参照先が未公開のため公開しなかった適合情報（先頭20件）: ${publishPlan.blocked.slice(0, 20).join(', ')}`);
+    const count = await applyPublishPlan(publishPlan, options, publishLimit);
+    console.log(`公開完了: ${count}件を公開しました（残り ${publishPlan.publish.length - count}件）。`);
+    return;
+  }
   const plan = buildImportPlan(catalog, existing, { fillBlanks });
   try {
     if (plan.fill.length) {

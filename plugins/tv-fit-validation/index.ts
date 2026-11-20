@@ -193,11 +193,17 @@ export function createPlugin() {
     hooks: {
       'content:beforeSave': { timeout: 25000, handler: beforeSave },
       'content:beforePublish': {
-        timeout: 10000,
+        timeout: 25000,
         async handler(event, context) {
           if (!isCatalogCollection(event.collection)) return;
           try {
-            validateCmsMutation(await collectSnapshot(context, 'published'), policyMutation(event));
+            // 適合情報の公開は、その1行を公開済みのテレビ・スタンドに照らして検証する。
+            // 公開済みの適合情報を毎回全件読むと、数千件で制限時間を超えるため。
+            // 公開済み同士のペア重複は、一括公開（scripts/cms-import.ts --publish）が公開前に確認する。
+            const snapshot = event.collection === 'compatibility'
+              ? await collectSnapshot(context, 'published', ['televisions', 'stands'])
+              : await collectSnapshot(context, 'published');
+            validateCmsMutation(snapshot, policyMutation(event));
             return undefined;
           } catch (error) {
             return { cancel: true as const, reason: boundedReason(error) };
@@ -207,7 +213,7 @@ export function createPlugin() {
       'content:beforeUnpublish': {
         timeout: 10000,
         async handler(event, context) {
-          if (!isCatalogCollection(event.collection)) return;
+          if (!isCatalogCollection(event.collection) || event.collection === 'compatibility') return;
           try {
             const mutation = policyMutation(event);
             validateCmsRemoval(await collectSnapshot(context, 'published'), mutation.collection, mutation.id!);
@@ -220,7 +226,7 @@ export function createPlugin() {
       'content:beforeDelete': {
         timeout: 10000,
         async handler(event, context) {
-          if (!isCatalogCollection(event.collection)) return;
+          if (!isCatalogCollection(event.collection) || event.collection === 'compatibility') return;
           try {
             validateCmsRemoval(await collectSnapshot(context, 'working'), event.collection, event.id);
             return undefined;
