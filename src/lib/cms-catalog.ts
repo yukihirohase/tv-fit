@@ -1,5 +1,5 @@
 import type { Catalog, CatalogOptions } from './data';
-import { catalogCollections, cmsCatalogFromRows, type CmsCollection, type CmsEntryRow } from './cms-mapping';
+import { cmsCatalogFromRows, type CmsCollection, type CmsEntryRow } from './cms-mapping';
 
 export const CMS_CATALOG_PAGE_SIZE = 100;
 const MAX_COLLECTION_RECORDS = 20_000;
