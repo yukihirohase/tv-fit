@@ -10,9 +10,11 @@ import {manufacturerPath} from '../../lib/manufacturers';
 import {getPublishedCatalog} from '../../lib/cms-catalog';
 import {sortByStatus} from '../../lib/fit';
 interface Props { television?:Television;catalog?:Catalog; }
-const catalog=Astro.props.catalog??await getPublishedCatalog();
-const tv=Astro.props.television??catalog.televisions.find(item=>manufacturerSlug(item.manufacturer)===Astro.params.manufacturer&&modelSlug(item.model)===Astro.params.model);
+const products=Astro.props.catalog??await getPublishedCatalog({compatibility:'none'});
+const tv=Astro.props.television??products.televisions.find(item=>manufacturerSlug(item.manufacturer)===Astro.params.manufacturer&&modelSlug(item.model)===Astro.params.model);
 if(!tv)return Astro.rewrite('/404/');
+// この型番の適合情報だけを読む（全件を読むと適合情報の件数に比例して遅くなるため）。
+const catalog=Astro.props.catalog??await getPublishedCatalog({compatibility:{televisionId:tv.id}});
 const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
 const entries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null}));
 const confirmed=entries.filter(entry=>entry.stand.stand_type!=='wall'&&entry.compatibility?.status==='confirmed');

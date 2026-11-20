@@ -80,6 +80,26 @@ describe('published CMS catalog loading', () => {
     }
   });
 
+  it('reads only the compatibility rows a page needs', async () => {
+    const rows = fixtureRows();
+    const filters: { collection: CmsCollection; where?: Record<string, string> }[] = [];
+    const read: CmsCollectionReader = async (collection, filter) => {
+      filters.push({ collection, ...(filter.where ? { where: filter.where } : {}) });
+      const entries = filter.where
+        ? rows[collection].filter(row => (row.data as Record<string, unknown>).television_id === filter.where!.television_id)
+        : rows[collection];
+      return { entries, hasMore: false };
+    };
+    const none = await getPublishedCatalog({ read, validation, compatibility: 'none' });
+    expect(none.compatibility).toEqual([]);
+    expect(filters.map(item => item.collection)).not.toContain('compatibility');
+    const tvId = fixture().compatibility[0]!.television_id;
+    filters.length = 0;
+    const one = await getPublishedCatalog({ read, validation, compatibility: { televisionId: tvId } });
+    expect(one.compatibility).toEqual(fixture().compatibility.filter(entry => entry.television_id === tvId));
+    expect(filters.find(item => item.collection === 'compatibility')?.where).toEqual({ television_id: tvId });
+  });
+
   it('accepts the documented nextCursor when a provider omits hasMore', async () => {
     const rows = fixtureRows();
     const read: CmsCollectionReader = async (collection, filter) => filter.cursor === undefined
