@@ -115,12 +115,12 @@
         },
         {
           "slug": "release_date",
-          "label": "発売日（YYYY-MM-DD または YYYY-MM）",
+          "label": "発売日（YYYY-MM-DD / YYYY-MM-上旬・中旬・下旬 / YYYY-MM）",
           "type": "string",
           "translatable": false,
           "required": false,
           "validation": {
-            "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-\\d{2})?$",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-(\\d{2}|上旬|中旬|下旬))?$",
             "maxLength": 10
           }
         }
