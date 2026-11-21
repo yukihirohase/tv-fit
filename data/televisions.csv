@@ -1,437 +1,437 @@
-id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url
-sony-k-98xr50,SONY,K-98XR50,98,69.0,600,400,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-85xr50,SONY,K-85XR50,85,46.3,400,400,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-75xr50,SONY,K-75XR50,75,36.2,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-65xr50,SONY,K-65XR50,65,24.9,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-55xr50,SONY,K-55XR50,55,17.7,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-75xr53,SONY,K-75XR53,75,36.2,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-65xr53,SONY,K-65XR53,65,24.9,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-55xr53,SONY,K-55XR53,55,17.7,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html
-sony-k-65xr80m2,SONY,K-65XR80M2,65,22.9,300,300,https://www.sony.jp/bravia/products/K-XR80M2/spec.html
-sony-k-55xr80m2,SONY,K-55XR80M2,55,17.2,300,300,https://www.sony.jp/bravia/products/K-XR80M2/spec.html
-sony-k-115xr90m2,SONY,K-115XR90M2,115,106.8,,,https://www.sony.jp/bravia/products/K-XR90M2/spec.html
-sony-k-85xr90m2,SONY,K-85XR90M2,85,48.2,400,400,https://www.sony.jp/bravia/products/K-XR90M2/spec.html
-sony-k-75xr90m2,SONY,K-75XR90M2,75,38.1,300,300,https://www.sony.jp/bravia/products/K-XR90M2/spec.html
-sony-k-65xr90m2,SONY,K-65XR90M2,65,26.6,300,300,https://www.sony.jp/bravia/products/K-XR90M2/spec.html
-sony-k-98xr70m2,SONY,K-98XR70M2,98,62.2,600,400,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-k-85xr70m2,SONY,K-85XR70M2,85,45.9,400,400,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-k-75xr70m2,SONY,K-75XR70M2,75,36.6,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-k-65xr70m2,SONY,K-65XR70M2,65,26.6,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-k-55xr70m2,SONY,K-55XR70M2,55,18.4,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-k-50xr70m2,SONY,K-50XR70M2,50,15.7,200,200,https://www.sony.jp/bravia/products/K-XR70M2/spec.html
-sony-kj-85x83l,SONY,KJ-85X83L,85,41.1,400,400,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-75x83l,SONY,KJ-75X83L,75,30.6,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-65x83l,SONY,KJ-65X83L,65,21.0,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-55x83l,SONY,KJ-55X83L,55,15.5,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-50x83l,SONY,KJ-50X83L,50,12.2,200,200,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-43x83l,SONY,KJ-43X83L,43,9.8,200,200,https://www.sony.jp/bravia/products/KJ-X83L/spec.html
-sony-kj-85x81l,SONY,KJ-85X81L,85,41.1,400,400,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-sony-kj-75x81l,SONY,KJ-75X81L,75,30.6,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-sony-kj-65x81l,SONY,KJ-65X81L,65,21.0,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-sony-kj-55x81l,SONY,KJ-55X81L,55,15.5,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-sony-kj-50x81l,SONY,KJ-50X81L,50,12.2,200,200,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-sony-kj-43x81l,SONY,KJ-43X81L,43,9.8,200,200,https://www.sony.jp/bravia/products/KJ-X81L/spec.html
-panasonic-tv-65z95b,Panasonic,TV-65Z95B,65,24.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/909/000000003357909/TV-65Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55z95b,Panasonic,TV-55Z95B,55,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/914/000000003357914/TV-55Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-77z95b,Panasonic,TV-77Z95B,77,43.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/789/268/000000003789268/TV-77Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65z90b,Panasonic,TV-65Z90B,65,25.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/918/000000003357918/TV-65Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55z90b,Panasonic,TV-55Z90B,55,18.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/922/000000003357922/TV-55Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-48z90b,Panasonic,TV-48Z90B,48,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/925/000000003357925/TV-48Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-42z90b,Panasonic,TV-42Z90B,42,14.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/928/000000003357928/TV-42Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-75w95b,Panasonic,TV-75W95B,75,26.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/931/000000003357931/TV-75W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65w95b,Panasonic,TV-65W95B,65,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/934/000000003357934/TV-65W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55w95b,Panasonic,TV-55W95B,55,13.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/937/000000003357937/TV-55W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65w90b,Panasonic,TV-65W90B,65,21.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/940/000000003357940/TV-65W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55w90b,Panasonic,TV-55W90B,55,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/943/000000003357943/TV-55W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-50w90b,Panasonic,TV-50W90B,50,11.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/946/000000003357946/TV-50W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-43w90b,Panasonic,TV-43W90B,43,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/949/000000003357949/TV-43W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-50w80b,Panasonic,TV-50W80B,50,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/952/000000003357952/TV-50W80B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-43w80b,Panasonic,TV-43W80B,43,7.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/955/000000003357955/TV-43W80B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65z95c,Panasonic,TV-65Z95C,65,24.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/718/000000004342718/TV-65Z95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55z95c,Panasonic,TV-55Z95C,55,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/721/000000004342721/TV-55Z95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-75w97c,Panasonic,TV-75W97C,75,29.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/724/000000004342724/TV-75W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65w97c,Panasonic,TV-65W97C,65,22.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/727/000000004342727/TV-65W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55w97c,Panasonic,TV-55W97C,55,16.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/730/000000004342730/TV-55W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-75w95c,Panasonic,TV-75W95C,75,26.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/733/000000004342733/TV-75W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65w95c,Panasonic,TV-65W95C,65,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/736/000000004342736/TV-65W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55w95c,Panasonic,TV-55W95C,55,13.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/739/000000004342739/TV-55W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-50w95c,Panasonic,TV-50W95C,50,13.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/742/000000004342742/TV-50W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-43w95c,Panasonic,TV-43W95C,43,10.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/745/000000004342745/TV-43W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65w93c,Panasonic,TV-65W93C,65,21.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/748/000000004342748/TV-65W93C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-55w93c,Panasonic,TV-55W93C,55,16.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/751/000000004342751/TV-55W93C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-98x97c,Panasonic,TV-98X97C,98,61.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/282/000000004710282/TV-98X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-85x97c,Panasonic,TV-85X97C,85,41.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/285/000000004710285/TV-85X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-75x97c,Panasonic,TV-75X97C,75,29.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/288/000000004710288/TV-75X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-65x97c,Panasonic,TV-65X97C,65,22.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/291/000000004710291/TV-65X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-50w80c,Panasonic,TV-50W80C,50,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/754/000000004342754/TV-50W80C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-43w80c,Panasonic,TV-43W80C,43,7.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/757/000000004342757/TV-43W80C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf
-panasonic-tv-40s60c,Panasonic,TV-40S60C,40,5.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/713/195/000000004713195/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-40S60C.pdf
-panasonic-tv-32s60c,Panasonic,TV-32S60C,32,4.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/713/192/000000004713192/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-32S60C.pdf
-panasonic-tv-32n50c,Panasonic,TV-32N50C,32,4.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/520/765/000000004520765/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-32N50C.pdf
-panasonic-tv-24n50c,Panasonic,TV-24N50C,24,2.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/520/768/000000004520768/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-24N50C.pdf
-panasonic-th-65lw2,Panasonic,TH-65LW2,65,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/434/000000003344434/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-65LW2.pdf
-panasonic-th-55lw2,Panasonic,TH-55LW2,55,12.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/437/000000003344437/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-55LW2.pdf
-panasonic-th-55lw2l,Panasonic,TH-55LW2L,55,12.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/440/000000003344440/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-55LW2L.pdf
-panasonic-th-43lf2,Panasonic,TH-43LF2,43,,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/443/000000003344443/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-43LF2.pdf
-panasonic-th-43lf2l,Panasonic,TH-43LF2L,43,,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/446/000000003344446/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-43LF2L.pdf
-sharp-4t-75x9a,SHARP,4T-75X9A,75,41.0,,,https://jp.sharp/aquos/products/x9a/spec/
-sharp-4t-65x9a,SHARP,4T-65X9A,65,29.0,,,https://jp.sharp/aquos/products/x9a/spec/
-sharp-4t-55x9a,SHARP,4T-55X9A,55,21.0,,,https://jp.sharp/aquos/products/x9a/spec/
-sharp-4t-65x7a,SHARP,4T-65X7A,65,24.0,,,https://jp.sharp/aquos/products/x7a/spec/
-sharp-4t-55x7a,SHARP,4T-55X7A,55,17.0,,,https://jp.sharp/aquos/products/x7a/spec/
-sharp-4t-50x7a,SHARP,4T-50X7A,50,13.0,,,https://jp.sharp/aquos/products/x7a/spec/
-sharp-4t-43x7a,SHARP,4T-43X7A,43,11.5,,,https://jp.sharp/aquos/products/x7a/spec/
-sharp-4t-65x5a,SHARP,4T-65X5A,65,22.5,,,https://jp.sharp/aquos/products/x5a/spec/
-sharp-4t-55x5a,SHARP,4T-55X5A,55,16.0,,,https://jp.sharp/aquos/products/x5a/spec/
-sharp-4t-77s9a,SHARP,4T-77S9A,77,39.0,,,https://jp.sharp/aquos/products/s9a/spec/
-sharp-4t-65s9a,SHARP,4T-65S9A,65,19.0,,,https://jp.sharp/aquos/products/s9a/spec/
-sharp-4t-55s9a,SHARP,4T-55S9A,55,15.5,,,https://jp.sharp/aquos/products/s9a/spec/
-sharp-4t-48s9a,SHARP,4T-48S9A,48,15.5,,,https://jp.sharp/aquos/products/s9a/spec/
-sharp-4t-65s7a,SHARP,4T-65S7A,65,17.0,,,https://jp.sharp/aquos/products/s7a/spec/
-sharp-4t-55s7a,SHARP,4T-55S7A,55,13.5,,,https://jp.sharp/aquos/products/s7a/spec/
-sharp-4t-48s7a,SHARP,4T-48S7A,48,15.0,,,https://jp.sharp/aquos/products/s7a/spec/
-sharp-4t-42s7a,SHARP,4T-42S7A,42,13.5,,,https://jp.sharp/aquos/products/s7a/spec/
-sharp-4t-c65hs1,SHARP,4T-C65HS1,65,33.0,,,https://jp.sharp/aquos/products/hs1/spec/
-sharp-4t-c55hs1,SHARP,4T-C55HS1,55,25.5,,,https://jp.sharp/aquos/products/hs1/spec/
-sharp-4t-c65hq1,SHARP,4T-C65HQ1,65,29.5,,,https://jp.sharp/aquos/products/hq1/spec/
-sharp-4t-c55hq1,SHARP,4T-C55HQ1,55,21.5,,,https://jp.sharp/aquos/products/hq1/spec/
-sharp-4t-c65hq2,SHARP,4T-C65HQ2,65,26.0,,,https://jp.sharp/aquos/products/hq2/spec/
-sharp-4t-c55hq2,SHARP,4T-C55HQ2,55,20.0,,,https://jp.sharp/aquos/products/hq2/spec/
-sharp-4t-c48hq2,SHARP,4T-C48HQ2,48,14.5,,,https://jp.sharp/aquos/products/hq2/spec/
-sharp-4t-c42hq2,SHARP,4T-C42HQ2,42,13.5,,,https://jp.sharp/aquos/products/hq2/spec/
-sharp-4t-c75hp1,SHARP,4T-C75HP1,75,42.0,,,https://jp.sharp/aquos/products/hp1/spec/
-sharp-4t-c65hp1,SHARP,4T-C65HP1,65,31.5,,,https://jp.sharp/aquos/products/hp1/spec/
-sharp-4t-c55hp1,SHARP,4T-C55HP1,55,21.0,,,https://jp.sharp/aquos/products/hp1/spec/
-sharp-4t-c50hp2,SHARP,4T-C50HP2,50,15.0,,,https://jp.sharp/aquos/products/hp1/spec/
-sharp-4t-c43hp2,SHARP,4T-C43HP2,43,12.0,,,https://jp.sharp/aquos/products/hp1/spec/
-sharp-4t-c85hv1,SHARP,4T-C85HV1,85,36.5,,,https://jp.sharp/aquos/products/hv1/spec/
-sharp-4t-c75hv1,SHARP,4T-C75HV1,75,32.5,,,https://jp.sharp/aquos/products/hv1/spec/
-sharp-4t-c65hv1,SHARP,4T-C65HV1,65,23.5,,,https://jp.sharp/aquos/products/hv1/spec/
-sharp-4t-c55hv1,SHARP,4T-C55HV1,55,18.0,,,https://jp.sharp/aquos/products/hv1/spec/
-sharp-4t-c65hn2,SHARP,4T-C65HN2,65,23.5,,,https://jp.sharp/aquos/products/hn2/spec/
-sharp-4t-c55hn2,SHARP,4T-C55HN2,55,12.5,,,https://jp.sharp/aquos/products/hn2/spec/
-sharp-4t-c50hn2,SHARP,4T-C50HN2,50,11.0,,,https://jp.sharp/aquos/products/hn2/spec/
-sharp-4t-c43hn2,SHARP,4T-C43HN2,43,8.9,,,https://jp.sharp/aquos/products/hn2/spec/
-sharp-2t-c43ge2,SHARP,2T-C43GE2,43,8.4,,,https://jp.sharp/aquos/products/ge1/spec/
-sharp-2t-c32ge1,SHARP,2T-C32GE1,32,5.1,,,https://jp.sharp/aquos/products/ge1/spec/
-sharp-2t-c24ge1,SHARP,2T-C24GE1,24,3.3,,,https://jp.sharp/aquos/products/ge1/spec/
-sharp-2t-c19ge1,SHARP,2T-C19GE1,19,2.9,,,https://jp.sharp/aquos/products/ge1/spec/
-regza-100zx3s,TVS REGZA,100ZX3S,100,64.6,,,https://www.regza.com/tv/lineup/zx3s/spec
-regza-85zx3s,TVS REGZA,85ZX3S,85,39.8,,,https://www.regza.com/tv/lineup/zx3s/spec
-regza-75zx3s,TVS REGZA,75ZX3S,75,32.2,,,https://www.regza.com/tv/lineup/zx3s/spec
-regza-65zx3s,TVS REGZA,65ZX3S,65,22.7,,,https://www.regza.com/tv/lineup/zx3s/spec
-regza-55zx3s,TVS REGZA,55ZX3S,55,16.0,,,https://www.regza.com/tv/lineup/zx3s/spec
-regza-116zx1r,TVS REGZA,116ZX1R,116,103.1,,,https://www.regza.com/tv/lineup/zx1r/spec
-regza-100zx1s,TVS REGZA,100ZX1S,100,76.1,,,https://www.regza.com/tv/lineup/zx1s/spec
-regza-85zx1s,TVS REGZA,85ZX1S,85,51.4,,,https://www.regza.com/tv/lineup/zx1s/spec
-regza-75zx2s,TVS REGZA,75ZX2S,75,38.3,,,https://www.regza.com/tv/lineup/zx2s/spec
-regza-65zx2s,TVS REGZA,65ZX2S,65,26.1,,,https://www.regza.com/tv/lineup/zx2s/spec
-regza-65x990s,TVS REGZA,65X990S,65,28.0,,,https://www.regza.com/tv/lineup/x990s/spec
-regza-55x990s,TVS REGZA,55X990S,55,21.3,,,https://www.regza.com/tv/lineup/x990s/spec
-regza-65x770s,TVS REGZA,65X770S,65,27.0,,,https://www.regza.com/tv/lineup/x770s/spec
-regza-55x770s,TVS REGZA,55X770S,55,19.4,,,https://www.regza.com/tv/lineup/x770s/spec
-regza-48x770s,TVS REGZA,48X770S,48,15.9,,,https://www.regza.com/tv/lineup/x770s/spec
-regza-85z990s,TVS REGZA,85Z990S,85,49.9,,,https://www.regza.com/tv/lineup/z990s/spec
-regza-75z990s,TVS REGZA,75Z990S,75,38.3,,,https://www.regza.com/tv/lineup/z990s/spec
-regza-65z990s,TVS REGZA,65Z990S,65,26.6,,,https://www.regza.com/tv/lineup/z990s/spec
-regza-85z890s,TVS REGZA,85Z890S,85,48.1,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-75z890s,TVS REGZA,75Z890S,75,36.6,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-65z890s,TVS REGZA,65Z890S,65,25.3,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-55z890s,TVS REGZA,55Z890S,55,18.9,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-50z890s,TVS REGZA,50Z890S,50,14.2,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-43z890s,TVS REGZA,43Z890S,43,11.2,,,https://www.regza.com/tv/lineup/z890s/spec
-regza-75z770s,TVS REGZA,75Z770S,75,30.3,,,https://www.regza.com/tv/lineup/z770s/spec
-regza-65z770s,TVS REGZA,65Z770S,65,21.6,,,https://www.regza.com/tv/lineup/z770s/spec
-regza-55z770s,TVS REGZA,55Z770S,55,15.7,,,https://www.regza.com/tv/lineup/z770s/spec
-regza-50z770s,TVS REGZA,50Z770S,50,13.2,,,https://www.regza.com/tv/lineup/z770s/spec
-regza-43z770s,TVS REGZA,43Z770S,43,10.2,,,https://www.regza.com/tv/lineup/z770s/spec
-regza-65z670s,TVS REGZA,65Z670S,65,19.9,,,https://www.regza.com/tv/lineup/z670s/spec
-regza-55z670s,TVS REGZA,55Z670S,55,14.4,,,https://www.regza.com/tv/lineup/z670s/spec
-regza-50z670s,TVS REGZA,50Z670S,50,12.0,,,https://www.regza.com/tv/lineup/z670s/spec
-regza-43z670s,TVS REGZA,43Z670S,43,9.4,,,https://www.regza.com/tv/lineup/z670s/spec
-regza-100e770s,TVS REGZA,100E770S,100,54.1,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-85e770s,TVS REGZA,85E770S,85,39.5,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-75e770s,TVS REGZA,75E770S,75,27.8,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-65e770s,TVS REGZA,65E770S,65,20.4,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-55e770s,TVS REGZA,55E770S,55,15.4,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-50e770s,TVS REGZA,50E770S,50,12.0,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-43e770s,TVS REGZA,43E770S,43,8.9,,,https://www.regza.com/tv/lineup/e770s/spec
-regza-98e670s,TVS REGZA,98E670S,98,49.1,,,https://www.regza.com/tv/lineup/e670s/spec
-regza-85e350s,TVS REGZA,85E350S,85,27.6,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-75e350s,TVS REGZA,75E350S,75,20.2,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-65e350s,TVS REGZA,65E350S,65,13.8,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-55e350s,TVS REGZA,55E350S,55,9.8,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-50e350s,TVS REGZA,50E350S,50,8.3,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-43e350s,TVS REGZA,43E350S,43,6.4,,,https://www.regza.com/tv/lineup/e350s/spec
-regza-85m550s,TVS REGZA,85M550S,85,27.5,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-75m550s,TVS REGZA,75M550S,75,26.8,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-65m550s,TVS REGZA,65M550S,65,18.4,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-55m550s,TVS REGZA,55M550S,55,12.9,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-50m550s,TVS REGZA,50M550S,50,10.9,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-43m550s,TVS REGZA,43M550S,43,8.4,,,https://www.regza.com/tv/lineup/m550s/spec
-regza-40v35t,TVS REGZA,40V35T,40,4.9,,,https://www.regza.com/tv/lineup/v35t/spec
-regza-32v35t,TVS REGZA,32V35T,32,3.9,,,https://www.regza.com/tv/lineup/v35t/spec
-regza-24v35t,TVS REGZA,24V35T,24,2.9,,,https://www.regza.com/tv/lineup/v35t/spec
-regza-40s25t,TVS REGZA,40S25T,40,4.9,,,https://www.regza.com/tv/lineup/s25t/spec
-regza-32s25t,TVS REGZA,32S25T,32,3.9,,,https://www.regza.com/tv/lineup/s25t/spec
-regza-65x9900r,TVS REGZA,65X9900R,65,27.5,,,https://www.regza.com/tv/lineup/x9900r/spec
-regza-55x9900r,TVS REGZA,55X9900R,55,21.3,,,https://www.regza.com/tv/lineup/x9900r/spec
-regza-77x8900r,TVS REGZA,77X8900R,77,36.8,,,https://www.regza.com/tv/lineup/x8900r/spec
-regza-65x8900r,TVS REGZA,65X8900R,65,28.5,,,https://www.regza.com/tv/lineup/x8900r/spec
-regza-55x8900r,TVS REGZA,55X8900R,55,19.9,,,https://www.regza.com/tv/lineup/x8900r/spec
-regza-48x8900r,TVS REGZA,48X8900R,48,16.4,,,https://www.regza.com/tv/lineup/x8900r/spec
-regza-110z990r,TVS REGZA,110Z990R,110,102.1,,,https://www.regza.com/tv/lineup/z990r/spec
-regza-100z970r,TVS REGZA,100Z970R,100,66.1,,,https://www.regza.com/tv/lineup/z970r/spec
-regza-85z970r,TVS REGZA,85Z970R,85,49.9,,,https://www.regza.com/tv/lineup/z970r/spec
-regza-75z970r,TVS REGZA,75Z970R,75,38.3,,,https://www.regza.com/tv/lineup/z970r/spec
-regza-65z970r,TVS REGZA,65Z970R,65,27.1,,,https://www.regza.com/tv/lineup/z970r/spec
-regza-85z875r,TVS REGZA,85Z875R,85,48.4,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-75z875r,TVS REGZA,75Z875R,75,36.8,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-65z875r,TVS REGZA,65Z875R,65,25.6,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-55z875r,TVS REGZA,55Z875R,55,19.1,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-50z870r,TVS REGZA,50Z870R,50,14.4,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-43z870r,TVS REGZA,43Z870R,43,11.4,,,https://www.regza.com/tv/lineup/z870r/spec
-regza-100z770r,TVS REGZA,100Z770R,100,63.6,,,https://www.regza.com/tv/lineup/z770r/spec
-regza-85z770r,TVS REGZA,85Z770R,85,42.0,,,https://www.regza.com/tv/lineup/z770r/spec
-regza-75z770r,TVS REGZA,75Z770R,75,32.3,,,https://www.regza.com/tv/lineup/z770r/spec
-regza-65z770r,TVS REGZA,65Z770R,65,23.0,,,https://www.regza.com/tv/lineup/z770r/spec
-regza-55z770r,TVS REGZA,55Z770R,55,16.1,,,https://www.regza.com/tv/lineup/z770r/spec
-regza-50z670r,TVS REGZA,50Z670R,50,13.1,,,https://www.regza.com/tv/lineup/z670r/spec
-regza-43z670r,TVS REGZA,43Z670R,43,10.8,,,https://www.regza.com/tv/lineup/z670r/spec
-regza-85m550r,TVS REGZA,85M550R,85,27.5,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-75m550r,TVS REGZA,75M550R,75,26.8,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-65m550r,TVS REGZA,65M550R,65,18.4,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-55m550r,TVS REGZA,55M550R,55,12.9,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-50m550r,TVS REGZA,50M550R,50,10.9,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-43m550r,TVS REGZA,43M550R,43,8.4,,,https://www.regza.com/tv/lineup/m550r/spec
-regza-100e670r,TVS REGZA,100E670R,100,58.6,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-85e670r,TVS REGZA,85E670R,85,39.5,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-75e670r,TVS REGZA,75E670R,75,27.8,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-65e670r,TVS REGZA,65E670R,65,20.4,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-55e670r,TVS REGZA,55E670R,55,15.4,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-50e670r,TVS REGZA,50E670R,50,12.0,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-43e670r,TVS REGZA,43E670R,43,8.9,,,https://www.regza.com/tv/lineup/e670r/spec
-regza-85e350r,TVS REGZA,85E350R,85,27.6,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-75e350r,TVS REGZA,75E350R,75,20.2,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-65e350r,TVS REGZA,65E350R,65,13.8,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-55e350r,TVS REGZA,55E350R,55,9.8,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-50e350r,TVS REGZA,50E350R,50,8.3,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-43e350r,TVS REGZA,43E350R,43,6.4,,,https://www.regza.com/tv/lineup/e350r/spec
-regza-40s25r,TVS REGZA,40S25R,40,5.9,,,https://www.regza.com/tv/lineup/s25r/spec
-regza-32s25r,TVS REGZA,32S25R,32,4.4,,,https://www.regza.com/tv/lineup/s25r/spec
-regza-40v35s,TVS REGZA,40V35S,40,4.9,,,https://www.regza.com/tv/lineup/v35s/spec
-regza-32v35s,TVS REGZA,32V35S,32,3.9,,,https://www.regza.com/tv/lineup/v35s/spec
-regza-24v35s,TVS REGZA,24V35S,24,2.9,,,https://www.regza.com/tv/lineup/v35s/spec
-regza-40s25s,TVS REGZA,40S25S,40,4.9,,,https://www.regza.com/tv/lineup/s25s/spec
-regza-32s25s,TVS REGZA,32S25S,32,3.9,,,https://www.regza.com/tv/lineup/s25s/spec
-lg-oled77t4pja,LG,OLED77T4PJA,77,,,,https://www.lg.com/jp/tvs-soundbars/oled/oled77t4pja/
-lg-oled97m5pja,LG,OLED97M5PJA,97,57.5,600,400,https://www.lg.com/jp/tvs-soundbars/oled/oled97m5pja/
-lg-oled83g5pja,LG,OLED83G5PJA,83,39,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83g5pja/
-lg-oled77g5pjb,LG,OLED77G5PJB,77,33.6,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled77g5pjb/
-lg-oled65g5pjb,LG,OLED65G5PJB,65,22.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled65g5pjb/
-lg-oled55g5pjb,LG,OLED55G5PJB,55,16.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55g5pjb/
-lg-oled83c5pja,LG,OLED83C5PJA,83,28.3,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83c5pja/
-lg-oled77c5pja,LG,OLED77C5PJA,77,23.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77c5pja/
-lg-oled65c5pja,LG,OLED65C5PJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c5pja/
-lg-oled55c5pja,LG,OLED55C5PJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c5pja/
-lg-oled48c5pja,LG,OLED48C5PJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c5pja/
-lg-oled42c5pja,LG,OLED42C5PJA,42,9.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled42c5pja/
-lg-oled65b5pja,LG,OLED65B5PJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b5pja/
-lg-oled55b5pja,LG,OLED55B5PJA,55,14.3,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55b5pja/
-lg-oled48b5pja,LG,OLED48B5PJA,48,11.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48b5pja/
-lg-oled77c5mja,LG,OLED77C5MJA,77,23.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77c5mja/
-lg-oled65c5mja,LG,OLED65C5MJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c5mja/
-lg-oled55c5mja,LG,OLED55C5MJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c5mja/
-lg-oled48c5mja,LG,OLED48C5MJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c5mja/
-lg-oled83w6pja,LG,OLED83W6PJA,83,22.5,,,https://www.lg.com/jp/tvs-soundbars/oled/oled83w6pja/
-lg-oled97g6pja,LG,OLED97G6PJA,97,57.0,600,400,https://www.lg.com/jp/tvs-soundbars/oled/oled97g6pja/
-lg-oled83g6pja,LG,OLED83G6PJA,83,37.2,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83g6pja/
-lg-oled77g6pjb,LG,OLED77G6PJB,77,33.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled77g6pjb/
-lg-oled65g6pjb,LG,OLED65G6PJB,65,22.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled65g6pjb/
-lg-oled55g6pjb,LG,OLED55G6PJB,55,16.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55g6pjb/
-lg-oled65c6pja,LG,OLED65C6PJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c6pja/
-lg-oled55c6pja,LG,OLED55C6PJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c6pja/
-lg-oled48c6pja,LG,OLED48C6PJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c6pja/
-lg-oled42c6pja,LG,OLED42C6PJA,42,9.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled42c6pja/
-lg-oled77b6mja,LG,OLED77B6MJA,77,22.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77b6mja/
-lg-oled65b6mja,LG,OLED65B6MJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b6mja/
-lg-oled55b6mja,LG,OLED55B6MJA,55,14.3,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55b6mja/
-lg-oled65c6mja,LG,OLED65C6MJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c6mja/
-lg-oled55c6mja,LG,OLED55C6MJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c6mja/
-lg-oled77b6eja,LG,OLED77B6EJA,77,22.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77b6eja/
-lg-oled65b6eja,LG,OLED65B6EJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b6eja/
-lg-oled48b6eja,LG,OLED48B6EJA,48,11.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48b6eja/
-lg-75qned70bja,LG,75QNED70BJA,75,22.1,300,300,https://www.lg.com/jp/tvs-soundbars/qned/75qned70bja/
-lg-65qned70bja,LG,65QNED70BJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/qned/65qned70bja/
-lg-55qned70bja,LG,55QNED70BJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/qned/55qned70bja/
-lg-50qned70bja,LG,50QNED70BJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/qned/50qned70bja/
-lg-85nu850bpja,LG,85NU850BPJA,85,29.6,400,400,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/85nu850bpja/
-lg-75nu850bpja,LG,75NU850BPJA,75,22.1,300,300,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/75nu850bpja/
-lg-65nu850bpja,LG,65NU850BPJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65nu850bpja/
-lg-55nu850bpja,LG,55NU850BPJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55nu850bpja/
-lg-50nu850bpja,LG,50NU850BPJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/50nu850bpja/
-lg-43nu850bpja,LG,43NU850BPJA,43,6.4,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/43nu850bpja/
-lg-65nu851bpja,LG,65NU851BPJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65nu851bpja/
-lg-55nu851bpja,LG,55NU851BPJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55nu851bpja/
-lg-50nu851bpja,LG,50NU851BPJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/50nu851bpja/
-lg-75mrgb86bja,LG,75MRGB86BJA,75,,,,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/75mrgb86bja/
-lg-65mrgb86bja,LG,65MRGB86BJA,65,,,,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65mrgb86bja/
-lg-55mrgb86bja,LG,55MRGB86BJA,55,15.1,300,300,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55mrgb86bja/
-lg-43nano80aja,LG,43NANO80AJA,43,8.8,200,200,https://www.lg.com/jp/tvs-soundbars/nanocell/43nano80aja/
-lg-50nano80aja,LG,50NANO80AJA,50,11.7,200,200,https://www.lg.com/jp/tvs-soundbars/nanocell/50nano80aja/
-lg-55nano80aja,LG,55NANO80AJA,55,14,300,300,https://www.lg.com/jp/tvs-soundbars/nanocell/55nano80aja/
-lg-65nano80aja,LG,65NANO80AJA,65,21.5,300,300,https://www.lg.com/jp/tvs-soundbars/nanocell/65nano80aja/
-lg-75nano80aja,LG,75NANO80AJA,75,31.4,400,400,https://www.lg.com/jp/tvs-soundbars/nanocell/75nano80aja/
-lg-86nano80aja,LG,86NANO80AJA,86,45.2,600,400,https://www.lg.com/jp/tvs-soundbars/nanocell/86nano80aja/
-hisense-rgb-100uxs,Hisense,RGB 100UXS,100,70.7,1000,600,https://www.hisense.co.jp/tv/rgbuxs/d6.php
-hisense-rgb-85uxs,Hisense,RGB 85UXS,85,56.5,600,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php
-hisense-rgb-75uxs,Hisense,RGB 75UXS,75,34.5,600,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php
-hisense-rgb-65uxs,Hisense,RGB 65UXS,65,24.4,400,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php
-hisense-rgb-85u9s,Hisense,RGB 85U9S,85,39.8,600,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php
-hisense-rgb-75u9s,Hisense,RGB 75U9S,75,31.3,400,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php
-hisense-rgb-65u9s,Hisense,RGB 65U9S,65,21.8,400,300,https://www.hisense.co.jp/tv/rgbu9s/d6.php
-hisense-rgb-55u9s,Hisense,RGB 55U9S,55,16.3,400,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php
-hisense-85u8s,Hisense,85U8S,85,34.6,600,400,https://www.hisense.co.jp/tv/u8s/d6.php
-hisense-75u8s,Hisense,75U8S,75,27.9,400,400,https://www.hisense.co.jp/tv/u8s/d6.php
-hisense-65u8s,Hisense,65U8S,65,20.2,400,300,https://www.hisense.co.jp/tv/u8s/d6.php
-hisense-55u8s,Hisense,55U8S,55,14.1,400,400,https://www.hisense.co.jp/tv/u8s/d6.php
-hisense-100u7s,Hisense,100U7S,100,54.5,800,400,https://www.hisense.co.jp/tv/u7s/d6.php
-hisense-85u7s,Hisense,85U7S,85,32.3,600,400,https://www.hisense.co.jp/tv/u7s/d6.php
-hisense-75u7s,Hisense,75U7S,75,26.3,500,400,https://www.hisense.co.jp/tv/u7s/d6.php
-hisense-65u7s,Hisense,65U7S,65,17.4,400,300,https://www.hisense.co.jp/tv/u7s/d6.php
-hisense-55u7s,Hisense,55U7S,55,13.5,,,https://www.hisense.co.jp/tv/u7s/d6.php
-hisense-75a6s,Hisense,75A6S,75,19.5,,,https://www.hisense.co.jp/tv/a6s/d5.php
-hisense-65a6s,Hisense,65A6S,65,12.9,400,200,https://www.hisense.co.jp/tv/a6s/d5.php
-hisense-55a6s,Hisense,55A6S,55,9.3,,,https://www.hisense.co.jp/tv/a6s/d5.php
-hisense-50a6s,Hisense,50A6S,50,8,,,https://www.hisense.co.jp/tv/a6s/d5.php
-hisense-43a6s,Hisense,43A6S,43,5.9,,,https://www.hisense.co.jp/tv/a6s/d5.php
-hisense-85c55s,Hisense,85C55S,85,27.5,500,400,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-75c55s,Hisense,75C55S,75,19.5,,,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-65c55s,Hisense,65C55S,65,12.9,400,200,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-55c55s,Hisense,55C55S,55,9.3,,,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-50c55s,Hisense,50C55S,50,8,,,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-43c55s,Hisense,43C55S,43,5.9,,,https://www.hisense.co.jp/tv/c55s/d5.php
-hisense-40a4s,Hisense,40A4S,40,4.8,,,https://www.hisense.co.jp/tv/a4s/d5.php
-hisense-32a4s,Hisense,32A4S,32,3.4,,,https://www.hisense.co.jp/tv/a4s/d5.php
-hisense-24a4s,Hisense,24A4S,24,2.7,,,https://www.hisense.co.jp/tv/a4s/d5.php
-hisense-32a5s,Hisense,32A5S,32,,,,https://www.hisense.co.jp/tv/a5s/d6.php
-hisense-32s6s,Hisense,32S6S,32,7.7,,,https://www.hisense.co.jp/tv/32s6s/d1.php
-hisense-116u9r,Hisense,116U9R,116,98,800,600,https://www.hisense.co.jp/tv/116u9r/d6.php
-hisense-85u9r,Hisense,85U9R,85,47.4,600,400,https://www.hisense.co.jp/tv/u9r/d6.php
-hisense-75u9r,Hisense,75U9R,75,35.1,600,400,https://www.hisense.co.jp/tv/u9r/d6.php
-hisense-65u9r,Hisense,65U9R,65,24.4,400,400,https://www.hisense.co.jp/tv/u9r/d6.php
-hisense-100u8r,Hisense,100U8R,100,62,800,400,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-85u8r,Hisense,85U8R,85,39.3,600,400,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-75u8r,Hisense,75U8R,75,30.2,600,400,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-65u8r,Hisense,65U8R,65,21.9,400,400,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-55u8r,Hisense,55U8R,55,16.1,400,200,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-50u8r,Hisense,50U8R,50,12.4,300,200,https://www.hisense.co.jp/tv/u8r/d6.php
-hisense-85u7r,Hisense,85U7R,85,39.3,600,400,https://www.hisense.co.jp/tv/u7r/d6.php
-hisense-75u7r,Hisense,75U7R,75,28.3,600,400,https://www.hisense.co.jp/tv/u7r/d6.php
-hisense-65u7r,Hisense,65U7R,65,20.4,400,400,https://www.hisense.co.jp/tv/u7r/d6.php
-hisense-55u7r,Hisense,55U7R,55,14,400,200,https://www.hisense.co.jp/tv/u7r/d6.php
-hisense-100e7r,Hisense,100E7R,100,54.5,800,400,https://www.hisense.co.jp/tv/e7r/d6.php
-hisense-85e7r,Hisense,85E7R,85,36.4,600,400,https://www.hisense.co.jp/tv/e7r/d6.php
-hisense-75a6r,Hisense,75A6R,75,19.5,,,https://www.hisense.co.jp/tv/a6r/d5.php
-hisense-65a6r,Hisense,65A6R,65,12.9,400,200,https://www.hisense.co.jp/tv/a6r/d5.php
-hisense-55a6r,Hisense,55A6R,55,9.3,,,https://www.hisense.co.jp/tv/a6r/d5.php
-hisense-50a6r,Hisense,50A6R,50,8,,,https://www.hisense.co.jp/tv/a6r/d5.php
-hisense-43a6r,Hisense,43A6R,43,5.9,,,https://www.hisense.co.jp/tv/a6r/d5.php
-hisense-40a4r,Hisense,40A4R,40,4.8,,,https://www.hisense.co.jp/tv/a4r/d5.php
-hisense-32a4r,Hisense,32A4R,32,3.4,,,https://www.hisense.co.jp/tv/a4r/d5.php
-hisense-24a4r,Hisense,24A4R,24,2.7,,,https://www.hisense.co.jp/tv/a4r/d5.php
-hisense-50u88r,Hisense,50U88R,50,12.4,300,200,https://www.hisense.co.jp/tv/50u88r/d6.php
-hisense-98u6r,Hisense,98U6R,98,48.5,600,400,https://www.hisense.co.jp/tv/u6r/d6.php
-hisense-50u6r,Hisense,50U6R,50,11.2,300,200,https://www.hisense.co.jp/tv/u6r/d6.php
-hisense-43u6r,Hisense,43U6R,43,9,300,300,https://www.hisense.co.jp/tv/u6r/d6.php
-hisense-85e80r,Hisense,85E80R,85,39.3,600,400,https://www.hisense.co.jp/tv/e80r/d6.php
-hisense-75e80r,Hisense,75E80R,75,30.2,600,400,https://www.hisense.co.jp/tv/e80r/d6.php
-hisense-65e80r,Hisense,65E80R,65,21.9,400,400,https://www.hisense.co.jp/tv/e80r/d6.php
-hisense-55e80r,Hisense,55E80R,55,16.1,400,200,https://www.hisense.co.jp/tv/e80r/d6.php
-hisense-85e70r,Hisense,85E70R,85,39.3,600,400,https://www.hisense.co.jp/tv/e70r/d6.php
-hisense-75e70r,Hisense,75E70R,75,28.3,600,400,https://www.hisense.co.jp/tv/e70r/d6.php
-hisense-65e70r,Hisense,65E70R,65,20.4,400,400,https://www.hisense.co.jp/tv/e70r/d6.php
-hisense-55e70r,Hisense,55E70R,55,14,400,200,https://www.hisense.co.jp/tv/e70r/d6.php
-hisense-85e50r,Hisense,85E50R,85,27.5,500,400,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-75e50r,Hisense,75E50R,75,19.5,,,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-65e50r,Hisense,65E50R,65,12.9,400,200,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-55e50r,Hisense,55E50R,55,9.3,,,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-50e50r,Hisense,50E50R,50,8,,,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-43e50r,Hisense,43E50R,43,5.9,,,https://www.hisense.co.jp/tv/e50r/d5.php
-hisense-85e80s,Hisense,85E80S,85,34.6,600,400,https://www.hisense.co.jp/tv/e80s/d6.php
-hisense-75e80s,Hisense,75E80S,75,27.9,400,400,https://www.hisense.co.jp/tv/e80s/d6.php
-hisense-65e80s,Hisense,65E80S,65,20.2,400,300,https://www.hisense.co.jp/tv/e80s/d6.php
-hisense-55e80s,Hisense,55E80S,55,14.1,400,400,https://www.hisense.co.jp/tv/e80s/d6.php
-hisense-100e70s,Hisense,100E70S,100,54.5,800,400,https://www.hisense.co.jp/tv/e70s/d6.php
-hisense-85e70s,Hisense,85E70S,85,32.3,600,400,https://www.hisense.co.jp/tv/e70s/d6.php
-hisense-75e70s,Hisense,75E70S,75,26.3,500,400,https://www.hisense.co.jp/tv/e70s/d6.php
-hisense-65e70s,Hisense,65E70S,65,17.4,400,300,https://www.hisense.co.jp/tv/e70s/d6.php
-hisense-55e70s,Hisense,55E70S,55,13.5,,,https://www.hisense.co.jp/tv/e70s/d6.php
-hisense-85e50s,Hisense,85E50S,85,27.5,500,400,https://www.hisense.co.jp/tv/e50s/d5.php
-hisense-75e50s,Hisense,75E50S,75,19.5,,,https://www.hisense.co.jp/tv/e50s/d5.php
-hisense-65e50s,Hisense,65E50S,65,12.9,400,200,https://www.hisense.co.jp/tv/e50s/d5.php
-hisense-55e50s,Hisense,55E50S,55,9.3,,,https://www.hisense.co.jp/tv/e50s/d5.php
-hisense-50e50s,Hisense,50E50S,50,8,,,https://www.hisense.co.jp/tv/e50s/d5.php
-hisense-43e50s,Hisense,43E50S,43,5.9,,,https://www.hisense.co.jp/tv/e50s/d5.php
-tcl-98x11l,TCL,98X11L,98,66,,,https://www.tcl.com/jp/ja/tvs/98x11l
-tcl-85x11l,TCL,85X11L,85,51.2,,,https://www.tcl.com/jp/ja/tvs/85x11l
-tcl-75x11l,TCL,75X11L,75,39,,,https://www.tcl.com/jp/ja/tvs/75x11l
-tcl-98c8l,TCL,98C8L,98,57.5,600,500,https://www.tcl.com/jp/ja/tvs/98c8l
-tcl-85c8l,TCL,85C8L,85,38.9,600,500,https://www.tcl.com/jp/ja/tvs/85c8l
-tcl-75c8l,TCL,75C8L,75,28.4,400,400,https://www.tcl.com/jp/ja/tvs/75c8l
-tcl-65c8l,TCL,65C8L,65,21.1,300,300,https://www.tcl.com/jp/ja/tvs/65c8l
-tcl-55c8l,TCL,55C8L,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c8l
-tcl-85c7l,TCL,85C7L,85,34.1,600,400,https://www.tcl.com/jp/ja/tvs/85c7l
-tcl-75c7l,TCL,75C7L,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75c7l
-tcl-65c7l,TCL,65C7L,65,19.2,300,300,https://www.tcl.com/jp/ja/tvs/65c7l
-tcl-55c7l,TCL,55C7L,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c7l
-tcl-75rm7l,TCL,75RM7L,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75rm7l
-tcl-65rm7l,TCL,65RM7L,65,19,300,300,https://www.tcl.com/jp/ja/tvs/65rm7l
-tcl-98a400m,TCL,98A400M,98,52.7,600,400,https://www.tcl.com/jp/ja/tvs/98a400m
-tcl-85a400m,TCL,85A400M,85,32.5,600,400,https://www.tcl.com/jp/ja/tvs/a400m
-tcl-75a400m,TCL,75A400M,75,24.6,400,400,https://www.tcl.com/jp/ja/tvs/a400m
-tcl-65a400m,TCL,65A400M,65,17.7,400,400,https://www.tcl.com/jp/ja/tvs/a400m
-tcl-55a400m,TCL,55A400M,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400m
-tcl-75a400,TCL,75A400,75,24.6,400,400,https://www.tcl.com/jp/ja/tvs/75a400
-tcl-65a400,TCL,65A400,65,17.7,400,400,https://www.tcl.com/jp/ja/tvs/a400
-tcl-55a400,TCL,55A400,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400
-tcl-75a400-pro,TCL,75A400 Pro,75,25.1,400,400,https://www.tcl.com/jp/ja/tvs/a400pro
-tcl-55a400-pro,TCL,55A400 Pro,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400pro
-tcl-43a400-pro,TCL,43A400 Pro,43,7.5,100,100,https://www.tcl.com/jp/ja/tvs/43a400pro
-tcl-75t6d,TCL,75T6D,75,18,300,300,https://www.tcl.com/jp/ja/tvs/t6d
-tcl-65t6d,TCL,65T6D,65,12.2,200,200,https://www.tcl.com/jp/ja/tvs/t6d
-tcl-55t6d,TCL,55T6D,55,9,200,200,https://www.tcl.com/jp/ja/tvs/t6d
-tcl-50t6d,TCL,50T6D,50,7.2,200,200,https://www.tcl.com/jp/ja/tvs/t6d
-tcl-43t6d,TCL,43T6D,43,5.6,200,200,https://www.tcl.com/jp/ja/tvs/t6d
-tcl-40s5l,TCL,40S5L,40,4.58,100,100,https://www.tcl.com/jp/ja/tvs/40s5l
-tcl-32s5l,TCL,32S5L,32,3.15,100,100,https://www.tcl.com/jp/ja/tvs/s5l
-tcl-98x11k,TCL,98X11K,98,68.8,600,400,https://www.tcl.com/jp/ja/tvs/x11k
-tcl-98c8k,TCL,98C8K,98,55,600,500,https://www.tcl.com/jp/ja/tvs/98c8k
-tcl-85c8k,TCL,85C8K,85,38.9,600,500,https://www.tcl.com/jp/ja/tvs/85c8k
-tcl-75c8k,TCL,75C8K,75,28.4,400,400,https://www.tcl.com/jp/ja/tvs/75c8k
-tcl-65c8k,TCL,65C8K,65,21.1,300,300,https://www.tcl.com/jp/ja/tvs/65c8k
-tcl-98c7k,TCL,98C7K,98,54.3,600,500,https://www.tcl.com/jp/ja/tvs/98c7k
-tcl-85c7k,TCL,85C7K,85,34.1,600,400,https://www.tcl.com/jp/ja/tvs/85c7k
-tcl-75c7k,TCL,75C7K,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75c7k
-tcl-65c7k,TCL,65C7K,65,18,300,300,https://www.tcl.com/jp/ja/tvs/65c7k
-tcl-55c7k,TCL,55C7K,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c7k
-tcl-98c6k,TCL,98C6K,98,52.3,600,500,https://www.tcl.com/jp/ja/tvs/98c6k
-tcl-85c6k,TCL,85C6K,85,32.6,600,400,https://www.tcl.com/jp/ja/tvs/85c6k
-tcl-75c6k,TCL,75C6K,75,23,300,300,https://www.tcl.com/jp/ja/tvs/75c6k
-tcl-65c6k,TCL,65C6K,65,17,300,300,https://www.tcl.com/jp/ja/tvs/65c6k
-tcl-55c6k,TCL,55C6K,55,12.2,300,300,https://www.tcl.com/jp/ja/tvs/55c6k
-tcl-85p8k,TCL,85P8K,85,30.3,600,400,https://www.tcl.com/jp/ja/tvs/p8k
-tcl-75p8k,TCL,75P8K,75,24,400,400,https://www.tcl.com/jp/ja/tvs/p8k
-tcl-65p8k,TCL,65P8K,65,17.1,400,300,https://www.tcl.com/jp/ja/tvs/p8k
-tcl-55p8k,TCL,55P8K,55,11,300,300,https://www.tcl.com/jp/ja/tvs/p8k
-tcl-50p7k,TCL,50P7K,50,8.7,300,300,https://www.tcl.com/jp/ja/tvs/p7k
-tcl-43p7k,TCL,43P7K,43,6.4,100,200,https://www.tcl.com/jp/ja/tvs/p7k
-tcl-75p6k,TCL,75P6K,75,18,300,300,https://www.tcl.com/jp/ja/tvs/p6k
-tcl-65p6k,TCL,65P6K,65,12.2,200,200,https://www.tcl.com/jp/ja/tvs/p6k
-tcl-55p6k,TCL,55P6K,55,9,200,200,https://www.tcl.com/jp/ja/tvs/p6k
-tcl-43p6k,TCL,43P6K,43,5.6,200,200,https://www.tcl.com/jp/ja/tvs/p6k
-tcl-40s5k,TCL,40S5K,40,4.58,100,100,https://www.tcl.com/jp/ja/tvs/s5k
-tcl-32s5k,TCL,32S5K,32,3.15,100,100,https://www.tcl.com/jp/ja/tvs/s5k
-tcl-75a300w,TCL,75A300W,75,32.7,,,https://www.tcl.com/jp/ja/tvs/a300w
-tcl-65a300w,TCL,65A300W,65,23.1,,,https://www.tcl.com/jp/ja/tvs/a300w
-tcl-55a300w,TCL,55A300W,55,16.1,,,https://www.tcl.com/jp/ja/tvs/a300w
+id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url,release_date,release_source_url
+sony-k-98xr50,SONY,K-98XR50,98,69.0,600,400,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-85xr50,SONY,K-85XR50,85,46.3,400,400,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-75xr50,SONY,K-75XR50,75,36.2,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-65xr50,SONY,K-65XR50,65,24.9,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-55xr50,SONY,K-55XR50,55,17.7,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-75xr53,SONY,K-75XR53,75,36.2,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-65xr53,SONY,K-65XR53,65,24.9,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-55xr53,SONY,K-55XR53,55,17.7,300,300,https://www.sony.jp/bravia/products/K-XR50/spec.html,,
+sony-k-65xr80m2,SONY,K-65XR80M2,65,22.9,300,300,https://www.sony.jp/bravia/products/K-XR80M2/spec.html,,
+sony-k-55xr80m2,SONY,K-55XR80M2,55,17.2,300,300,https://www.sony.jp/bravia/products/K-XR80M2/spec.html,,
+sony-k-115xr90m2,SONY,K-115XR90M2,115,106.8,,,https://www.sony.jp/bravia/products/K-XR90M2/spec.html,,
+sony-k-85xr90m2,SONY,K-85XR90M2,85,48.2,400,400,https://www.sony.jp/bravia/products/K-XR90M2/spec.html,,
+sony-k-75xr90m2,SONY,K-75XR90M2,75,38.1,300,300,https://www.sony.jp/bravia/products/K-XR90M2/spec.html,,
+sony-k-65xr90m2,SONY,K-65XR90M2,65,26.6,300,300,https://www.sony.jp/bravia/products/K-XR90M2/spec.html,,
+sony-k-98xr70m2,SONY,K-98XR70M2,98,62.2,600,400,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-k-85xr70m2,SONY,K-85XR70M2,85,45.9,400,400,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-k-75xr70m2,SONY,K-75XR70M2,75,36.6,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-k-65xr70m2,SONY,K-65XR70M2,65,26.6,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-k-55xr70m2,SONY,K-55XR70M2,55,18.4,300,300,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-k-50xr70m2,SONY,K-50XR70M2,50,15.7,200,200,https://www.sony.jp/bravia/products/K-XR70M2/spec.html,,
+sony-kj-85x83l,SONY,KJ-85X83L,85,41.1,400,400,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-75x83l,SONY,KJ-75X83L,75,30.6,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-65x83l,SONY,KJ-65X83L,65,21.0,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-55x83l,SONY,KJ-55X83L,55,15.5,300,300,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-50x83l,SONY,KJ-50X83L,50,12.2,200,200,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-43x83l,SONY,KJ-43X83L,43,9.8,200,200,https://www.sony.jp/bravia/products/KJ-X83L/spec.html,,
+sony-kj-85x81l,SONY,KJ-85X81L,85,41.1,400,400,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+sony-kj-75x81l,SONY,KJ-75X81L,75,30.6,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+sony-kj-65x81l,SONY,KJ-65X81L,65,21.0,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+sony-kj-55x81l,SONY,KJ-55X81L,55,15.5,300,300,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+sony-kj-50x81l,SONY,KJ-50X81L,50,12.2,200,200,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+sony-kj-43x81l,SONY,KJ-43X81L,43,9.8,200,200,https://www.sony.jp/bravia/products/KJ-X81L/spec.html,,
+panasonic-tv-65z95b,Panasonic,TV-65Z95B,65,24.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/909/000000003357909/TV-65Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55z95b,Panasonic,TV-55Z95B,55,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/914/000000003357914/TV-55Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-77z95b,Panasonic,TV-77Z95B,77,43.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/789/268/000000003789268/TV-77Z95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65z90b,Panasonic,TV-65Z90B,65,25.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/918/000000003357918/TV-65Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55z90b,Panasonic,TV-55Z90B,55,18.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/922/000000003357922/TV-55Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-48z90b,Panasonic,TV-48Z90B,48,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/925/000000003357925/TV-48Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-42z90b,Panasonic,TV-42Z90B,42,14.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/928/000000003357928/TV-42Z90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-75w95b,Panasonic,TV-75W95B,75,26.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/931/000000003357931/TV-75W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65w95b,Panasonic,TV-65W95B,65,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/934/000000003357934/TV-65W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55w95b,Panasonic,TV-55W95B,55,13.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/937/000000003357937/TV-55W95B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65w90b,Panasonic,TV-65W90B,65,21.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/940/000000003357940/TV-65W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55w90b,Panasonic,TV-55W90B,55,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/943/000000003357943/TV-55W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-50w90b,Panasonic,TV-50W90B,50,11.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/946/000000003357946/TV-50W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-43w90b,Panasonic,TV-43W90B,43,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/949/000000003357949/TV-43W90B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-50w80b,Panasonic,TV-50W80B,50,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/952/000000003357952/TV-50W80B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-43w80b,Panasonic,TV-43W80B,43,7.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/357/955/000000003357955/TV-43W80B_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65z95c,Panasonic,TV-65Z95C,65,24.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/718/000000004342718/TV-65Z95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55z95c,Panasonic,TV-55Z95C,55,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/721/000000004342721/TV-55Z95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-75w97c,Panasonic,TV-75W97C,75,29.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/724/000000004342724/TV-75W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65w97c,Panasonic,TV-65W97C,65,22.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/727/000000004342727/TV-65W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55w97c,Panasonic,TV-55W97C,55,16.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/730/000000004342730/TV-55W97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-75w95c,Panasonic,TV-75W95C,75,26.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/733/000000004342733/TV-75W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65w95c,Panasonic,TV-65W95C,65,19.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/736/000000004342736/TV-65W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55w95c,Panasonic,TV-55W95C,55,13.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/739/000000004342739/TV-55W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-50w95c,Panasonic,TV-50W95C,50,13.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/742/000000004342742/TV-50W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-43w95c,Panasonic,TV-43W95C,43,10.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/745/000000004342745/TV-43W95C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65w93c,Panasonic,TV-65W93C,65,21.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/748/000000004342748/TV-65W93C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-55w93c,Panasonic,TV-55W93C,55,16.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/751/000000004342751/TV-55W93C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-98x97c,Panasonic,TV-98X97C,98,61.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/282/000000004710282/TV-98X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-85x97c,Panasonic,TV-85X97C,85,41.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/285/000000004710285/TV-85X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-75x97c,Panasonic,TV-75X97C,75,29.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/288/000000004710288/TV-75X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-65x97c,Panasonic,TV-65X97C,65,22.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/710/291/000000004710291/TV-65X97C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-50w80c,Panasonic,TV-50W80C,50,9.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/754/000000004342754/TV-50W80C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-43w80c,Panasonic,TV-43W80C,43,7.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/342/757/000000004342757/TV-43W80C_%E4%BB%95%E6%A7%98%E6%9B%B8.pdf,,
+panasonic-tv-40s60c,Panasonic,TV-40S60C,40,5.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/713/195/000000004713195/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-40S60C.pdf,,
+panasonic-tv-32s60c,Panasonic,TV-32S60C,32,4.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/713/192/000000004713192/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-32S60C.pdf,,
+panasonic-tv-32n50c,Panasonic,TV-32N50C,32,4.0,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/520/765/000000004520765/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-32N50C.pdf,,
+panasonic-tv-24n50c,Panasonic,TV-24N50C,24,2.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/004/520/768/000000004520768/%E4%BB%95%E6%A7%98%E6%9B%B8_TV-24N50C.pdf,,
+panasonic-th-65lw2,Panasonic,TH-65LW2,65,15.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/434/000000003344434/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-65LW2.pdf,,
+panasonic-th-55lw2,Panasonic,TH-55LW2,55,12.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/437/000000003344437/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-55LW2.pdf,,
+panasonic-th-55lw2l,Panasonic,TH-55LW2L,55,12.5,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/440/000000003344440/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-55LW2L.pdf,,
+panasonic-th-43lf2,Panasonic,TH-43LF2,43,,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/443/000000003344443/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-43LF2.pdf,,
+panasonic-th-43lf2l,Panasonic,TH-43LF2L,43,,,,https://panasonic.jp/content/dam/panasonic/jp/ja/pim-assets/support/specification/000/000/003/344/446/000000003344446/%E4%BB%95%E6%A7%98%E6%9B%B8_TH-43LF2L.pdf,,
+sharp-4t-75x9a,SHARP,4T-75X9A,75,41.0,,,https://jp.sharp/aquos/products/x9a/spec/,,
+sharp-4t-65x9a,SHARP,4T-65X9A,65,29.0,,,https://jp.sharp/aquos/products/x9a/spec/,,
+sharp-4t-55x9a,SHARP,4T-55X9A,55,21.0,,,https://jp.sharp/aquos/products/x9a/spec/,,
+sharp-4t-65x7a,SHARP,4T-65X7A,65,24.0,,,https://jp.sharp/aquos/products/x7a/spec/,,
+sharp-4t-55x7a,SHARP,4T-55X7A,55,17.0,,,https://jp.sharp/aquos/products/x7a/spec/,,
+sharp-4t-50x7a,SHARP,4T-50X7A,50,13.0,,,https://jp.sharp/aquos/products/x7a/spec/,,
+sharp-4t-43x7a,SHARP,4T-43X7A,43,11.5,,,https://jp.sharp/aquos/products/x7a/spec/,,
+sharp-4t-65x5a,SHARP,4T-65X5A,65,22.5,,,https://jp.sharp/aquos/products/x5a/spec/,,
+sharp-4t-55x5a,SHARP,4T-55X5A,55,16.0,,,https://jp.sharp/aquos/products/x5a/spec/,,
+sharp-4t-77s9a,SHARP,4T-77S9A,77,39.0,,,https://jp.sharp/aquos/products/s9a/spec/,,
+sharp-4t-65s9a,SHARP,4T-65S9A,65,19.0,,,https://jp.sharp/aquos/products/s9a/spec/,,
+sharp-4t-55s9a,SHARP,4T-55S9A,55,15.5,,,https://jp.sharp/aquos/products/s9a/spec/,,
+sharp-4t-48s9a,SHARP,4T-48S9A,48,15.5,,,https://jp.sharp/aquos/products/s9a/spec/,,
+sharp-4t-65s7a,SHARP,4T-65S7A,65,17.0,,,https://jp.sharp/aquos/products/s7a/spec/,,
+sharp-4t-55s7a,SHARP,4T-55S7A,55,13.5,,,https://jp.sharp/aquos/products/s7a/spec/,,
+sharp-4t-48s7a,SHARP,4T-48S7A,48,15.0,,,https://jp.sharp/aquos/products/s7a/spec/,,
+sharp-4t-42s7a,SHARP,4T-42S7A,42,13.5,,,https://jp.sharp/aquos/products/s7a/spec/,,
+sharp-4t-c65hs1,SHARP,4T-C65HS1,65,33.0,,,https://jp.sharp/aquos/products/hs1/spec/,,
+sharp-4t-c55hs1,SHARP,4T-C55HS1,55,25.5,,,https://jp.sharp/aquos/products/hs1/spec/,,
+sharp-4t-c65hq1,SHARP,4T-C65HQ1,65,29.5,,,https://jp.sharp/aquos/products/hq1/spec/,,
+sharp-4t-c55hq1,SHARP,4T-C55HQ1,55,21.5,,,https://jp.sharp/aquos/products/hq1/spec/,,
+sharp-4t-c65hq2,SHARP,4T-C65HQ2,65,26.0,,,https://jp.sharp/aquos/products/hq2/spec/,,
+sharp-4t-c55hq2,SHARP,4T-C55HQ2,55,20.0,,,https://jp.sharp/aquos/products/hq2/spec/,,
+sharp-4t-c48hq2,SHARP,4T-C48HQ2,48,14.5,,,https://jp.sharp/aquos/products/hq2/spec/,,
+sharp-4t-c42hq2,SHARP,4T-C42HQ2,42,13.5,,,https://jp.sharp/aquos/products/hq2/spec/,,
+sharp-4t-c75hp1,SHARP,4T-C75HP1,75,42.0,,,https://jp.sharp/aquos/products/hp1/spec/,,
+sharp-4t-c65hp1,SHARP,4T-C65HP1,65,31.5,,,https://jp.sharp/aquos/products/hp1/spec/,,
+sharp-4t-c55hp1,SHARP,4T-C55HP1,55,21.0,,,https://jp.sharp/aquos/products/hp1/spec/,,
+sharp-4t-c50hp2,SHARP,4T-C50HP2,50,15.0,,,https://jp.sharp/aquos/products/hp1/spec/,,
+sharp-4t-c43hp2,SHARP,4T-C43HP2,43,12.0,,,https://jp.sharp/aquos/products/hp1/spec/,,
+sharp-4t-c85hv1,SHARP,4T-C85HV1,85,36.5,,,https://jp.sharp/aquos/products/hv1/spec/,,
+sharp-4t-c75hv1,SHARP,4T-C75HV1,75,32.5,,,https://jp.sharp/aquos/products/hv1/spec/,,
+sharp-4t-c65hv1,SHARP,4T-C65HV1,65,23.5,,,https://jp.sharp/aquos/products/hv1/spec/,,
+sharp-4t-c55hv1,SHARP,4T-C55HV1,55,18.0,,,https://jp.sharp/aquos/products/hv1/spec/,,
+sharp-4t-c65hn2,SHARP,4T-C65HN2,65,23.5,,,https://jp.sharp/aquos/products/hn2/spec/,,
+sharp-4t-c55hn2,SHARP,4T-C55HN2,55,12.5,,,https://jp.sharp/aquos/products/hn2/spec/,,
+sharp-4t-c50hn2,SHARP,4T-C50HN2,50,11.0,,,https://jp.sharp/aquos/products/hn2/spec/,,
+sharp-4t-c43hn2,SHARP,4T-C43HN2,43,8.9,,,https://jp.sharp/aquos/products/hn2/spec/,,
+sharp-2t-c43ge2,SHARP,2T-C43GE2,43,8.4,,,https://jp.sharp/aquos/products/ge1/spec/,,
+sharp-2t-c32ge1,SHARP,2T-C32GE1,32,5.1,,,https://jp.sharp/aquos/products/ge1/spec/,,
+sharp-2t-c24ge1,SHARP,2T-C24GE1,24,3.3,,,https://jp.sharp/aquos/products/ge1/spec/,,
+sharp-2t-c19ge1,SHARP,2T-C19GE1,19,2.9,,,https://jp.sharp/aquos/products/ge1/spec/,,
+regza-100zx3s,TVS REGZA,100ZX3S,100,64.6,,,https://www.regza.com/tv/lineup/zx3s/spec,,
+regza-85zx3s,TVS REGZA,85ZX3S,85,39.8,,,https://www.regza.com/tv/lineup/zx3s/spec,,
+regza-75zx3s,TVS REGZA,75ZX3S,75,32.2,,,https://www.regza.com/tv/lineup/zx3s/spec,,
+regza-65zx3s,TVS REGZA,65ZX3S,65,22.7,,,https://www.regza.com/tv/lineup/zx3s/spec,,
+regza-55zx3s,TVS REGZA,55ZX3S,55,16.0,,,https://www.regza.com/tv/lineup/zx3s/spec,,
+regza-116zx1r,TVS REGZA,116ZX1R,116,103.1,,,https://www.regza.com/tv/lineup/zx1r/spec,,
+regza-100zx1s,TVS REGZA,100ZX1S,100,76.1,,,https://www.regza.com/tv/lineup/zx1s/spec,,
+regza-85zx1s,TVS REGZA,85ZX1S,85,51.4,,,https://www.regza.com/tv/lineup/zx1s/spec,,
+regza-75zx2s,TVS REGZA,75ZX2S,75,38.3,,,https://www.regza.com/tv/lineup/zx2s/spec,,
+regza-65zx2s,TVS REGZA,65ZX2S,65,26.1,,,https://www.regza.com/tv/lineup/zx2s/spec,,
+regza-65x990s,TVS REGZA,65X990S,65,28.0,,,https://www.regza.com/tv/lineup/x990s/spec,,
+regza-55x990s,TVS REGZA,55X990S,55,21.3,,,https://www.regza.com/tv/lineup/x990s/spec,,
+regza-65x770s,TVS REGZA,65X770S,65,27.0,,,https://www.regza.com/tv/lineup/x770s/spec,,
+regza-55x770s,TVS REGZA,55X770S,55,19.4,,,https://www.regza.com/tv/lineup/x770s/spec,,
+regza-48x770s,TVS REGZA,48X770S,48,15.9,,,https://www.regza.com/tv/lineup/x770s/spec,,
+regza-85z990s,TVS REGZA,85Z990S,85,49.9,,,https://www.regza.com/tv/lineup/z990s/spec,,
+regza-75z990s,TVS REGZA,75Z990S,75,38.3,,,https://www.regza.com/tv/lineup/z990s/spec,,
+regza-65z990s,TVS REGZA,65Z990S,65,26.6,,,https://www.regza.com/tv/lineup/z990s/spec,,
+regza-85z890s,TVS REGZA,85Z890S,85,48.1,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-75z890s,TVS REGZA,75Z890S,75,36.6,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-65z890s,TVS REGZA,65Z890S,65,25.3,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-55z890s,TVS REGZA,55Z890S,55,18.9,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-50z890s,TVS REGZA,50Z890S,50,14.2,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-43z890s,TVS REGZA,43Z890S,43,11.2,,,https://www.regza.com/tv/lineup/z890s/spec,,
+regza-75z770s,TVS REGZA,75Z770S,75,30.3,,,https://www.regza.com/tv/lineup/z770s/spec,,
+regza-65z770s,TVS REGZA,65Z770S,65,21.6,,,https://www.regza.com/tv/lineup/z770s/spec,,
+regza-55z770s,TVS REGZA,55Z770S,55,15.7,,,https://www.regza.com/tv/lineup/z770s/spec,,
+regza-50z770s,TVS REGZA,50Z770S,50,13.2,,,https://www.regza.com/tv/lineup/z770s/spec,,
+regza-43z770s,TVS REGZA,43Z770S,43,10.2,,,https://www.regza.com/tv/lineup/z770s/spec,,
+regza-65z670s,TVS REGZA,65Z670S,65,19.9,,,https://www.regza.com/tv/lineup/z670s/spec,,
+regza-55z670s,TVS REGZA,55Z670S,55,14.4,,,https://www.regza.com/tv/lineup/z670s/spec,,
+regza-50z670s,TVS REGZA,50Z670S,50,12.0,,,https://www.regza.com/tv/lineup/z670s/spec,,
+regza-43z670s,TVS REGZA,43Z670S,43,9.4,,,https://www.regza.com/tv/lineup/z670s/spec,,
+regza-100e770s,TVS REGZA,100E770S,100,54.1,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-85e770s,TVS REGZA,85E770S,85,39.5,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-75e770s,TVS REGZA,75E770S,75,27.8,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-65e770s,TVS REGZA,65E770S,65,20.4,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-55e770s,TVS REGZA,55E770S,55,15.4,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-50e770s,TVS REGZA,50E770S,50,12.0,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-43e770s,TVS REGZA,43E770S,43,8.9,,,https://www.regza.com/tv/lineup/e770s/spec,,
+regza-98e670s,TVS REGZA,98E670S,98,49.1,,,https://www.regza.com/tv/lineup/e670s/spec,,
+regza-85e350s,TVS REGZA,85E350S,85,27.6,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-75e350s,TVS REGZA,75E350S,75,20.2,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-65e350s,TVS REGZA,65E350S,65,13.8,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-55e350s,TVS REGZA,55E350S,55,9.8,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-50e350s,TVS REGZA,50E350S,50,8.3,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-43e350s,TVS REGZA,43E350S,43,6.4,,,https://www.regza.com/tv/lineup/e350s/spec,,
+regza-85m550s,TVS REGZA,85M550S,85,27.5,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-75m550s,TVS REGZA,75M550S,75,26.8,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-65m550s,TVS REGZA,65M550S,65,18.4,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-55m550s,TVS REGZA,55M550S,55,12.9,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-50m550s,TVS REGZA,50M550S,50,10.9,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-43m550s,TVS REGZA,43M550S,43,8.4,,,https://www.regza.com/tv/lineup/m550s/spec,,
+regza-40v35t,TVS REGZA,40V35T,40,4.9,,,https://www.regza.com/tv/lineup/v35t/spec,,
+regza-32v35t,TVS REGZA,32V35T,32,3.9,,,https://www.regza.com/tv/lineup/v35t/spec,,
+regza-24v35t,TVS REGZA,24V35T,24,2.9,,,https://www.regza.com/tv/lineup/v35t/spec,,
+regza-40s25t,TVS REGZA,40S25T,40,4.9,,,https://www.regza.com/tv/lineup/s25t/spec,,
+regza-32s25t,TVS REGZA,32S25T,32,3.9,,,https://www.regza.com/tv/lineup/s25t/spec,,
+regza-65x9900r,TVS REGZA,65X9900R,65,27.5,,,https://www.regza.com/tv/lineup/x9900r/spec,,
+regza-55x9900r,TVS REGZA,55X9900R,55,21.3,,,https://www.regza.com/tv/lineup/x9900r/spec,,
+regza-77x8900r,TVS REGZA,77X8900R,77,36.8,,,https://www.regza.com/tv/lineup/x8900r/spec,,
+regza-65x8900r,TVS REGZA,65X8900R,65,28.5,,,https://www.regza.com/tv/lineup/x8900r/spec,,
+regza-55x8900r,TVS REGZA,55X8900R,55,19.9,,,https://www.regza.com/tv/lineup/x8900r/spec,,
+regza-48x8900r,TVS REGZA,48X8900R,48,16.4,,,https://www.regza.com/tv/lineup/x8900r/spec,,
+regza-110z990r,TVS REGZA,110Z990R,110,102.1,,,https://www.regza.com/tv/lineup/z990r/spec,,
+regza-100z970r,TVS REGZA,100Z970R,100,66.1,,,https://www.regza.com/tv/lineup/z970r/spec,,
+regza-85z970r,TVS REGZA,85Z970R,85,49.9,,,https://www.regza.com/tv/lineup/z970r/spec,,
+regza-75z970r,TVS REGZA,75Z970R,75,38.3,,,https://www.regza.com/tv/lineup/z970r/spec,,
+regza-65z970r,TVS REGZA,65Z970R,65,27.1,,,https://www.regza.com/tv/lineup/z970r/spec,,
+regza-85z875r,TVS REGZA,85Z875R,85,48.4,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-75z875r,TVS REGZA,75Z875R,75,36.8,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-65z875r,TVS REGZA,65Z875R,65,25.6,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-55z875r,TVS REGZA,55Z875R,55,19.1,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-50z870r,TVS REGZA,50Z870R,50,14.4,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-43z870r,TVS REGZA,43Z870R,43,11.4,,,https://www.regza.com/tv/lineup/z870r/spec,,
+regza-100z770r,TVS REGZA,100Z770R,100,63.6,,,https://www.regza.com/tv/lineup/z770r/spec,,
+regza-85z770r,TVS REGZA,85Z770R,85,42.0,,,https://www.regza.com/tv/lineup/z770r/spec,,
+regza-75z770r,TVS REGZA,75Z770R,75,32.3,,,https://www.regza.com/tv/lineup/z770r/spec,,
+regza-65z770r,TVS REGZA,65Z770R,65,23.0,,,https://www.regza.com/tv/lineup/z770r/spec,,
+regza-55z770r,TVS REGZA,55Z770R,55,16.1,,,https://www.regza.com/tv/lineup/z770r/spec,,
+regza-50z670r,TVS REGZA,50Z670R,50,13.1,,,https://www.regza.com/tv/lineup/z670r/spec,,
+regza-43z670r,TVS REGZA,43Z670R,43,10.8,,,https://www.regza.com/tv/lineup/z670r/spec,,
+regza-85m550r,TVS REGZA,85M550R,85,27.5,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-75m550r,TVS REGZA,75M550R,75,26.8,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-65m550r,TVS REGZA,65M550R,65,18.4,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-55m550r,TVS REGZA,55M550R,55,12.9,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-50m550r,TVS REGZA,50M550R,50,10.9,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-43m550r,TVS REGZA,43M550R,43,8.4,,,https://www.regza.com/tv/lineup/m550r/spec,,
+regza-100e670r,TVS REGZA,100E670R,100,58.6,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-85e670r,TVS REGZA,85E670R,85,39.5,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-75e670r,TVS REGZA,75E670R,75,27.8,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-65e670r,TVS REGZA,65E670R,65,20.4,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-55e670r,TVS REGZA,55E670R,55,15.4,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-50e670r,TVS REGZA,50E670R,50,12.0,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-43e670r,TVS REGZA,43E670R,43,8.9,,,https://www.regza.com/tv/lineup/e670r/spec,,
+regza-85e350r,TVS REGZA,85E350R,85,27.6,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-75e350r,TVS REGZA,75E350R,75,20.2,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-65e350r,TVS REGZA,65E350R,65,13.8,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-55e350r,TVS REGZA,55E350R,55,9.8,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-50e350r,TVS REGZA,50E350R,50,8.3,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-43e350r,TVS REGZA,43E350R,43,6.4,,,https://www.regza.com/tv/lineup/e350r/spec,,
+regza-40s25r,TVS REGZA,40S25R,40,5.9,,,https://www.regza.com/tv/lineup/s25r/spec,,
+regza-32s25r,TVS REGZA,32S25R,32,4.4,,,https://www.regza.com/tv/lineup/s25r/spec,,
+regza-40v35s,TVS REGZA,40V35S,40,4.9,,,https://www.regza.com/tv/lineup/v35s/spec,,
+regza-32v35s,TVS REGZA,32V35S,32,3.9,,,https://www.regza.com/tv/lineup/v35s/spec,,
+regza-24v35s,TVS REGZA,24V35S,24,2.9,,,https://www.regza.com/tv/lineup/v35s/spec,,
+regza-40s25s,TVS REGZA,40S25S,40,4.9,,,https://www.regza.com/tv/lineup/s25s/spec,,
+regza-32s25s,TVS REGZA,32S25S,32,3.9,,,https://www.regza.com/tv/lineup/s25s/spec,,
+lg-oled77t4pja,LG,OLED77T4PJA,77,,,,https://www.lg.com/jp/tvs-soundbars/oled/oled77t4pja/,,
+lg-oled97m5pja,LG,OLED97M5PJA,97,57.5,600,400,https://www.lg.com/jp/tvs-soundbars/oled/oled97m5pja/,,
+lg-oled83g5pja,LG,OLED83G5PJA,83,39,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83g5pja/,,
+lg-oled77g5pjb,LG,OLED77G5PJB,77,33.6,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled77g5pjb/,,
+lg-oled65g5pjb,LG,OLED65G5PJB,65,22.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled65g5pjb/,,
+lg-oled55g5pjb,LG,OLED55G5PJB,55,16.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55g5pjb/,,
+lg-oled83c5pja,LG,OLED83C5PJA,83,28.3,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83c5pja/,,
+lg-oled77c5pja,LG,OLED77C5PJA,77,23.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77c5pja/,,
+lg-oled65c5pja,LG,OLED65C5PJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c5pja/,,
+lg-oled55c5pja,LG,OLED55C5PJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c5pja/,,
+lg-oled48c5pja,LG,OLED48C5PJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c5pja/,,
+lg-oled42c5pja,LG,OLED42C5PJA,42,9.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled42c5pja/,,
+lg-oled65b5pja,LG,OLED65B5PJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b5pja/,,
+lg-oled55b5pja,LG,OLED55B5PJA,55,14.3,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55b5pja/,,
+lg-oled48b5pja,LG,OLED48B5PJA,48,11.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48b5pja/,,
+lg-oled77c5mja,LG,OLED77C5MJA,77,23.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77c5mja/,,
+lg-oled65c5mja,LG,OLED65C5MJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c5mja/,,
+lg-oled55c5mja,LG,OLED55C5MJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c5mja/,,
+lg-oled48c5mja,LG,OLED48C5MJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c5mja/,,
+lg-oled83w6pja,LG,OLED83W6PJA,83,22.5,,,https://www.lg.com/jp/tvs-soundbars/oled/oled83w6pja/,,
+lg-oled97g6pja,LG,OLED97G6PJA,97,57.0,600,400,https://www.lg.com/jp/tvs-soundbars/oled/oled97g6pja/,,
+lg-oled83g6pja,LG,OLED83G6PJA,83,37.2,400,400,https://www.lg.com/jp/tvs-soundbars/oled/oled83g6pja/,,
+lg-oled77g6pjb,LG,OLED77G6PJB,77,33.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled77g6pjb/,,
+lg-oled65g6pjb,LG,OLED65G6PJB,65,22.0,300,300,https://www.lg.com/jp/tvs-soundbars/oled/oled65g6pjb/,,
+lg-oled55g6pjb,LG,OLED55G6PJB,55,16.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55g6pjb/,,
+lg-oled65c6pja,LG,OLED65C6PJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c6pja/,,
+lg-oled55c6pja,LG,OLED55C6PJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c6pja/,,
+lg-oled48c6pja,LG,OLED48C6PJA,48,14.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48c6pja/,,
+lg-oled42c6pja,LG,OLED42C6PJA,42,9.8,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled42c6pja/,,
+lg-oled77b6mja,LG,OLED77B6MJA,77,22.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77b6mja/,,
+lg-oled65b6mja,LG,OLED65B6MJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b6mja/,,
+lg-oled55b6mja,LG,OLED55B6MJA,55,14.3,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55b6mja/,,
+lg-oled65c6mja,LG,OLED65C6MJA,65,16.6,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65c6mja/,,
+lg-oled55c6mja,LG,OLED55C6MJA,55,14.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled55c6mja/,,
+lg-oled77b6eja,LG,OLED77B6EJA,77,22.9,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled77b6eja/,,
+lg-oled65b6eja,LG,OLED65B6EJA,65,17.1,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled65b6eja/,,
+lg-oled48b6eja,LG,OLED48B6EJA,48,11.5,300,200,https://www.lg.com/jp/tvs-soundbars/oled/oled48b6eja/,,
+lg-75qned70bja,LG,75QNED70BJA,75,22.1,300,300,https://www.lg.com/jp/tvs-soundbars/qned/75qned70bja/,,
+lg-65qned70bja,LG,65QNED70BJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/qned/65qned70bja/,,
+lg-55qned70bja,LG,55QNED70BJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/qned/55qned70bja/,,
+lg-50qned70bja,LG,50QNED70BJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/qned/50qned70bja/,,
+lg-85nu850bpja,LG,85NU850BPJA,85,29.6,400,400,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/85nu850bpja/,,
+lg-75nu850bpja,LG,75NU850BPJA,75,22.1,300,300,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/75nu850bpja/,,
+lg-65nu850bpja,LG,65NU850BPJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65nu850bpja/,,
+lg-55nu850bpja,LG,55NU850BPJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55nu850bpja/,,
+lg-50nu850bpja,LG,50NU850BPJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/50nu850bpja/,,
+lg-43nu850bpja,LG,43NU850BPJA,43,6.4,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/43nu850bpja/,,
+lg-65nu851bpja,LG,65NU851BPJA,65,13.9,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65nu851bpja/,,
+lg-55nu851bpja,LG,55NU851BPJA,55,9.5,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55nu851bpja/,,
+lg-50nu851bpja,LG,50NU851BPJA,50,8.2,300,200,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/50nu851bpja/,,
+lg-75mrgb86bja,LG,75MRGB86BJA,75,,,,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/75mrgb86bja/,,
+lg-65mrgb86bja,LG,65MRGB86BJA,65,,,,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/65mrgb86bja/,,
+lg-55mrgb86bja,LG,55MRGB86BJA,55,15.1,300,300,https://www.lg.com/jp/tvs-soundbars/lcd-tvs/55mrgb86bja/,,
+lg-43nano80aja,LG,43NANO80AJA,43,8.8,200,200,https://www.lg.com/jp/tvs-soundbars/nanocell/43nano80aja/,,
+lg-50nano80aja,LG,50NANO80AJA,50,11.7,200,200,https://www.lg.com/jp/tvs-soundbars/nanocell/50nano80aja/,,
+lg-55nano80aja,LG,55NANO80AJA,55,14,300,300,https://www.lg.com/jp/tvs-soundbars/nanocell/55nano80aja/,,
+lg-65nano80aja,LG,65NANO80AJA,65,21.5,300,300,https://www.lg.com/jp/tvs-soundbars/nanocell/65nano80aja/,,
+lg-75nano80aja,LG,75NANO80AJA,75,31.4,400,400,https://www.lg.com/jp/tvs-soundbars/nanocell/75nano80aja/,,
+lg-86nano80aja,LG,86NANO80AJA,86,45.2,600,400,https://www.lg.com/jp/tvs-soundbars/nanocell/86nano80aja/,,
+hisense-rgb-100uxs,Hisense,RGB 100UXS,100,70.7,1000,600,https://www.hisense.co.jp/tv/rgbuxs/d6.php,,
+hisense-rgb-85uxs,Hisense,RGB 85UXS,85,56.5,600,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php,,
+hisense-rgb-75uxs,Hisense,RGB 75UXS,75,34.5,600,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php,,
+hisense-rgb-65uxs,Hisense,RGB 65UXS,65,24.4,400,400,https://www.hisense.co.jp/tv/rgbuxs/d6.php,,
+hisense-rgb-85u9s,Hisense,RGB 85U9S,85,39.8,600,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php,,
+hisense-rgb-75u9s,Hisense,RGB 75U9S,75,31.3,400,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php,,
+hisense-rgb-65u9s,Hisense,RGB 65U9S,65,21.8,400,300,https://www.hisense.co.jp/tv/rgbu9s/d6.php,,
+hisense-rgb-55u9s,Hisense,RGB 55U9S,55,16.3,400,400,https://www.hisense.co.jp/tv/rgbu9s/d6.php,,
+hisense-85u8s,Hisense,85U8S,85,34.6,600,400,https://www.hisense.co.jp/tv/u8s/d6.php,,
+hisense-75u8s,Hisense,75U8S,75,27.9,400,400,https://www.hisense.co.jp/tv/u8s/d6.php,,
+hisense-65u8s,Hisense,65U8S,65,20.2,400,300,https://www.hisense.co.jp/tv/u8s/d6.php,,
+hisense-55u8s,Hisense,55U8S,55,14.1,400,400,https://www.hisense.co.jp/tv/u8s/d6.php,,
+hisense-100u7s,Hisense,100U7S,100,54.5,800,400,https://www.hisense.co.jp/tv/u7s/d6.php,,
+hisense-85u7s,Hisense,85U7S,85,32.3,600,400,https://www.hisense.co.jp/tv/u7s/d6.php,,
+hisense-75u7s,Hisense,75U7S,75,26.3,500,400,https://www.hisense.co.jp/tv/u7s/d6.php,,
+hisense-65u7s,Hisense,65U7S,65,17.4,400,300,https://www.hisense.co.jp/tv/u7s/d6.php,,
+hisense-55u7s,Hisense,55U7S,55,13.5,,,https://www.hisense.co.jp/tv/u7s/d6.php,,
+hisense-75a6s,Hisense,75A6S,75,19.5,,,https://www.hisense.co.jp/tv/a6s/d5.php,,
+hisense-65a6s,Hisense,65A6S,65,12.9,400,200,https://www.hisense.co.jp/tv/a6s/d5.php,,
+hisense-55a6s,Hisense,55A6S,55,9.3,,,https://www.hisense.co.jp/tv/a6s/d5.php,,
+hisense-50a6s,Hisense,50A6S,50,8,,,https://www.hisense.co.jp/tv/a6s/d5.php,,
+hisense-43a6s,Hisense,43A6S,43,5.9,,,https://www.hisense.co.jp/tv/a6s/d5.php,,
+hisense-85c55s,Hisense,85C55S,85,27.5,500,400,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-75c55s,Hisense,75C55S,75,19.5,,,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-65c55s,Hisense,65C55S,65,12.9,400,200,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-55c55s,Hisense,55C55S,55,9.3,,,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-50c55s,Hisense,50C55S,50,8,,,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-43c55s,Hisense,43C55S,43,5.9,,,https://www.hisense.co.jp/tv/c55s/d5.php,,
+hisense-40a4s,Hisense,40A4S,40,4.8,,,https://www.hisense.co.jp/tv/a4s/d5.php,,
+hisense-32a4s,Hisense,32A4S,32,3.4,,,https://www.hisense.co.jp/tv/a4s/d5.php,,
+hisense-24a4s,Hisense,24A4S,24,2.7,,,https://www.hisense.co.jp/tv/a4s/d5.php,,
+hisense-32a5s,Hisense,32A5S,32,,,,https://www.hisense.co.jp/tv/a5s/d6.php,,
+hisense-32s6s,Hisense,32S6S,32,7.7,,,https://www.hisense.co.jp/tv/32s6s/d1.php,,
+hisense-116u9r,Hisense,116U9R,116,98,800,600,https://www.hisense.co.jp/tv/116u9r/d6.php,,
+hisense-85u9r,Hisense,85U9R,85,47.4,600,400,https://www.hisense.co.jp/tv/u9r/d6.php,,
+hisense-75u9r,Hisense,75U9R,75,35.1,600,400,https://www.hisense.co.jp/tv/u9r/d6.php,,
+hisense-65u9r,Hisense,65U9R,65,24.4,400,400,https://www.hisense.co.jp/tv/u9r/d6.php,,
+hisense-100u8r,Hisense,100U8R,100,62,800,400,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-85u8r,Hisense,85U8R,85,39.3,600,400,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-75u8r,Hisense,75U8R,75,30.2,600,400,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-65u8r,Hisense,65U8R,65,21.9,400,400,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-55u8r,Hisense,55U8R,55,16.1,400,200,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-50u8r,Hisense,50U8R,50,12.4,300,200,https://www.hisense.co.jp/tv/u8r/d6.php,,
+hisense-85u7r,Hisense,85U7R,85,39.3,600,400,https://www.hisense.co.jp/tv/u7r/d6.php,,
+hisense-75u7r,Hisense,75U7R,75,28.3,600,400,https://www.hisense.co.jp/tv/u7r/d6.php,,
+hisense-65u7r,Hisense,65U7R,65,20.4,400,400,https://www.hisense.co.jp/tv/u7r/d6.php,,
+hisense-55u7r,Hisense,55U7R,55,14,400,200,https://www.hisense.co.jp/tv/u7r/d6.php,,
+hisense-100e7r,Hisense,100E7R,100,54.5,800,400,https://www.hisense.co.jp/tv/e7r/d6.php,,
+hisense-85e7r,Hisense,85E7R,85,36.4,600,400,https://www.hisense.co.jp/tv/e7r/d6.php,,
+hisense-75a6r,Hisense,75A6R,75,19.5,,,https://www.hisense.co.jp/tv/a6r/d5.php,,
+hisense-65a6r,Hisense,65A6R,65,12.9,400,200,https://www.hisense.co.jp/tv/a6r/d5.php,,
+hisense-55a6r,Hisense,55A6R,55,9.3,,,https://www.hisense.co.jp/tv/a6r/d5.php,,
+hisense-50a6r,Hisense,50A6R,50,8,,,https://www.hisense.co.jp/tv/a6r/d5.php,,
+hisense-43a6r,Hisense,43A6R,43,5.9,,,https://www.hisense.co.jp/tv/a6r/d5.php,,
+hisense-40a4r,Hisense,40A4R,40,4.8,,,https://www.hisense.co.jp/tv/a4r/d5.php,,
+hisense-32a4r,Hisense,32A4R,32,3.4,,,https://www.hisense.co.jp/tv/a4r/d5.php,,
+hisense-24a4r,Hisense,24A4R,24,2.7,,,https://www.hisense.co.jp/tv/a4r/d5.php,,
+hisense-50u88r,Hisense,50U88R,50,12.4,300,200,https://www.hisense.co.jp/tv/50u88r/d6.php,,
+hisense-98u6r,Hisense,98U6R,98,48.5,600,400,https://www.hisense.co.jp/tv/u6r/d6.php,,
+hisense-50u6r,Hisense,50U6R,50,11.2,300,200,https://www.hisense.co.jp/tv/u6r/d6.php,,
+hisense-43u6r,Hisense,43U6R,43,9,300,300,https://www.hisense.co.jp/tv/u6r/d6.php,,
+hisense-85e80r,Hisense,85E80R,85,39.3,600,400,https://www.hisense.co.jp/tv/e80r/d6.php,,
+hisense-75e80r,Hisense,75E80R,75,30.2,600,400,https://www.hisense.co.jp/tv/e80r/d6.php,,
+hisense-65e80r,Hisense,65E80R,65,21.9,400,400,https://www.hisense.co.jp/tv/e80r/d6.php,,
+hisense-55e80r,Hisense,55E80R,55,16.1,400,200,https://www.hisense.co.jp/tv/e80r/d6.php,,
+hisense-85e70r,Hisense,85E70R,85,39.3,600,400,https://www.hisense.co.jp/tv/e70r/d6.php,,
+hisense-75e70r,Hisense,75E70R,75,28.3,600,400,https://www.hisense.co.jp/tv/e70r/d6.php,,
+hisense-65e70r,Hisense,65E70R,65,20.4,400,400,https://www.hisense.co.jp/tv/e70r/d6.php,,
+hisense-55e70r,Hisense,55E70R,55,14,400,200,https://www.hisense.co.jp/tv/e70r/d6.php,,
+hisense-85e50r,Hisense,85E50R,85,27.5,500,400,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-75e50r,Hisense,75E50R,75,19.5,,,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-65e50r,Hisense,65E50R,65,12.9,400,200,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-55e50r,Hisense,55E50R,55,9.3,,,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-50e50r,Hisense,50E50R,50,8,,,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-43e50r,Hisense,43E50R,43,5.9,,,https://www.hisense.co.jp/tv/e50r/d5.php,,
+hisense-85e80s,Hisense,85E80S,85,34.6,600,400,https://www.hisense.co.jp/tv/e80s/d6.php,,
+hisense-75e80s,Hisense,75E80S,75,27.9,400,400,https://www.hisense.co.jp/tv/e80s/d6.php,,
+hisense-65e80s,Hisense,65E80S,65,20.2,400,300,https://www.hisense.co.jp/tv/e80s/d6.php,,
+hisense-55e80s,Hisense,55E80S,55,14.1,400,400,https://www.hisense.co.jp/tv/e80s/d6.php,,
+hisense-100e70s,Hisense,100E70S,100,54.5,800,400,https://www.hisense.co.jp/tv/e70s/d6.php,,
+hisense-85e70s,Hisense,85E70S,85,32.3,600,400,https://www.hisense.co.jp/tv/e70s/d6.php,,
+hisense-75e70s,Hisense,75E70S,75,26.3,500,400,https://www.hisense.co.jp/tv/e70s/d6.php,,
+hisense-65e70s,Hisense,65E70S,65,17.4,400,300,https://www.hisense.co.jp/tv/e70s/d6.php,,
+hisense-55e70s,Hisense,55E70S,55,13.5,,,https://www.hisense.co.jp/tv/e70s/d6.php,,
+hisense-85e50s,Hisense,85E50S,85,27.5,500,400,https://www.hisense.co.jp/tv/e50s/d5.php,,
+hisense-75e50s,Hisense,75E50S,75,19.5,,,https://www.hisense.co.jp/tv/e50s/d5.php,,
+hisense-65e50s,Hisense,65E50S,65,12.9,400,200,https://www.hisense.co.jp/tv/e50s/d5.php,,
+hisense-55e50s,Hisense,55E50S,55,9.3,,,https://www.hisense.co.jp/tv/e50s/d5.php,,
+hisense-50e50s,Hisense,50E50S,50,8,,,https://www.hisense.co.jp/tv/e50s/d5.php,,
+hisense-43e50s,Hisense,43E50S,43,5.9,,,https://www.hisense.co.jp/tv/e50s/d5.php,,
+tcl-98x11l,TCL,98X11L,98,66,,,https://www.tcl.com/jp/ja/tvs/98x11l,,
+tcl-85x11l,TCL,85X11L,85,51.2,,,https://www.tcl.com/jp/ja/tvs/85x11l,,
+tcl-75x11l,TCL,75X11L,75,39,,,https://www.tcl.com/jp/ja/tvs/75x11l,,
+tcl-98c8l,TCL,98C8L,98,57.5,600,500,https://www.tcl.com/jp/ja/tvs/98c8l,,
+tcl-85c8l,TCL,85C8L,85,38.9,600,500,https://www.tcl.com/jp/ja/tvs/85c8l,,
+tcl-75c8l,TCL,75C8L,75,28.4,400,400,https://www.tcl.com/jp/ja/tvs/75c8l,,
+tcl-65c8l,TCL,65C8L,65,21.1,300,300,https://www.tcl.com/jp/ja/tvs/65c8l,,
+tcl-55c8l,TCL,55C8L,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c8l,,
+tcl-85c7l,TCL,85C7L,85,34.1,600,400,https://www.tcl.com/jp/ja/tvs/85c7l,,
+tcl-75c7l,TCL,75C7L,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75c7l,,
+tcl-65c7l,TCL,65C7L,65,19.2,300,300,https://www.tcl.com/jp/ja/tvs/65c7l,,
+tcl-55c7l,TCL,55C7L,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c7l,,
+tcl-75rm7l,TCL,75RM7L,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75rm7l,,
+tcl-65rm7l,TCL,65RM7L,65,19,300,300,https://www.tcl.com/jp/ja/tvs/65rm7l,,
+tcl-98a400m,TCL,98A400M,98,52.7,600,400,https://www.tcl.com/jp/ja/tvs/98a400m,,
+tcl-85a400m,TCL,85A400M,85,32.5,600,400,https://www.tcl.com/jp/ja/tvs/a400m,,
+tcl-75a400m,TCL,75A400M,75,24.6,400,400,https://www.tcl.com/jp/ja/tvs/a400m,,
+tcl-65a400m,TCL,65A400M,65,17.7,400,400,https://www.tcl.com/jp/ja/tvs/a400m,,
+tcl-55a400m,TCL,55A400M,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400m,,
+tcl-75a400,TCL,75A400,75,24.6,400,400,https://www.tcl.com/jp/ja/tvs/75a400,,
+tcl-65a400,TCL,65A400,65,17.7,400,400,https://www.tcl.com/jp/ja/tvs/a400,,
+tcl-55a400,TCL,55A400,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400,,
+tcl-75a400-pro,TCL,75A400 Pro,75,25.1,400,400,https://www.tcl.com/jp/ja/tvs/a400pro,,
+tcl-55a400-pro,TCL,55A400 Pro,55,12.1,400,400,https://www.tcl.com/jp/ja/tvs/a400pro,,
+tcl-43a400-pro,TCL,43A400 Pro,43,7.5,100,100,https://www.tcl.com/jp/ja/tvs/43a400pro,,
+tcl-75t6d,TCL,75T6D,75,18,300,300,https://www.tcl.com/jp/ja/tvs/t6d,,
+tcl-65t6d,TCL,65T6D,65,12.2,200,200,https://www.tcl.com/jp/ja/tvs/t6d,,
+tcl-55t6d,TCL,55T6D,55,9,200,200,https://www.tcl.com/jp/ja/tvs/t6d,,
+tcl-50t6d,TCL,50T6D,50,7.2,200,200,https://www.tcl.com/jp/ja/tvs/t6d,,
+tcl-43t6d,TCL,43T6D,43,5.6,200,200,https://www.tcl.com/jp/ja/tvs/t6d,,
+tcl-40s5l,TCL,40S5L,40,4.58,100,100,https://www.tcl.com/jp/ja/tvs/40s5l,,
+tcl-32s5l,TCL,32S5L,32,3.15,100,100,https://www.tcl.com/jp/ja/tvs/s5l,,
+tcl-98x11k,TCL,98X11K,98,68.8,600,400,https://www.tcl.com/jp/ja/tvs/x11k,,
+tcl-98c8k,TCL,98C8K,98,55,600,500,https://www.tcl.com/jp/ja/tvs/98c8k,,
+tcl-85c8k,TCL,85C8K,85,38.9,600,500,https://www.tcl.com/jp/ja/tvs/85c8k,,
+tcl-75c8k,TCL,75C8K,75,28.4,400,400,https://www.tcl.com/jp/ja/tvs/75c8k,,
+tcl-65c8k,TCL,65C8K,65,21.1,300,300,https://www.tcl.com/jp/ja/tvs/65c8k,,
+tcl-98c7k,TCL,98C7K,98,54.3,600,500,https://www.tcl.com/jp/ja/tvs/98c7k,,
+tcl-85c7k,TCL,85C7K,85,34.1,600,400,https://www.tcl.com/jp/ja/tvs/85c7k,,
+tcl-75c7k,TCL,75C7K,75,24.6,300,300,https://www.tcl.com/jp/ja/tvs/75c7k,,
+tcl-65c7k,TCL,65C7K,65,18,300,300,https://www.tcl.com/jp/ja/tvs/65c7k,,
+tcl-55c7k,TCL,55C7K,55,13.3,300,300,https://www.tcl.com/jp/ja/tvs/55c7k,,
+tcl-98c6k,TCL,98C6K,98,52.3,600,500,https://www.tcl.com/jp/ja/tvs/98c6k,,
+tcl-85c6k,TCL,85C6K,85,32.6,600,400,https://www.tcl.com/jp/ja/tvs/85c6k,,
+tcl-75c6k,TCL,75C6K,75,23,300,300,https://www.tcl.com/jp/ja/tvs/75c6k,,
+tcl-65c6k,TCL,65C6K,65,17,300,300,https://www.tcl.com/jp/ja/tvs/65c6k,,
+tcl-55c6k,TCL,55C6K,55,12.2,300,300,https://www.tcl.com/jp/ja/tvs/55c6k,,
+tcl-85p8k,TCL,85P8K,85,30.3,600,400,https://www.tcl.com/jp/ja/tvs/p8k,,
+tcl-75p8k,TCL,75P8K,75,24,400,400,https://www.tcl.com/jp/ja/tvs/p8k,,
+tcl-65p8k,TCL,65P8K,65,17.1,400,300,https://www.tcl.com/jp/ja/tvs/p8k,,
+tcl-55p8k,TCL,55P8K,55,11,300,300,https://www.tcl.com/jp/ja/tvs/p8k,,
+tcl-50p7k,TCL,50P7K,50,8.7,300,300,https://www.tcl.com/jp/ja/tvs/p7k,,
+tcl-43p7k,TCL,43P7K,43,6.4,100,200,https://www.tcl.com/jp/ja/tvs/p7k,,
+tcl-75p6k,TCL,75P6K,75,18,300,300,https://www.tcl.com/jp/ja/tvs/p6k,,
+tcl-65p6k,TCL,65P6K,65,12.2,200,200,https://www.tcl.com/jp/ja/tvs/p6k,,
+tcl-55p6k,TCL,55P6K,55,9,200,200,https://www.tcl.com/jp/ja/tvs/p6k,,
+tcl-43p6k,TCL,43P6K,43,5.6,200,200,https://www.tcl.com/jp/ja/tvs/p6k,,
+tcl-40s5k,TCL,40S5K,40,4.58,100,100,https://www.tcl.com/jp/ja/tvs/s5k,,
+tcl-32s5k,TCL,32S5K,32,3.15,100,100,https://www.tcl.com/jp/ja/tvs/s5k,,
+tcl-75a300w,TCL,75A300W,75,32.7,,,https://www.tcl.com/jp/ja/tvs/a300w,,
+tcl-65a300w,TCL,65A300W,65,23.1,,,https://www.tcl.com/jp/ja/tvs/a300w,,
+tcl-55a300w,TCL,55A300W,55,16.1,,,https://www.tcl.com/jp/ja/tvs/a300w,,

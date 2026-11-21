@@ -87,7 +87,7 @@ EmDash の公開済みコンテンツを表示の正本とします。`data/*.cs
 EmDash 自身の `id` と `status` は、CMS の識別子・下書き／公開状態です。商品の適合判定には使用しません。適合情報の `television_id` と `stand_id` は、元の CSV と同じ外部 ID を入力する文字列項目です。保存・公開時に参照関係を検証します。
 
 ```csv
-id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url
+id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url,release_date,release_source_url
 ```
 
 ```csv

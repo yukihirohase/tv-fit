@@ -63,7 +63,7 @@ describe('manufacturer navigation', () => {
 
   it('only permits a list with at least one indexable television record', () => {
     // Synthetic in-memory eligibility input, never loaded or emitted by production.
-    const television: Television = { id: 'catalog-one', manufacturer: 'Synthetic eligibility brand', model: 'SPEC-ONE', screen_inches: 43, weight_kg: 9, vesa_width_mm: 200, vesa_height_mm: 200, source_url: 'https://source.test/spec' };
+    const television: Television = { id: 'catalog-one', manufacturer: 'Synthetic eligibility brand', model: 'SPEC-ONE', screen_inches: 43, weight_kg: 9, vesa_width_mm: 200, vesa_height_mm: 200, source_url: 'https://source.test/spec', release_date: null, release_source_url: null };
     const catalog: Catalog = { televisions: [television], stands: [], compatibility: [{ television_id: television.id, stand_id: 'catalog-stand', status: 'confirmed', evidence_type: 'manufacturer_individual', evidence_url: 'https://source.test/confirmation', checked_at: '2026-01-01', notes: 'Synthetic eligibility test only.' }] };
     const manufacturer = getManufacturers(catalog.televisions).find(item => item.name === television.manufacturer)!;
     expect(isIndexableManufacturer(manufacturer, catalog)).toBe(true);
