@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {fitBreakdown, sortByStatus} from '../src/lib/fit';
 import type {Compatibility, Stand, Television} from '../src/lib/data';
 
-const tv: Television = {id: 'fixture-tv', manufacturer: 'Fixture', model: 'FX-1', screen_inches: 65, weight_kg: 12.9, vesa_width_mm: 400, vesa_height_mm: 200, source_url: null};
+const tv: Television = {id: 'fixture-tv', manufacturer: 'Fixture', model: 'FX-1', screen_inches: 65, weight_kg: 12.9, vesa_width_mm: 400, vesa_height_mm: 200, source_url: null, release_date: null, release_source_url: null};
 const stand: Stand = {id: 'fixture-stand', manufacturer: 'Fixture', sku: 'FS-1', stand_type: 'floor', max_weight_kg: 40, vesa_patterns: [{width: 400, height: 200}, {width: 400, height: 400}], source_url: 'https://fixture.invalid/', product_url: null};
 
 describe('fit breakdown', () => {
