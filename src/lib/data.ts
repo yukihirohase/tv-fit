@@ -22,9 +22,9 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/u).refine((value) => {
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }, '実在する日付を指定してください');
 const nullableDate = z.preprocess((value) => value === '' || value === undefined ? null : value, date.nullable());
-/** 発売日。日まで公表されていれば YYYY-MM-DD、月までなら YYYY-MM。 */
-const releaseDate = z.preprocess((value) => value === '' || value === undefined ? null : value, z.string().regex(/^\d{4}-(0[1-9]|1[0-2])(-\d{2})?$/u, '発売日は YYYY-MM-DD か YYYY-MM で指定してください').refine((value) => {
-  if (value.length === 7) return true;
+/** 発売日。日まで公表されていれば YYYY-MM-DD、旬までなら YYYY-MM-上旬/中旬/下旬、月までなら YYYY-MM。 */
+const releaseDate = z.preprocess((value) => value === '' || value === undefined ? null : value, z.string().regex(/^\d{4}-(0[1-9]|1[0-2])(-(\d{2}|上旬|中旬|下旬))?$/u, '発売日は YYYY-MM-DD・YYYY-MM-上旬/中旬/下旬・YYYY-MM のいずれかで指定してください').refine((value) => {
+  if (!/-\d{2}-\d{2}$/u.test(value)) return true;
   const parsed = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }, '実在する日付を指定してください').nullable());
@@ -171,8 +171,9 @@ export function isIndexableTelevision(tv: Television, catalog: Catalog, exclusio
     catalog.compatibility.some((entry) => entry.television_id === tv.id && entry.status !== 'unknown' && entry.evidence_url !== null && entry.checked_at !== null);
 }
 
-/** 発売日の表示（2025-06-07 → 2025年6月7日、2025-06 → 2025年6月）。 */
+/** 発売日の表示（2025-06-07 → 2025年6月7日、2025-06-下旬 → 2025年6月下旬、2025-06 → 2025年6月）。 */
 export function formatReleaseDate(value: string): string {
   const [year, month, day] = value.split('-');
-  return `${Number(year)}年${Number(month)}月${day ? `${Number(day)}日` : ''}`;
+  const rest = day === undefined ? '' : /^\d+$/u.test(day) ? `${Number(day)}日` : day;
+  return `${Number(year)}年${Number(month)}月${rest}`;
 }

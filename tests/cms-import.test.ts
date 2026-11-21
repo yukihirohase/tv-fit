@@ -92,9 +92,20 @@ describe('validated CSV import into EmDash', () => {
     expect(() => buildImportPlan(fixtures, blank)).toThrow('既存データと異なる');
     const plan = buildImportPlan(fixtures, blank, { fillBlanks: true });
     expect(plan.create).toEqual([]);
-    expect(plan.fill).toEqual([{ collection: 'televisions', key: fixtures.televisions[0]!.id, id: 'cms-tv', fields: { vesa_width_mm: tv.vesa_width_mm, vesa_height_mm: tv.vesa_height_mm } }]);
+    expect(plan.fill).toEqual([{ collection: 'televisions', key: fixtures.televisions[0]!.id, id: 'cms-tv', fields: { vesa_width_mm: tv.vesa_width_mm, vesa_height_mm: tv.vesa_height_mm }, previous: { vesa_width_mm: null, vesa_height_mm: null } }]);
     const overwritten = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, model: 'FICTION-CHANGED', vesa_width_mm: null, vesa_height_mm: null } }, ...rows.televisions.slice(1)] };
     expect(() => buildImportPlan(fixtures, overwritten, { fillBlanks: true })).toThrow('既存データと異なる');
+  });
+  it('overwrites a release date only when --overwrite-field names it', () => {
+    const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map((row, i) => ({ id: `${collection}-${i}`, data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
+    const tv = toCmsRecord('televisions', fixtures.televisions[0]!);
+    const catalog = { ...fixtures, televisions: [{ ...fixtures.televisions[0]!, release_date: '2025-05-15' }, ...fixtures.televisions.slice(1)] };
+    const monthOnly = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, release_date: '2025-05' } }, ...rows.televisions.slice(1)] };
+    expect(() => buildImportPlan(catalog, monthOnly, { fillBlanks: true })).toThrow('既存データと異なる');
+    const plan = buildImportPlan(catalog, monthOnly, { fillBlanks: true, overwriteFields: ['release_date'] });
+    expect(plan.fill).toEqual([{ collection: 'televisions', key: fixtures.televisions[0]!.id, id: 'cms-tv', fields: { release_date: '2025-05-15' }, previous: { release_date: '2025-05' } }]);
+    const otherChange = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, model: 'FICTION-CHANGED', release_date: '2025-05' } }, ...rows.televisions.slice(1)] };
+    expect(() => buildImportPlan(catalog, otherChange, { fillBlanks: true, overwriteFields: ['release_date'] })).toThrow('既存データと異なる');
   });
   it('keeps drafts as drafts, skips published entries, and verifies every fill', async () => {
     const stored: Record<string, { status: string; data: Record<string, unknown> }> = {

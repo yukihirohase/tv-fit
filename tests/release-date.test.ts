@@ -8,7 +8,7 @@ const base = {
 
 describe('television release date', () => {
   it('accepts a full date or a month', () => {
-    for (const release_date of ['2025-06-07', '2025-06']) {
+    for (const release_date of ['2025-06-07', '2025-06-上旬', '2025-06-中旬', '2025-06-下旬', '2025-06']) {
       expect(televisionSchema.parse({ ...base, release_date }).release_date).toBe(release_date);
     }
   });
@@ -19,7 +19,7 @@ describe('television release date', () => {
   });
 
   it('rejects malformed or impossible dates', () => {
-    for (const release_date of ['2025/06/07', '2025-13', '2025-02-30', '2025-6-7']) {
+    for (const release_date of ['2025/06/07', '2025-13', '2025-02-30', '2025-6-7', '2025-06-末', '2025-06下旬', '2025-13-下旬']) {
       expect(() => televisionSchema.parse({ ...base, release_date })).toThrow();
     }
   });
@@ -27,5 +27,6 @@ describe('television release date', () => {
   it('formats dates for display', () => {
     expect(formatReleaseDate('2025-06-07')).toBe('2025年6月7日');
     expect(formatReleaseDate('2025-06')).toBe('2025年6月');
+    expect(formatReleaseDate('2025-11-下旬')).toBe('2025年11月下旬');
   });
 });
