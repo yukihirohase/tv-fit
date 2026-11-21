@@ -208,6 +208,18 @@ describe('registered hook behavior', () => {
     await expect(hook.handler({ collection: 'compatibility', isNew: true, content: { ...pair.data, television_id: 'fixture-tv-missing' } }, ctx)).rejects.toBeInstanceOf(ContentSaveRejectedError);
   });
 
+  it('does not read compatibility rows when a product change cannot affect them', async () => {
+    const hook = createPlugin().hooks['content:beforeSave']!;
+    const rows = snapshot();
+    const tv = rows.televisions[0]!;
+    const ctx = context(rows);
+    await hook.handler({ collection: 'televisions', id: tv.id, isNew: false, content: { release_date: '2025-06' } }, ctx).catch(() => undefined);
+    expect(ctx.content!.list).not.toHaveBeenCalledWith('compatibility', expect.anything());
+    const spec = context(rows);
+    await hook.handler({ collection: 'televisions', id: tv.id, isNew: false, content: { weight_kg: 999 } }, spec).catch(() => undefined);
+    expect(spec.content!.list).toHaveBeenCalledWith('compatibility', expect.anything());
+  });
+
   it('reads multiple catalog pages before checking the prospective write', async () => {
     const hook = createPlugin().hooks['content:beforeSave']!;
     const ctx = context(empty());

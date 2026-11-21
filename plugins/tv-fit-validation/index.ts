@@ -159,12 +159,40 @@ async function compatibilitySnapshot(event: ContentHookEvent, context: PluginCon
   return { ...snapshot, compatibility: [{ id: entry.id, status: entry.status, data }] };
 }
 
+/**
+ * テレビ・スタンドの保存／公開で、適合情報まで読む必要があるかを判断する。
+ * 適合情報の検証に効くのは管理ID・重量・VESA（スタンドは耐荷重・VESA）だけなので、
+ * それらが変わらない変更（発売日の追加など）では適合情報を読まずに検証する。
+ * 数千件の適合情報を毎回読むと、制限時間を超えて保存できなくなるため。
+ */
+const referentialFields: Record<'televisions' | 'stands', readonly string[]> = {
+  televisions: ['external_id', 'weight_kg', 'vesa_width_mm', 'vesa_height_mm'],
+  stands: ['external_id', 'max_weight_kg', 'vesa_patterns'],
+};
+function sameValue(a: unknown, b: unknown): boolean {
+  const norm = (v: unknown) => (v === undefined || v === '' ? null : typeof v === 'string' && v.trim() !== '' && !Number.isNaN(Number(v)) ? Number(v) : v);
+  return norm(a) === norm(b);
+}
+function needsCompatibility(collection: 'televisions' | 'stands', data: Record<string, unknown>, existing: ValidationEntry | undefined): boolean {
+  if (!existing) return false;
+  return referentialFields[collection].some(field => Object.hasOwn(data, field) && !sameValue(data[field], existing.data[field]));
+}
+async function productSnapshot(
+  context: PluginContext, mode: 'working' | 'published', collection: 'televisions' | 'stands', id: string | undefined, data: Record<string, unknown>,
+): Promise<ValidationSnapshot> {
+  const products = await collectSnapshot(context, mode, ['televisions', 'stands']);
+  const existing = id === undefined ? undefined : products[collection].find(entry => entry.id === id);
+  if (!needsCompatibility(collection, data, existing)) return products;
+  const { compatibility } = await collectSnapshot(context, mode, ['compatibility']);
+  return { ...products, compatibility };
+}
+
 async function beforeSave(event: ContentHookEvent, context: PluginContext): Promise<void> {
   if (!isCatalogCollection(event.collection)) return;
   try {
     const snapshot = event.collection === 'compatibility'
       ? await compatibilitySnapshot(event, context)
-      : await collectSnapshot(context, 'working');
+      : await productSnapshot(context, 'working', event.collection, event.id, event.content);
     if (!event.isNew && (!event.id || !snapshot[event.collection].some(entry => entry.id === event.id))) {
       throw new Error('更新対象のコンテンツを読み取れません。保存を中止しました。');
     }
@@ -200,10 +228,11 @@ export function createPlugin() {
             // 適合情報の公開は、その1行を公開済みのテレビ・スタンドに照らして検証する。
             // 公開済みの適合情報を毎回全件読むと、数千件で制限時間を超えるため。
             // 公開済み同士のペア重複は、一括公開（scripts/cms-import.ts --publish）が公開前に確認する。
-            const snapshot = event.collection === 'compatibility'
+            const mutation = policyMutation(event);
+            const snapshot = mutation.collection === 'compatibility'
               ? await collectSnapshot(context, 'published', ['televisions', 'stands'])
-              : await collectSnapshot(context, 'published');
-            validateCmsMutation(snapshot, policyMutation(event));
+              : await productSnapshot(context, 'published', mutation.collection, mutation.id, mutation.data);
+            validateCmsMutation(snapshot, mutation);
             return undefined;
           } catch (error) {
             return { cancel: true as const, reason: boundedReason(error) };
