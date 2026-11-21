@@ -40,9 +40,7 @@ export const televisionSchema = z.object({
   vesa_height_mm: positive(5000, true),
   source_url: nullableUrl,
   release_date: releaseDate,
-  release_source_url: nullableUrl,
-}).strict().refine((tv) => (tv.vesa_width_mm === null) === (tv.vesa_height_mm === null), 'VESAの幅と高さは両方指定するか両方空欄にしてください')
-  .refine((tv) => tv.release_date === null || tv.release_source_url !== null, '発売日を入れるときは、出典（release_source_url）も指定してください');
+}).strict().refine((tv) => (tv.vesa_width_mm === null) === (tv.vesa_height_mm === null), 'VESAの幅と高さは両方指定するか両方空欄にしてください');
 
 export const standSchema = z.object({
   id,
@@ -90,7 +88,7 @@ function fixtureUrl(value: string): boolean {
 }
 
 export const csvColumns = {
-  televisions: ['id', 'manufacturer', 'model', 'screen_inches', 'weight_kg', 'vesa_width_mm', 'vesa_height_mm', 'source_url', 'release_date', 'release_source_url'],
+  televisions: ['id', 'manufacturer', 'model', 'screen_inches', 'weight_kg', 'vesa_width_mm', 'vesa_height_mm', 'source_url', 'release_date'],
   stands: ['id', 'manufacturer', 'sku', 'stand_type', 'max_weight_kg', 'vesa_patterns', 'source_url', 'product_url'],
   compatibility: ['television_id', 'stand_id', 'status', 'evidence_type', 'evidence_url', 'checked_at', 'notes'],
 } as const;

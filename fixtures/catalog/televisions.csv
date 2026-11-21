@@ -1,4 +1,4 @@
-id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url,release_date,release_source_url
-fixture-tv-one,架空メーカー,FICTION-43-A,43,9.5,200,200,https://television.invalid/spec-one,,
-fixture-tv-two,架空メーカー,FICTION-55-B,55,16,300,200,https://television.invalid/spec-two,,
-fixture-tv-thin,架空メーカー,FICTION-UNKNOWN,,,,,,,
+id,manufacturer,model,screen_inches,weight_kg,vesa_width_mm,vesa_height_mm,source_url,release_date
+fixture-tv-one,架空メーカー,FICTION-43-A,43,9.5,200,200,https://television.invalid/spec-one,
+fixture-tv-two,架空メーカー,FICTION-55-B,55,16,300,200,https://television.invalid/spec-two,
+fixture-tv-thin,架空メーカー,FICTION-UNKNOWN,,,,,,
