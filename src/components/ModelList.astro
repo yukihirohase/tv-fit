@@ -1,23 +1,47 @@
 ---
 import Icon from './Icon.astro';
 import { televisionPath, type Television } from '../lib/data';
+import { screenSizeOptions } from '../lib/model-filter';
 interface Props {
   televisions: Television[];
   manufacturerName: string;
 }
 const { televisions, manufacturerName } = Astro.props;
+const sizes = screenSizeOptions(televisions.map(television => television.screen_inches));
 ---
-<ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
-  {televisions.map(television => <li>
-    <a class="model-card" data-model-link data-tv-result-link data-tv-id={television.id} data-manufacturer={television.manufacturer} href={televisionPath(television)}>
-      <div class="model-card-body"><span class="model-card-name">{television.model}</span>
-        <span class="model-card-specs">
-          {television.screen_inches !== null && <span>{television.screen_inches}インチ</span>}
-          {television.vesa_width_mm !== null && television.vesa_height_mm !== null && <span>VESA {television.vesa_width_mm} × {television.vesa_height_mm} mm</span>}
-        </span>
-        <span class="model-card-action">対応情報を見る</span>
-      </div>
-      <Icon name="arrow" size={19}/>
-    </a>
-  </li>)}
-</ul>
+<div class="model-filter-root" data-model-filter-root>
+  <form class="model-filter" role="search" aria-label={`${manufacturerName}の型番を絞り込む`}>
+    <div class="model-filter-field model-filter-query">
+      <label for="model-filter-query">型番で絞り込む</label>
+      <input id="model-filter-query" type="search" data-model-filter-query placeholder="例：55X80L" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"/>
+    </div>
+    <div class="model-filter-field model-filter-size">
+      <label for="model-filter-size">画面サイズ</label>
+      <select id="model-filter-size" data-model-filter-size>
+        <option value="">すべてのサイズ</option>
+        {sizes.map(size => <option value={String(size)}>{size}インチ</option>)}
+      </select>
+    </div>
+    <button type="button" class="model-filter-reset" data-model-filter-reset hidden>条件をクリア</button>
+  </form>
+  <p class="model-filter-hint">型番の一部だけでも探せます。ハイフンなどの記号、大文字・小文字、全角・半角の違いは区別しません。</p>
+  <p class="model-filter-status" data-model-filter-status role="status" aria-live="polite">{televisions.length}件の型番を表示しています。</p>
+  <ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
+    {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)}>
+      <a class="model-card" data-model-link data-tv-result-link data-tv-id={television.id} data-manufacturer={television.manufacturer} href={televisionPath(television)}>
+        <div class="model-card-body"><span class="model-card-name">{television.model}</span>
+          <span class="model-card-specs">
+            {television.screen_inches !== null && <span>{television.screen_inches}インチ</span>}
+            {television.vesa_width_mm !== null && television.vesa_height_mm !== null && <span>VESA {television.vesa_width_mm} × {television.vesa_height_mm} mm</span>}
+          </span>
+          <span class="model-card-action">対応情報を見る</span>
+        </div>
+        <Icon name="arrow" size={19}/>
+      </a>
+    </li>)}
+  </ul>
+  <p class="model-filter-empty" data-model-filter-empty hidden>条件に合う型番がありません。型番の一部を短くするか、画面サイズを「すべてのサイズ」に戻してお試しください。</p>
+</div>
+<script>
+  import '../scripts/model-filter';
+</script>
