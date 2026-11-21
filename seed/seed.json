@@ -112,6 +112,24 @@
           "type": "url",
           "translatable": false,
           "required": false
+        },
+        {
+          "slug": "release_date",
+          "label": "発売日（YYYY-MM-DD または YYYY-MM）",
+          "type": "string",
+          "translatable": false,
+          "required": false,
+          "validation": {
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-\\d{2})?$",
+            "maxLength": 10
+          }
+        },
+        {
+          "slug": "release_source_url",
+          "label": "発売日の出典URL",
+          "type": "url",
+          "translatable": false,
+          "required": false
         }
       ]
     },

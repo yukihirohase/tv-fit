@@ -22,6 +22,12 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/u).refine((value) => {
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }, '実在する日付を指定してください');
 const nullableDate = z.preprocess((value) => value === '' || value === undefined ? null : value, date.nullable());
+/** 発売日。日まで公表されていれば YYYY-MM-DD、月までなら YYYY-MM。 */
+const releaseDate = z.preprocess((value) => value === '' || value === undefined ? null : value, z.string().regex(/^\d{4}-(0[1-9]|1[0-2])(-\d{2})?$/u, '発売日は YYYY-MM-DD か YYYY-MM で指定してください').refine((value) => {
+  if (value.length === 7) return true;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
+}, '実在する日付を指定してください').nullable());
 const vesaPattern = z.object({ width: z.number().int().positive().max(5000), height: z.number().int().positive().max(5000) }).strict();
 
 export const televisionSchema = z.object({
@@ -33,7 +39,10 @@ export const televisionSchema = z.object({
   vesa_width_mm: positive(5000, true),
   vesa_height_mm: positive(5000, true),
   source_url: nullableUrl,
-}).strict().refine((tv) => (tv.vesa_width_mm === null) === (tv.vesa_height_mm === null), 'VESAの幅と高さは両方指定するか両方空欄にしてください');
+  release_date: releaseDate,
+  release_source_url: nullableUrl,
+}).strict().refine((tv) => (tv.vesa_width_mm === null) === (tv.vesa_height_mm === null), 'VESAの幅と高さは両方指定するか両方空欄にしてください')
+  .refine((tv) => tv.release_date === null || tv.release_source_url !== null, '発売日を入れるときは、出典（release_source_url）も指定してください');
 
 export const standSchema = z.object({
   id,
@@ -81,7 +90,7 @@ function fixtureUrl(value: string): boolean {
 }
 
 export const csvColumns = {
-  televisions: ['id', 'manufacturer', 'model', 'screen_inches', 'weight_kg', 'vesa_width_mm', 'vesa_height_mm', 'source_url'],
+  televisions: ['id', 'manufacturer', 'model', 'screen_inches', 'weight_kg', 'vesa_width_mm', 'vesa_height_mm', 'source_url', 'release_date', 'release_source_url'],
   stands: ['id', 'manufacturer', 'sku', 'stand_type', 'max_weight_kg', 'vesa_patterns', 'source_url', 'product_url'],
   compatibility: ['television_id', 'stand_id', 'status', 'evidence_type', 'evidence_url', 'checked_at', 'notes'],
 } as const;
@@ -162,4 +171,10 @@ export function isIndexableTelevision(tv: Television, catalog: Catalog, exclusio
     tv.source_url !== null && !fixtureUrl(tv.source_url) &&
     tv.screen_inches !== null && tv.weight_kg !== null && tv.vesa_width_mm !== null && tv.vesa_height_mm !== null &&
     catalog.compatibility.some((entry) => entry.television_id === tv.id && entry.status !== 'unknown' && entry.evidence_url !== null && entry.checked_at !== null);
+}
+
+/** 発売日の表示（2025-06-07 → 2025年6月7日、2025-06 → 2025年6月）。 */
+export function formatReleaseDate(value: string): string {
+  const [year, month, day] = value.split('-');
+  return `${Number(year)}年${Number(month)}月${day ? `${Number(day)}日` : ''}`;
 }
