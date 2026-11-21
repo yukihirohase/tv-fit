@@ -47,7 +47,7 @@
 | `vesa_width_mm` |  | VESA 横（mm、整数）。高さと両方入れるか両方空欄 | `300` の形式 |
 | `vesa_height_mm` |  | VESA 縦（mm、整数） | `200` の形式 |
 | `source_url` |  | メーカー公式の仕様ページ | `https://…` |
-| `release_date` |  | 発売日。日まで公表されていれば `YYYY-MM-DD`、月までなら `YYYY-MM`（「6月中旬」など日が決まらないものは月まで）。発表日・予約開始日ではなく**発売日**。未来日も可。出典（メーカー公式のニュースリリースなど）は CMS には持たず、`docs/release-date-sources.csv` に記録する | `2025-06-07` / `2025-06` |
+| `release_date` |  | 発売日。日まで公表されていれば `YYYY-MM-DD`、月までなら `YYYY-MM`（「6月中旬」など日が決まらないものは月まで）。発表日・予約開始日ではなく**発売日**。未来日も可。出典は価格.comの商品ページの「発売日」を優先し、載っていなければメーカー公式のニュースリリースなどを使う。出典は CMS には持たず、`docs/release-date-sources.csv` に記録する。CMSに入っている発売日を直すときは「CMS import」を `fill_blanks`・`include_published`・`overwrite_release_date` をオンにして手動実行する | `2025-06-07` / `2025-06` |
 
 ### stands.csv
 

@@ -12,7 +12,9 @@ export interface ImportItem {
   key: string;
   data: Record<string, unknown>;
 }
-export interface FillItem { collection: CmsCollection; key: string; id: string; fields: Record<string, unknown> }
+export interface FillItem { collection: CmsCollection; key: string; id: string; fields: Record<string, unknown>; previous?: Record<string, unknown> }
+/** Fields that --overwrite-field may replace when the CMS already has a value. */
+export const overwritableFields = ['release_date'] as const;
 export interface ImportPlan { create: ImportItem[]; skipped: number; fill: FillItem[] }
 type Fetch = typeof globalThis.fetch;
 interface ApiOptions { origin: string; token: string; fetch?: Fetch; retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }
@@ -45,19 +47,22 @@ function equivalent(a: Record<string, unknown>, b: Record<string, unknown>): boo
 
 /** Preserve existing content. A retry skips identical rows; changes need editor review. */
 /** Fields that are blank in the CMS and filled in the CSV; null when anything else differs. */
-function blankFills(previous: Record<string, unknown>, next: Record<string, unknown>): Record<string, unknown> | null {
+function blankFills(previous: Record<string, unknown>, next: Record<string, unknown>, overwrite: ReadonlySet<string> = new Set()): { fields: Record<string, unknown>; previous: Record<string, unknown> } | null {
   const fields: Record<string, unknown> = {};
+  const before: Record<string, unknown> = {};
   for (const key of new Set([...Object.keys(previous), ...Object.keys(next)])) {
-    const before = previous[key] ?? null;
+    const old = previous[key] ?? null;
     const after = next[key] ?? null;
-    if (before === after) continue;
-    if (before !== null || after === null) return null;
+    if (old === after) continue;
+    if (after === null || (old !== null && !overwrite.has(key))) return null;
     fields[key] = after;
+    before[key] = old;
   }
-  return fields;
+  return { fields, previous: before };
 }
 
-export function buildImportPlan(catalog: Catalog, existing?: CmsCatalogRows, options: { fillBlanks?: boolean } = {}): ImportPlan {
+export function buildImportPlan(catalog: Catalog, existing?: CmsCatalogRows, options: { fillBlanks?: boolean; overwriteFields?: readonly string[] } = {}): ImportPlan {
+  const overwrite = new Set(options.overwriteFields ?? []);
   const plan: ImportPlan = { create: [], skipped: 0, fill: [] };
   for (const collection of catalogCollections) {
     const ids = new Map<string, string | undefined>();
@@ -77,10 +82,10 @@ export function buildImportPlan(catalog: Catalog, existing?: CmsCatalogRows, opt
       const previous = byKey.get(key);
       if (previous) {
         if (equivalent(previous, data)) { plan.skipped += 1; continue; }
-        const fields = options.fillBlanks ? blankFills(previous, data) : null;
+        const fill = options.fillBlanks ? blankFills(previous, data, overwrite) : null;
         const id = ids.get(key);
-        if (!fields || !id) throw new Error(`${collection}/${key}: 既存データと異なるため取込を中止しました。管理画面で確認してください。`);
-        plan.fill.push({ collection, key, id, fields });
+        if (!fill || !id) throw new Error(`${collection}/${key}: 既存データと異なるため取込を中止しました。管理画面で確認してください。`);
+        plan.fill.push({ collection, key, id, fields: fill.fields, previous: fill.previous });
       } else plan.create.push({ collection, key, data });
     }
   }
@@ -199,7 +204,8 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
     if (typeof current.status !== 'string' || !allowed.includes(current.status)) { published.push(item.key); continue; }
     for (const [field, value] of Object.entries(item.fields)) {
       const now = current.data[field] ?? null;
-      if (now !== null && now !== value) throw new Error(`${item.collection}/${item.key}: CMSの${field}が空欄ではなくなっているため中止しました。`);
+      const expected = item.previous?.[field] ?? null;
+      if (now !== null && now !== value && now !== expected) throw new Error(`${item.collection}/${item.key}: CMSの${field}が取込計画の作成後に変わったため中止しました。`);
     }
     // EmDash: send only the changed fields with the read's _rev. Saving a published entry
     // stages a draft while the live version stays; publish it to keep the entry published.
@@ -220,7 +226,7 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
       }
     }
     filled += 1;
-    console.log(`空欄補完 ${filled}件目: ${item.collection}/${item.key} [${String(current.status)}] (${Object.keys(item.fields).join(', ')})`);
+    console.log(`空欄補完 ${filled}件目: ${item.collection}/${item.key} [${String(current.status)}] (${Object.entries(item.fields).map(([field, value]) => item.previous?.[field] != null ? `${field}: ${String(item.previous[field])} → ${String(value)}` : field).join(', ')})`);
     if (options.writeIntervalMs !== 0) await sleep(options.writeIntervalMs ?? 300);
   }
   return { filled, published };
@@ -269,13 +275,18 @@ export async function applyPublishPlan(plan: PublishPlan, options: ApiOptions, l
 }
 
 export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = process.env): Promise<void> {
-  const valued = ['--directory', '--fill-limit', '--publish-limit'];
+  const valued = ['--directory', '--fill-limit', '--publish-limit', '--overwrite-field'];
   const unknown = args.filter((arg, index) => !['--apply', '--fill-blanks', '--include-published', '--publish-compatibility', ...valued].includes(arg) && !valued.includes(args[index - 1] ?? ''));
-  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--include-published] [--fill-limit N]] [--publish-compatibility [--publish-limit N]]');
+  if (unknown.length) throw new Error('使用方法: npm run cms:import -- [--directory data] [--apply] [--fill-blanks [--include-published] [--fill-limit N] [--overwrite-field release_date]] [--publish-compatibility [--publish-limit N]]');
   const publishIndex = args.indexOf('--publish-limit');
   const publishLimit = publishIndex >= 0 ? Number(args[publishIndex + 1]) : Infinity;
   if (publishIndex >= 0 && (!Number.isInteger(publishLimit) || publishLimit < 1)) throw new Error('--publish-limitには1以上の整数を指定してください。');
   const fillBlanks = args.includes('--fill-blanks');
+  const overwriteFields = args.flatMap((arg, index) => arg === '--overwrite-field' ? [args[index + 1] ?? ''] : []);
+  for (const field of overwriteFields) {
+    if (!(overwritableFields as readonly string[]).includes(field)) throw new Error(`--overwrite-fieldに指定できるのは ${overwritableFields.join(', ')} だけです。`);
+  }
+  if (overwriteFields.length && !fillBlanks) throw new Error('--overwrite-fieldは--fill-blanksと一緒に指定してください。');
   const limitIndex = args.indexOf('--fill-limit');
   const fillLimit = limitIndex >= 0 ? Number(args[limitIndex + 1]) : Infinity;
   if (limitIndex >= 0 && (!Number.isInteger(fillLimit) || fillLimit < 1)) throw new Error('--fill-limitには1以上の整数を指定してください。');
@@ -302,7 +313,7 @@ export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = proc
     console.log(`公開完了: ${count}件を公開しました（残り ${publishPlan.publish.length - count}件）。`);
     return;
   }
-  const plan = buildImportPlan(catalog, existing, { fillBlanks });
+  const plan = buildImportPlan(catalog, existing, { fillBlanks, overwriteFields });
   try {
     if (plan.fill.length) {
       console.log(`空欄補完の対象 ${plan.fill.length}件${Number.isFinite(fillLimit) ? `（今回は最大${fillLimit}件）` : ''}`);

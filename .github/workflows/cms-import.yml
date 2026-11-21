@@ -22,6 +22,10 @@ on:
         description: '空欄補完で公開済みの項目も対象にする（公開状態のまま空欄だけ埋める）'
         type: boolean
         default: false
+      overwrite_release_date:
+        description: '空欄補完で、CMSに入っている発売日もCSVの値で上書きする（発売日以外は変更しない）'
+        type: boolean
+        default: false
       fill_limit:
         description: '空欄補完の最大件数（試行用。空欄なら全件）'
         type: string
@@ -74,6 +78,7 @@ jobs:
         env:
           FILL_BLANKS: ${{ inputs.fill_blanks && '--fill-blanks' || '' }}
           INCLUDE_PUBLISHED: ${{ inputs.fill_blanks && inputs.include_published && '--include-published' || '' }}
+          OVERWRITE: ${{ inputs.fill_blanks && inputs.overwrite_release_date && '--overwrite-field release_date' || '' }}
           FILL_LIMIT: ${{ inputs.fill_limit && format('--fill-limit {0}', inputs.fill_limit) || '' }}
           PUBLISH: ${{ inputs.publish_compatibility && '--publish-compatibility' || '' }}
           PUBLISH_LIMIT: ${{ inputs.publish_compatibility && inputs.publish_limit && format('--publish-limit {0}', inputs.publish_limit) || '' }}
@@ -86,6 +91,7 @@ jobs:
           IN_FILL_BLANKS: ${{ inputs.fill_blanks || false }}
           IN_INCLUDE_PUBLISHED: ${{ inputs.include_published || false }}
           IN_FILL_LIMIT: ${{ inputs.fill_limit || '' }}
+          IN_OVERWRITE: ${{ inputs.overwrite_release_date || false }}
         shell: bash
         run: |
           set -o pipefail
@@ -98,7 +104,7 @@ jobs:
             next=$((CHAIN + 1))
             echo "時間の上限に近いため、続きを新しい実行（${next}回目の継続）に引き継ぎます。"
             gh workflow run cms-import.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" \
-              -f chain="$next" -f fill_blanks="$IN_FILL_BLANKS" -f include_published="$IN_INCLUDE_PUBLISHED" -f fill_limit="$IN_FILL_LIMIT" \
+              -f chain="$next" -f fill_blanks="$IN_FILL_BLANKS" -f include_published="$IN_INCLUDE_PUBLISHED" -f fill_limit="$IN_FILL_LIMIT" -f overwrite_release_date="$IN_OVERWRITE" \
               -f publish_compatibility="$IN_PUBLISH" -f publish_limit="$IN_PUBLISH_LIMIT"
             exit 0
           }
@@ -109,7 +115,7 @@ jobs:
             [ "$remaining" -le 120 ] && continue_next
             echo "::group::取込 ${attempt}回目（残り約$((remaining / 60))分）"
             set +e
-            timeout "${remaining}s" npm run cms:import -- --directory data --apply $FILL_BLANKS $INCLUDE_PUBLISHED $FILL_LIMIT $PUBLISH $PUBLISH_LIMIT 2>&1 | tee import.log
+            timeout "${remaining}s" npm run cms:import -- --directory data --apply $FILL_BLANKS $INCLUDE_PUBLISHED $OVERWRITE $FILL_LIMIT $PUBLISH $PUBLISH_LIMIT 2>&1 | tee import.log
             status=${PIPESTATUS[0]}
             set -e
             echo "::endgroup::"
