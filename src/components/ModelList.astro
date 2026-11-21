@@ -1,12 +1,16 @@
 ---
 import Icon from './Icon.astro';
-import { televisionPath, type Television } from '../lib/data';
-import { screenSizeOptions } from '../lib/model-filter';
+import { televisionPath, formatReleaseDate, type Television } from '../lib/data';
+import { screenSizeOptions, compareModels, releaseSortKey, modelSortOrders, modelSortLabels, defaultModelSortOrder } from '../lib/model-filter';
 interface Props {
   televisions: Television[];
   manufacturerName: string;
 }
-const { televisions, manufacturerName } = Astro.props;
+const { televisions: unsorted, manufacturerName } = Astro.props;
+const televisions = [...unsorted].sort((a, b) => compareModels(
+  { model: a.model, size: a.screen_inches, release: releaseSortKey(a.release_date) },
+  { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date) },
+));
 const sizes = screenSizeOptions(televisions.map(television => television.screen_inches));
 ---
 <div class="model-filter-root" data-model-filter-root>
@@ -22,17 +26,24 @@ const sizes = screenSizeOptions(televisions.map(television => television.screen_
         {sizes.map(size => <option value={String(size)}>{size}インチ</option>)}
       </select>
     </div>
+    <div class="model-filter-field model-filter-sort">
+      <label for="model-filter-sort">並び順</label>
+      <select id="model-filter-sort" data-model-filter-sort>
+        {modelSortOrders.map(order => <option value={order} selected={order === defaultModelSortOrder}>{modelSortLabels[order]}</option>)}
+      </select>
+    </div>
     <button type="button" class="model-filter-reset" data-model-filter-reset hidden>条件をクリア</button>
   </form>
   <p class="model-filter-hint">型番の一部だけでも探せます。ハイフンなどの記号、大文字・小文字、全角・半角の違いは区別しません。</p>
   <p class="model-filter-status" data-model-filter-status role="status" aria-live="polite">{televisions.length}件の型番を表示しています。</p>
   <ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
-    {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)}>
+    {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)} data-release={television.release_date ?? ''}>
       <a class="model-card" data-model-link data-tv-result-link data-tv-id={television.id} data-manufacturer={television.manufacturer} href={televisionPath(television)}>
         <div class="model-card-body"><span class="model-card-name">{television.model}</span>
           <span class="model-card-specs">
             {television.screen_inches !== null && <span>{television.screen_inches}インチ</span>}
             {television.vesa_width_mm !== null && television.vesa_height_mm !== null && <span>VESA {television.vesa_width_mm} × {television.vesa_height_mm} mm</span>}
+            {television.release_date && <span>{formatReleaseDate(television.release_date)}発売</span>}
           </span>
           <span class="model-card-action">対応情報を見る</span>
         </div>
