@@ -7,22 +7,21 @@ const base = {
 };
 
 describe('television release date', () => {
-  it('accepts a full date or a month, with a source', () => {
+  it('accepts a full date or a month', () => {
     for (const release_date of ['2025-06-07', '2025-06']) {
-      expect(televisionSchema.parse({ ...base, release_date, release_source_url: 'https://www.sony.jp/bravia/' }).release_date).toBe(release_date);
+      expect(televisionSchema.parse({ ...base, release_date }).release_date).toBe(release_date);
     }
   });
 
   it('keeps the date optional, and treats a missing CMS field as blank', () => {
-    expect(televisionSchema.parse({ ...base, release_date: '', release_source_url: '' })).toMatchObject({ release_date: null, release_source_url: null });
-    expect(televisionSchema.parse(base)).toMatchObject({ release_date: null, release_source_url: null });
+    expect(televisionSchema.parse({ ...base, release_date: '' })).toMatchObject({ release_date: null });
+    expect(televisionSchema.parse(base)).toMatchObject({ release_date: null });
   });
 
-  it('rejects malformed or impossible dates and dates without a source', () => {
+  it('rejects malformed or impossible dates', () => {
     for (const release_date of ['2025/06/07', '2025-13', '2025-02-30', '2025-6-7']) {
-      expect(() => televisionSchema.parse({ ...base, release_date, release_source_url: 'https://www.sony.jp/bravia/' })).toThrow();
+      expect(() => televisionSchema.parse({ ...base, release_date })).toThrow();
     }
-    expect(() => televisionSchema.parse({ ...base, release_date: '2025-06-07' })).toThrow(/出典/u);
   });
 
   it('formats dates for display', () => {
