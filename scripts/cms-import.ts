@@ -15,7 +15,30 @@ export interface ImportItem {
 export interface FillItem { collection: CmsCollection; key: string; id: string; fields: Record<string, unknown>; previous?: Record<string, unknown> }
 /** Fields that --overwrite-field may replace when the CMS already has a value. */
 export const overwritableFields = ['release_date'] as const;
-export interface ImportPlan { create: ImportItem[]; skipped: number; fill: FillItem[] }
+/**
+ * upgrade: 適合情報を「仕様上の候補」から「確認済み」に上げる更新。CSVで status が candidate→confirmed に変わり、
+ * 根拠がメーカーの個別確認（manufacturer_individual / official_individual）のときだけ認める。
+ */
+export interface ImportPlan { create: ImportItem[]; skipped: number; fill: FillItem[]; upgrade: FillItem[] }
+const individualEvidence = new Set(['manufacturer_individual', 'official_individual']);
+
+/** 候補→確認済みの更新なら、変わる項目を返す（参照ID以外の根拠の列だけが変わる場合に限る）。 */
+function compatibilityUpgrade(previous: Record<string, unknown>, next: Record<string, unknown>): { fields: Record<string, unknown>; previous: Record<string, unknown> } | null {
+  if (previous.compatibility_status !== 'candidate' || next.compatibility_status !== 'confirmed') return null;
+  if (typeof next.evidence_type !== 'string' || !individualEvidence.has(next.evidence_type)) return null;
+  const changeable = new Set(['compatibility_status', 'evidence_type', 'evidence_url', 'checked_at', 'notes']);
+  const fields: Record<string, unknown> = {};
+  const before: Record<string, unknown> = {};
+  for (const key of new Set([...Object.keys(previous), ...Object.keys(next)])) {
+    const old = previous[key] ?? null;
+    const after = next[key] ?? null;
+    if (old === after) continue;
+    if (!changeable.has(key) || after === null) return null;
+    fields[key] = after;
+    before[key] = old;
+  }
+  return { fields, previous: before };
+}
 type Fetch = typeof globalThis.fetch;
 interface ApiOptions { origin: string; token: string; fetch?: Fetch; retryDelayMs?: number | undefined; writeIntervalMs?: number | undefined }
 
@@ -63,7 +86,7 @@ function blankFills(previous: Record<string, unknown>, next: Record<string, unkn
 
 export function buildImportPlan(catalog: Catalog, existing?: CmsCatalogRows, options: { fillBlanks?: boolean; overwriteFields?: readonly string[] } = {}): ImportPlan {
   const overwrite = new Set(options.overwriteFields ?? []);
-  const plan: ImportPlan = { create: [], skipped: 0, fill: [] };
+  const plan: ImportPlan = { create: [], skipped: 0, fill: [], upgrade: [] };
   for (const collection of catalogCollections) {
     const ids = new Map<string, string | undefined>();
     const byKey = new Map<string, Record<string, unknown>>();
@@ -82,8 +105,10 @@ export function buildImportPlan(catalog: Catalog, existing?: CmsCatalogRows, opt
       const previous = byKey.get(key);
       if (previous) {
         if (equivalent(previous, data)) { plan.skipped += 1; continue; }
-        const fill = options.fillBlanks ? blankFills(previous, data, overwrite) : null;
         const id = ids.get(key);
+        const upgrade = collection === 'compatibility' ? compatibilityUpgrade(previous, data) : null;
+        if (upgrade && id) { plan.upgrade.push({ collection, key, id, fields: upgrade.fields, previous: upgrade.previous }); continue; }
+        const fill = options.fillBlanks ? blankFills(previous, data, overwrite) : null;
         if (!fill || !id) throw new Error(`${collection}/${key}: 既存データと異なるため取込を中止しました。管理画面で確認してください。`);
         plan.fill.push({ collection, key, id, fields: fill.fields, previous: fill.previous });
       } else plan.create.push({ collection, key, data });
@@ -159,7 +184,7 @@ export async function listExistingCmsRows(options: ApiOptions, status: 'all' | '
   return rows;
 }
 
-export async function applyImportPlan(plan: ImportPlan, options: ApiOptions): Promise<number> {
+export async function applyImportPlan(plan: Pick<ImportPlan, 'create'>, options: ApiOptions): Promise<number> {
   const api = { ...authenticated(options), writeIntervalMs: options.writeIntervalMs };
   let created = 0;
   for (const item of plan.create) {
@@ -192,7 +217,7 @@ function itemOf(data: Record<string, unknown>): { status?: unknown; data: Record
  * Fill CMS fields that are still blank. Drafts only by default (published entries with
  * includePublished); the status is kept, and every write is read back; anything unexpected stops the run.
  */
-export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit = Infinity, includePublished = false): Promise<{ filled: number; published: string[] }> {
+export async function applyFillPlan(plan: Pick<ImportPlan, 'fill'>, options: ApiOptions, limit = Infinity, includePublished = false, label = '空欄補完'): Promise<{ filled: number; published: string[] }> {
   const api = authenticated(options);
   let filled = 0;
   const published: string[] = [];
@@ -226,7 +251,7 @@ export async function applyFillPlan(plan: ImportPlan, options: ApiOptions, limit
       }
     }
     filled += 1;
-    console.log(`空欄補完 ${filled}件目: ${item.collection}/${item.key} [${String(current.status)}] (${Object.entries(item.fields).map(([field, value]) => item.previous?.[field] != null ? `${field}: ${String(item.previous[field])} → ${String(value)}` : field).join(', ')})`);
+    console.log(`${label} ${filled}件目: ${item.collection}/${item.key} [${String(current.status)}] (${Object.entries(item.fields).map(([field, value]) => item.previous?.[field] != null ? `${field}: ${String(item.previous[field])} → ${String(value)}` : field).join(', ')})`);
     if (options.writeIntervalMs !== 0) await sleep(options.writeIntervalMs ?? 300);
   }
   return { filled, published };
@@ -315,6 +340,13 @@ export async function runCmsImport(args: string[], env: NodeJS.ProcessEnv = proc
   }
   const plan = buildImportPlan(catalog, existing, { fillBlanks, overwriteFields });
   try {
+    if (plan.upgrade.length) {
+      // 公開済みの候補も更新する（公開状態は保つ）。候補→確認済み以外の変更はここに入らない。
+      console.log(`適合区分の更新（候補→確認済み）の対象 ${plan.upgrade.length}件`);
+      const result = await applyFillPlan({ fill: plan.upgrade }, options, Infinity, true, '適合区分の更新');
+      console.log(`適合区分の更新: ${result.filled}件。`);
+      if (result.published.length) console.log(`::warning::下書き・公開以外の状態のため更新しなかった項目: ${result.published.join(', ')}。管理画面で更新してください。`);
+    }
     if (plan.fill.length) {
       console.log(`空欄補完の対象 ${plan.fill.length}件${Number.isFinite(fillLimit) ? `（今回は最大${fillLimit}件）` : ''}`);
       const result = await applyFillPlan(plan, options, fillLimit, args.includes('--include-published'));

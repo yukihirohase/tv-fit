@@ -22,6 +22,7 @@
 - 同じ ID（適合情報はテレビID＋スタンドIDの組）で **同じ内容** の行は、2回目以降スキップされる。何度実行しても重複しない。
 - 同じ ID で **内容が違う** 行があると、書き込む前に全体を中止する。既に登録済みのデータの修正は管理画面で行い、CSV 側も同じ内容に直しておく。
 - 下書きが既に CMS にある行も「登録済み」とみなす。
+- 例外：適合情報を `candidate` から `confirmed`（根拠が `manufacturer_individual` / `official_individual`）に上げた行は、中止せずに CMS の該当項目を更新する。公開済みなら公開のまま反映される。格下げや他の変更は従来どおり中止する。
 
 ## 初回だけ必要な設定（API トークン）
 
@@ -84,6 +85,14 @@
 | `unknown` | 判断できない | `insufficient` など |
 
 VESA と重量が合っているだけでは `confirmed` にしない（`candidate`）。
+
+### 候補を確認済みにする（定期調査）
+
+`node scripts/find-confirmable.mjs > hits.json` で、全 `candidate` をサンワサプライ公式の対応表（sanwa.co.jp の「対応表」タブ、サンワダイレクトの `taiou` ページ）と照合する（読み取りのみ）。
+
+- `confirmable`：対応表で「◯（対応）」または対応機種一覧に掲載。対応表を開いて型番・VESA を確かめてから `confirmed` / `manufacturer_individual` に直し、`evidence_url` を対応表の URL、`checked_at` を確認日にする。
+- `incompatible`：対応表で「×」。`incompatible` に直す候補（要確認）。
+- `conditional`：「◯※（条件付き）」。条件の内容を確かめるまで `candidate` のままにする。
 
 ## 守ること
 
