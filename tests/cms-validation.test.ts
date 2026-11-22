@@ -220,6 +220,20 @@ describe('registered hook behavior', () => {
     expect(spec.content!.list).toHaveBeenCalledWith('compatibility', expect.anything());
   });
 
+  it('does not read compatibility rows when filling the VESA of a television that had none', async () => {
+    const hook = createPlugin().hooks['content:beforeSave']!;
+    const rows = snapshot();
+    const tv = rows.televisions[0]!;
+    const blank = { ...rows, televisions: [{ ...tv, data: { ...tv.data, vesa_width_mm: null, vesa_height_mm: null } }, ...rows.televisions.slice(1)] };
+    const ctx = context(blank);
+    await hook.handler({ collection: 'televisions', id: tv.id, isNew: false, content: { vesa_width_mm: 300, vesa_height_mm: 300 } }, ctx).catch(() => undefined);
+    expect(ctx.content!.list).not.toHaveBeenCalledWith('compatibility', expect.anything());
+    // 管理IDを変える場合は、空欄があっても適合情報を確認する。
+    const renamed = context(blank);
+    await hook.handler({ collection: 'televisions', id: tv.id, isNew: false, content: { external_id: 'fixture-renamed', vesa_width_mm: 300, vesa_height_mm: 300 } }, renamed).catch(() => undefined);
+    expect(renamed.content!.list).toHaveBeenCalledWith('compatibility', expect.anything());
+  });
+
   it('reads multiple catalog pages before checking the prospective write', async () => {
     const hook = createPlugin().hooks['content:beforeSave']!;
     const ctx = context(empty());
