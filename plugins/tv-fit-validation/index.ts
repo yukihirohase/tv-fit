@@ -173,9 +173,17 @@ function sameValue(a: unknown, b: unknown): boolean {
   const norm = (v: unknown) => (v === undefined || v === '' ? null : typeof v === 'string' && v.trim() !== '' && !Number.isNaN(Number(v)) ? Number(v) : v);
   return norm(a) === norm(b);
 }
+const isBlank = (value: unknown) => value === undefined || value === null || value === '';
 function needsCompatibility(collection: 'televisions' | 'stands', data: Record<string, unknown>, existing: ValidationEntry | undefined): boolean {
   if (!existing) return false;
-  return referentialFields[collection].some(field => Object.hasOwn(data, field) && !sameValue(data[field], existing.data[field]));
+  const changed = referentialFields[collection].filter(field => Object.hasOwn(data, field) && !sameValue(data[field], existing.data[field]));
+  if (changed.length === 0) return false;
+  // 仕様上の候補（candidate）は、本体質量と VESA がそろったテレビにしか存在できない。
+  // そのどれかが空欄だったテレビは候補から参照されていないので、管理IDを変えない限り
+  // 空欄を埋めても既存の適合情報に影響しない（数千件を読むと制限時間を超えるため読まない）。
+  if (collection === 'televisions' && !changed.includes('external_id')
+    && ['weight_kg', 'vesa_width_mm', 'vesa_height_mm'].some(field => isBlank(existing.data[field]))) return false;
+  return true;
 }
 async function productSnapshot(
   context: PluginContext, mode: 'working' | 'published', collection: 'televisions' | 'stands', id: string | undefined, data: Record<string, unknown>,
