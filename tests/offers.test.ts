@@ -78,10 +78,10 @@ describe('チェック結果から記録を更新する', () => {
     const respond = (body: string, status = 200) => vi.fn(async () => new Response(body, { status })) as unknown as typeof fetch;
     expect(await observeOffer(base.url, respond(productPage()))).toMatchObject({ kind: 'found' });
     expect(await observeOffer(base.url, respond('', 404))).toEqual({ kind: 'missing', detail: 'HTTP 404' });
-    expect(await observeOffer(base.url, respond('<html>top page</html>'))).toEqual({ kind: 'missing', detail: 'no Product data' });
+    expect(await observeOffer(base.url, respond('<html><title>Access Check</title>top page</html>'))).toEqual({ kind: 'missing', detail: expect.stringMatching(/^no Product data \(HTTP 200, .*title: Access Check\)$/) });
     expect(await observeOffer(base.url, respond('', 503))).toEqual({ kind: 'error', detail: 'HTTP 503' });
     const broken = vi.fn(async () => { throw new TypeError('network'); }) as unknown as typeof fetch;
-    expect(await observeOffer(base.url, broken)).toEqual({ kind: 'error', detail: 'TypeError' });
+    expect(await observeOffer(base.url, broken)).toEqual({ kind: 'error', detail: 'TypeError: network' });
   });
 });
 
@@ -153,6 +153,15 @@ describe('定期チェック', () => {
     expect(rows.get('sanwa-cr-last1:sanwa_direct')).toMatchObject({ price_jpy: 32800, availability: 'in_stock' });
     expect(rows.get('sanwa-gone:sanwa_direct')).toMatchObject({ missing_count: 1, availability: 'unknown' });
     expect(rows.has('removed-stand:sanwa_direct')).toBe(false);
+  });
+
+  it('1件も商品情報を読めなかった回は、見つからないと数えず一時的なエラーにする', async () => {
+    const { db, rows } = memoryDb([]);
+    const fetcher = vi.fn(async () => new Response('<html><title>Just a moment</title></html>')) as unknown as typeof fetch;
+    const stands = [{ id: 'a', product_url: base.url }, { id: 'b', product_url: 'https://direct.sanwa.co.jp/ItemPage/B' }];
+    const result = await runOfferCheck({ db, stands, fetcher, sleep: async () => undefined, now: () => t0 });
+    expect(result).toMatchObject({ checked: 2, found: 0, missing: 0, errors: 2 });
+    expect(rows.get('a:sanwa_direct')).toMatchObject({ missing_count: 0, error_count: 1, last_error: expect.stringContaining('全件で取得できず保留') });
   });
 
   it('スタンドが読めなかったときは記録を消さない', async () => {

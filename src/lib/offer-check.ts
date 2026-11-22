@@ -1,5 +1,5 @@
 import type { Stand } from './data';
-import { nextOffer, observeOffer, offerTargetUrl, shopForUrl } from './offers';
+import { nextOffer, observeOffer, offerTargetUrl, shopForUrl, type Observation, type Offer } from './offers';
 import { deleteOffer, ensureOffersTable, readOffers, saveOffer, type OfferDatabase } from './offer-store';
 
 export interface OfferCheckOptions {
@@ -25,6 +25,7 @@ export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCh
   const previous = new Map((await readOffers(db)).map(offer => [`${offer.stand_id}:${offer.shop}`, offer]));
   const result: OfferCheckResult = { checked: 0, found: 0, missing: 0, errors: 0, removed: 0 };
   const current = new Set<string>();
+  const observed: { key: string; base: Pick<Offer, 'stand_id' | 'shop' | 'url'>; observation: Observation; at: Date }[] = [];
   for (const stand of stands) {
     if (!stand.product_url) continue;
     const shop = shopForUrl(stand.product_url);
@@ -32,9 +33,17 @@ export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCh
     const url = offerTargetUrl(stand.product_url);
     const key = `${stand.id}:${shop}`;
     current.add(key);
-    if (result.checked > 0) await sleep(delayMs);
-    const observation = await observeOffer(url, fetcher);
-    await saveOffer(db, nextOffer(previous.get(key) ?? null, { stand_id: stand.id, shop, url }, observation, now()));
+    if (observed.length > 0) await sleep(delayMs);
+    observed.push({ key, base: { stand_id: stand.id, shop, url }, observation: await observeOffer(url, fetcher), at: now() });
+  }
+  // 1件も商品情報を読めなかった回は、販売店側の障害やアクセス制限とみなす。
+  // 「見つからない」を数えると全商品が販売終了扱いになってしまうため、一時的なエラーとして記録する。
+  const anyFound = observed.some(item => item.observation.kind === 'found');
+  for (const item of observed) {
+    const observation: Observation = !anyFound && observed.length > 1 && item.observation.kind === 'missing'
+      ? { kind: 'error', detail: `全件で取得できず保留: ${item.observation.detail}`.slice(0, 300) }
+      : item.observation;
+    await saveOffer(db, nextOffer(previous.get(item.key) ?? null, item.base, observation, item.at));
     result.checked += 1;
     if (observation.kind === 'found') result.found += 1;
     else if (observation.kind === 'missing') result.missing += 1;

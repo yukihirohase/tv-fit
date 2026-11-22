@@ -185,6 +185,12 @@ export function nextOffer(previous: Offer | null, base: Pick<Offer, 'stand_id' |
 }
 
 /** 販売ページを取得して結果を分類する。 */
+function bytesToLatin1(bytes: Uint8Array): string {
+  let text = '';
+  for (let i = 0; i < bytes.length; i += 8192) text += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  return text;
+}
+
 export async function observeOffer(url: string, fetcher: typeof fetch = fetch): Promise<Observation> {
   let response: Response;
   try {
@@ -194,14 +200,18 @@ export async function observeOffer(url: string, fetcher: typeof fetch = fetch): 
       signal: AbortSignal.timeout(20_000),
     });
   } catch (error) {
-    return { kind: 'error', detail: error instanceof Error ? error.name : 'fetch failed' };
+    return { kind: 'error', detail: error instanceof Error ? `${error.name}: ${error.message}`.slice(0, 200) : 'fetch failed' };
   }
   if (response.status === 404 || response.status === 410) return { kind: 'missing', detail: `HTTP ${response.status}` };
   if (!response.ok) return { kind: 'error', detail: `HTTP ${response.status}` };
-  // Shift_JIS のページでも、JSON-LD の価格・在庫・URL は ASCII なので latin1 で読めば十分。
-  const html = new TextDecoder('latin1').decode(await response.arrayBuffer());
+  // Shift_JIS のページでも、JSON-LD の価格・在庫・URL は ASCII なので1バイト1文字で読めば十分。
+  // （Workers の TextDecoder が対応する文字コードに依存しないよう、自前で変換する）
+  const html = bytesToLatin1(new Uint8Array(await response.arrayBuffer()));
   const offer = parseJsonLdOffer(html);
-  return offer ? { kind: 'found', offer } : { kind: 'missing', detail: 'no Product data' };
+  if (offer) return { kind: 'found', offer };
+  // 確認ページ（ボット対策）などに置き換えられた場合の手がかりとして、種類とタイトルを残す。
+  const title = /<title[^>]*>([^<]{0,200})/i.exec(html)?.[1]?.replace(/[^ -~]/g, '?').trim().slice(0, 80) ?? '';
+  return { kind: 'missing', detail: `no Product data (HTTP ${response.status}, ${response.headers.get('content-type') ?? '-'}, ${html.length} bytes${title ? `, title: ${title}` : ''})` };
 }
 
 export interface OfferDisplay {
