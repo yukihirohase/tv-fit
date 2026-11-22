@@ -120,7 +120,7 @@ jobs:
             set -e
             echo "::endgroup::"
             if [ "$status" -eq 0 ] && grep -qE '取込完了|空欄補完: 更新|件数指定のため|公開完了' import.log; then
-              grep -E '取込完了|空欄補完|公開対象|公開完了' import.log || true
+              grep -E '取込完了|空欄補完|適合区分の更新|公開対象|公開完了' import.log || true
               exit 0
             fi
             [ "$status" -eq 124 ] && continue_next

@@ -18,7 +18,7 @@ describe('validated CSV import into EmDash', () => {
   });
   it('is idempotent for identical external IDs but rejects differing existing content before any writes', () => {
     const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map(row => ({ data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
-    expect(buildImportPlan(fixtures, rows)).toEqual({ create: [], fill: [], skipped: fixtures.televisions.length + fixtures.stands.length + fixtures.compatibility.length });
+    expect(buildImportPlan(fixtures, rows)).toEqual({ create: [], fill: [], upgrade: [], skipped: fixtures.televisions.length + fixtures.stands.length + fixtures.compatibility.length });
     const changed = { ...rows, televisions: [{ data: { ...toCmsRecord('televisions', fixtures.televisions[0]!), model: 'FICTION-CHANGED' } }] };
     expect(() => buildImportPlan(fixtures, changed)).toThrow('既存データと異なる');
   });
@@ -96,6 +96,22 @@ describe('validated CSV import into EmDash', () => {
     const overwritten = { ...rows, televisions: [{ id: 'cms-tv', data: { ...tv, model: 'FICTION-CHANGED', vesa_width_mm: null, vesa_height_mm: null } }, ...rows.televisions.slice(1)] };
     expect(() => buildImportPlan(fixtures, overwritten, { fillBlanks: true })).toThrow('既存データと異なる');
   });
+  it('upgrades a published candidate to confirmed only with individual evidence, without --fill-blanks', () => {
+    const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map((row, i) => ({ id: `${collection}-${i}`, data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
+    const index = fixtures.compatibility.findIndex(row => row.status === 'confirmed');
+    const confirmed = toCmsRecord('compatibility', fixtures.compatibility[index]!);
+    const asCandidate = { ...confirmed, compatibility_status: 'candidate', evidence_type: 'specification', evidence_url: 'https://stand.example.org/spec', notes: '仕様上の候補' };
+    const withCandidate = (data: Record<string, unknown>) => ({ ...rows, compatibility: rows.compatibility.map((entry, i) => i === index ? { ...entry, data } : entry) });
+    const plan = buildImportPlan(fixtures, withCandidate(asCandidate));
+    expect(plan.create).toEqual([]);
+    expect(plan.upgrade).toEqual([{ collection: 'compatibility', key: `${confirmed.television_id}:${confirmed.stand_id}`, id: `compatibility-${index}`,
+      fields: { compatibility_status: 'confirmed', evidence_type: confirmed.evidence_type, evidence_url: confirmed.evidence_url, notes: confirmed.notes },
+      previous: { compatibility_status: 'candidate', evidence_type: 'specification', evidence_url: 'https://stand.example.org/spec', notes: '仕様上の候補' } }]);
+    // 確認済み→候補（格下げ）や、根拠の列以外も変わる更新は従来どおり止める。
+    const downgrade = fixtures.compatibility.map((row, i) => i === index ? { ...row, status: 'candidate' as const, evidence_type: 'specification' as const } : row);
+    expect(() => buildImportPlan({ ...fixtures, compatibility: downgrade }, rows)).toThrow('既存データと異なる');
+    expect(() => buildImportPlan(fixtures, withCandidate({ ...asCandidate, compatibility_status: 'unknown', evidence_type: 'insufficient' }))).toThrow('既存データと異なる');
+  });
   it('overwrites a release date only when --overwrite-field names it', () => {
     const rows = Object.fromEntries(catalogCollections.map(collection => [collection, fixtures[collection].map((row, i) => ({ id: `${collection}-${i}`, data: toCmsRecord(collection, row) }))])) as unknown as CmsCatalogRows;
     const tv = toCmsRecord('televisions', fixtures.televisions[0]!);
@@ -136,7 +152,7 @@ describe('validated CSV import into EmDash', () => {
       const after = call > 1;
       return Response.json({ success: true, data: { item: { status: call > 2 ? 'published' : 'draft', data: { external_id: 'c', vesa_width_mm: after ? 300 : null, vesa_height_mm: after ? 300 : null } } } });
     }) as unknown as typeof globalThis.fetch;
-    await expect(applyFillPlan({ create: [], skipped: 0, fill: [{ collection: 'televisions', key: 'c', id: 'c', fields }] }, { origin: 'https://cms.example.org', token: 'test-token', fetch: publishing, writeIntervalMs: 0 })).rejects.toThrow('状態がdraftからpublished');
+    await expect(applyFillPlan({ fill: [{ collection: 'televisions', key: 'c', id: 'c', fields }] }, { origin: 'https://cms.example.org', token: 'test-token', fetch: publishing, writeIntervalMs: 0 })).rejects.toThrow('状態がdraftからpublished');
   });
 });
 
