@@ -13,6 +13,8 @@
   // Workers Paid（2026-11-17 契約）。1リクエストあたりのCPU時間上限を 30 秒にする。
   // 無料プラン（10ms）では EmDash の一覧・保存が頻繁に「CPU時間制限超過」で失敗していた。
   "limits": { "cpu_ms": 30000 },
+  // 6時間ごとに販売情報（価格・在庫）を確認する（src/worker.ts の scheduled）。EmDash の予約公開もこの時に動く。
+  "triggers": { "crons": ["17 */6 * * *"] },
   "vars": {
     "EMDASH_SITE_URL": "https://tv-fit.com",
     "PUBLIC_SITE_URL": "https://tv-fit.com"

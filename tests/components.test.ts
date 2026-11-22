@@ -80,7 +80,7 @@ describe('rendered compatibility and product comparison', () => {
     expect($('[data-compare-selected]').attr('disabled')).toBeDefined();
     expect($('.table-scroll[tabindex="0"]').length).toBe(1);
     expect($('caption').text()).toContain(television.model);
-    expect($('thead th[scope="col"]').length).toBe(7);
+    expect($('thead th[scope="col"]').length).toBe(8);
     expect($('tbody th[scope="row"]').length).toBe(5);
     expect($('[data-compare-row="fixture-stand-incompatible"] [data-affiliate-link]').length).toBe(0);
     $('a[target="_blank"]').each((_, node) => {
