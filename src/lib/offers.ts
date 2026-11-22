@@ -27,9 +27,16 @@ export interface Offer {
 }
 
 /** 販売店の識別子と表示名。新しい販売店はここに足す。 */
-export const shops: Record<string, { name: string; hosts: readonly string[] }> = {
-  sanwa_direct: { name: 'サンワダイレクト', hosts: ['direct.sanwa.co.jp'] },
+/**
+ * autoCheck: 販売ページを定期的に読みに行くか。
+ * サンワダイレクトは Cloudflare からのアクセスを HTTP 403 で拒否するため止めている（2026-11-22）。
+ * 価格・在庫は ASP（バリューコマースなど）の商品データから取る方針。
+ */
+export const shops: Record<string, { name: string; hosts: readonly string[]; autoCheck: boolean }> = {
+  sanwa_direct: { name: 'サンワダイレクト', hosts: ['direct.sanwa.co.jp'], autoCheck: false },
 };
+
+export const isAutoCheckedShop = (shop: string): boolean => shops[shop]?.autoCheck === true;
 
 /** 何回続けて「ページがない」と確認されたら販売終了とみなすか。一時的な障害で誤って隠さないため。 */
 export const DISCONTINUED_AFTER_MISSES = 3;

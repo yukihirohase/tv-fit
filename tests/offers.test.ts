@@ -146,7 +146,7 @@ describe('定期チェック', () => {
       { id: 'amazon-only', product_url: 'https://www.amazon.co.jp/dp/B000' },
       { id: 'no-link', product_url: null },
     ];
-    const result = await runOfferCheck({ db, stands, fetcher, sleep, now: () => t0 });
+    const result = await runOfferCheck({ db, stands, fetcher, sleep, now: () => t0, isChecked: () => true });
     expect(result).toEqual({ checked: 2, found: 1, missing: 1, errors: 0, removed: 1 });
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledTimes(1);
@@ -159,9 +159,18 @@ describe('定期チェック', () => {
     const { db, rows } = memoryDb([]);
     const fetcher = vi.fn(async () => new Response('<html><title>Just a moment</title></html>')) as unknown as typeof fetch;
     const stands = [{ id: 'a', product_url: base.url }, { id: 'b', product_url: 'https://direct.sanwa.co.jp/ItemPage/B' }];
-    const result = await runOfferCheck({ db, stands, fetcher, sleep: async () => undefined, now: () => t0 });
+    const result = await runOfferCheck({ db, stands, fetcher, sleep: async () => undefined, now: () => t0, isChecked: () => true });
     expect(result).toMatchObject({ checked: 2, found: 0, missing: 0, errors: 2 });
     expect(rows.get('a:sanwa_direct')).toMatchObject({ missing_count: 0, error_count: 1, last_error: expect.stringContaining('全件で取得できず保留') });
+  });
+
+  it('自動チェックを止めている販売店は読みに行かず、残っていた記録を消す', async () => {
+    const { db, rows } = memoryDb([nextOffer(null, { ...base, stand_id: 'sanwa-cr-last1' }, { kind: 'error', detail: 'HTTP 403' }, t0)]);
+    const fetcher = vi.fn() as unknown as typeof fetch;
+    const result = await runOfferCheck({ db, stands: [{ id: 'sanwa-cr-last1', product_url: base.url }], fetcher });
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(result).toEqual({ checked: 0, found: 0, missing: 0, errors: 0, removed: 1 });
+    expect(rows.size).toBe(0);
   });
 
   it('スタンドが読めなかったときは記録を消さない', async () => {

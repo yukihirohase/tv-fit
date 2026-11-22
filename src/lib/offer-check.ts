@@ -1,5 +1,5 @@
 import type { Stand } from './data';
-import { nextOffer, observeOffer, offerTargetUrl, shopForUrl, type Observation, type Offer } from './offers';
+import { isAutoCheckedShop, nextOffer, observeOffer, offerTargetUrl, shopForUrl, type Observation, type Offer } from './offers';
 import { deleteOffer, ensureOffersTable, readOffers, saveOffer, type OfferDatabase } from './offer-store';
 
 export interface OfferCheckOptions {
@@ -10,6 +10,8 @@ export interface OfferCheckOptions {
   /** 販売サイトに負荷をかけないよう、1件ごとに空ける時間。 */
   delayMs?: number;
   sleep?: (ms: number) => Promise<void>;
+  /** 確認する販売店。既定は shops の autoCheck が true のもの。 */
+  isChecked?: (shop: string) => boolean;
 }
 
 export interface OfferCheckResult { checked: number; found: number; missing: number; errors: number; removed: number }
@@ -19,7 +21,7 @@ export interface OfferCheckResult { checked: number; found: number; missing: num
  * 対応していない販売店のリンクは飛ばす。
  */
 export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCheckResult> {
-  const { db, stands, fetcher = fetch, now = () => new Date(), delayMs = 1000 } = options;
+  const { db, stands, fetcher = fetch, now = () => new Date(), delayMs = 1000, isChecked = isAutoCheckedShop } = options;
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
   await ensureOffersTable(db);
   const previous = new Map((await readOffers(db)).map(offer => [`${offer.stand_id}:${offer.shop}`, offer]));
@@ -29,7 +31,7 @@ export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCh
   for (const stand of stands) {
     if (!stand.product_url) continue;
     const shop = shopForUrl(stand.product_url);
-    if (!shop) continue;
+    if (!shop || !isChecked(shop)) continue;
     const url = offerTargetUrl(stand.product_url);
     const key = `${stand.id}:${shop}`;
     current.add(key);
