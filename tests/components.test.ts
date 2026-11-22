@@ -62,37 +62,7 @@ describe('rendered accessible components', () => {
 });
 
 // Fictional data is injected only into the component renderer, never the production build.
-describe('rendered compatibility and product comparison', () => {
-  it('keeps confirmed, candidate, incompatible, and missing records distinct in the comparison table', async () => {
-    const { default: ComparisonTable } = await import('../src/components/ComparisonTable.astro');
-    const container = await AstroContainer.create();
-    const television = fixtures.televisions[0]!;
-    const entries = fixtures.stands.map(stand => ({
-      stand, compatibility: fixtures.compatibility.find(item => item.television_id === television.id && item.stand_id === stand.id) ?? null,
-    }));
-    const $ = load(await container.renderToString(ComparisonTable, { props: { television, entries } }));
-    expect($('tbody tr').length).toBe(5);
-    expect($('.status-confirmed').length).toBe(1);
-    expect($('.status-candidate').length).toBe(2);
-    expect($('.status-incompatible').length).toBe(1);
-    expect($('.status-unknown').length).toBe(1);
-    expect($('[data-compare-check]').length).toBe(5);
-    expect($('[data-compare-selected]').attr('disabled')).toBeDefined();
-    expect($('.table-scroll[tabindex="0"]').length).toBe(1);
-    expect($('caption').text()).toContain(television.model);
-    expect($('thead th[scope="col"]').length).toBe(8);
-    expect($('tbody th[scope="row"]').length).toBe(5);
-    expect($('[data-compare-row="fixture-stand-incompatible"] [data-affiliate-link]').length).toBe(0);
-    $('a[target="_blank"]').each((_, node) => {
-      expect($(node).attr('rel')).toContain('noopener');
-      expect($(node).attr('rel')).toContain('noreferrer');
-    });
-    $('[data-affiliate-link]').each((_, node) => {
-      expect($(node).attr('rel')).toContain('sponsored');
-      expect($(node).text()).toContain('広告');
-    });
-  });
-
+describe('rendered product cards', () => {
   it('never treats absent compatibility as confirmed, even when weight and VESA match', async () => {
     const { default: ProductCard } = await import('../src/components/ProductCard.astro');
     const container = await AstroContainer.create();
@@ -122,14 +92,6 @@ describe('rendered compatibility and product comparison', () => {
     expect($('[data-affiliate-link]').attr('data-status')).toBe('candidate');
   });
 
-  it('renders an honest empty comparison without selection controls', async () => {
-    const { default: ComparisonTable } = await import('../src/components/ComparisonTable.astro');
-    const container = await AstroContainer.create();
-    const $ = load(await container.renderToString(ComparisonTable, { props: { television: fixtures.televisions[0]!, entries: [] } }));
-    expect($('.empty-state').text()).toContain('登録されていません');
-    expect($('table').length).toBe(0);
-    expect($('[data-compare-selected]').length).toBe(0);
-  });
 });
 
 describe('rendered television detail page', () => {
@@ -144,17 +106,20 @@ describe('rendered television detail page', () => {
     expect($('h1').text()).toBe(television.model);
     expect($('title').text()).toContain(television.model);
     expect($('meta[name="robots"]').attr('content')).toBe('noindex, follow');
-    expect($('#confirmed .product-confirmed').length).toBe(1);
-    expect($('#confirmed .product-candidate').length).toBe(0);
-    expect($('#candidates .product-candidate').length).toBe(1);
+    // 確認済みと仕様上の候補は同じ一覧に、確認済みを先に並べる。非対応・判断材料不足は出さない。
+    expect($('#stands .product-card').map((_, node) => $(node).attr('data-status')).get()).toEqual(['confirmed', 'candidate']);
+    expect($('#stands .fit-count').text()).toContain('確認済み 1件・仕様上の候補 1件');
     expect($('#wall .product-candidate').length).toBe(1);
-    expect($('.other-products .product-incompatible').length).toBe(1);
-    expect($('.other-products .product-unknown').length).toBe(1);
+    expect($('.product-incompatible, .product-unknown').length).toBe(0);
+    expect($('.other-products').length).toBe(0);
+    expect($('table, [data-compare-check]').length).toBe(0);
+    expect($('.detail-toc a').map((_, node) => $(node).attr('href')).get()).toEqual(['#stands', '#wall']);
+    // 発売日を含む4項目が仕様欄に並ぶ
+    expect($('.tv-specifications > div').length).toBe(4);
     expect($('.tv-specifications').text()).toContain('200 × 200');
     expect($('.detail-meta').text()).toContain('2026-01-01');
     expect($('.installation-notes').text()).toContain('ネジ');
     expect($('.installation-notes').text()).toContain('下地');
-    expect($('tbody tr').length).toBe(5);
     expect($('.advertising-notice').text()).toContain('広告');
     $('script[type="application/ld+json"]').each((_, node) => {
       const json = JSON.parse($(node).text());
@@ -173,10 +138,9 @@ describe('rendered television detail page', () => {
     }));
     expect($('meta[name="robots"]').attr('content')).toBe('noindex, follow');
     expect($('.tv-specifications').text()).toContain('未確認');
-    expect($('#confirmed .empty-state').text()).toContain('登録されていません');
-    expect($('.product-confirmed').length).toBe(0);
-    expect($('.product-candidate').length).toBe(0);
-    expect($('.other-products .product-unknown').length).toBe(fixtures.stands.length);
+    expect($('#stands .empty-state').text()).toContain('登録されていません');
+    expect($('#wall .empty-state').text()).toContain('登録されていません');
+    expect($('.product-card').length).toBe(0);
     expect($('.detail-meta').text()).toContain('未確認');
   });
 });
