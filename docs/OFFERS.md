@@ -2,6 +2,8 @@
 
 適合情報（CMS）とは別に、スタンド・壁掛け金具の価格・在庫を販売店ごとに自動で確認して表示する。
 
+> **現状（2026-11-22）**：サンワダイレクトは Cloudflare からのアクセスを HTTP 403 で拒否するため、`shops.sanwa_direct.autoCheck` を `false` にして自動チェックを止めている。回避（取得元の変更やブラウザを装うこと）はしない。価格・在庫は ASP（バリューコマースなど）の商品データから取る方針で、提携の承認後に取得部品を追加する。止めている間は販売情報を表示しない（購入ボタンは従来どおり出る）。
+
 ## 仕組み
 
 - Cloudflare の Cron Trigger（`wrangler.jsonc` の `triggers.crons`、6時間ごと）で `src/worker.ts` の `scheduled()` が動く。
@@ -30,6 +32,6 @@
 
 ## 販売店を追加するとき
 
-1. `src/lib/offers.ts` の `shops` に販売店IDと表示名・ホスト名を足す（JSON-LD を持つ直販サイトはこれだけで動く）。
+1. `src/lib/offers.ts` の `shops` に販売店IDと表示名・ホスト名を足す。販売ページを直接読んでよい（拒否されない）販売店だけ `autoCheck: true` にする（JSON-LD を持つ直販サイトはこれだけで動く）。
 2. JSON-LD を持たない販売店（楽天・Yahoo!・Amazon など）は、各社の商品APIから同じ `Offer` 形式を作る取得部品を追加する。
 3. アフィリエイトの転送URLは `affiliateRedirectors` に足すと、中の販売ページを確認する。
