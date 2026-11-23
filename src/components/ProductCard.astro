@@ -40,5 +40,5 @@ const allPatterns = stand.vesa_patterns.map(p=>`${p.width} × ${p.height}`).join
     <span class="offer-meta">{sale.shopName}{sale.priceAt && `・${sale.priceAt}`}</span>
     {sale.availability === 'discontinued' && <span class="offer-meta">販売先で販売終了を確認しました。</span>}
   </div>}
-  {stand.product_url && status !== 'incompatible' && (sale?.purchasable ?? true) && <a class="button affiliate-button" href={stand.product_url} target="_blank" rel="sponsored nofollow noopener noreferrer" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>購入先で確認する <Icon name="external" size={16}/><span class="ad-label">広告</span></a>}
+  {stand.product_url && status !== 'incompatible' && (sale?.purchasable ?? true) && <a class="button affiliate-button" href={stand.product_url} target="_blank" rel="sponsored nofollow noopener noreferrer" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>}
 </article>
