@@ -2,7 +2,7 @@
 import type { Compatibility } from '../lib/data';
 interface Props { status: Compatibility['status']; }
 const { status } = Astro.props;
-export const labels = { confirmed: '個別適合確認済み', candidate: '仕様上の候補・未確認', incompatible: '非対応', unknown: '判断材料不足' };
+export const labels = { confirmed: '個別適合確認済み', candidate: '仕様上適合', incompatible: '非対応', unknown: '判断材料不足' };
 const symbols = { confirmed: '✓', candidate: '△', incompatible: '×', unknown: '?' };
 ---
 <span class:list={['status-badge', `status-${status}`]}><span aria-hidden="true">{symbols[status]}</span>{labels[status]}</span>

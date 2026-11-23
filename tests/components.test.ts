@@ -38,7 +38,7 @@ describe('rendered accessible components', () => {
   it('gives all four compatibility statuses distinct text and class names', async () => {
     const container = await AstroContainer.create();
     const labels = {
-      confirmed: '個別適合確認済み', candidate: '仕様上の候補・未確認',
+      confirmed: '個別適合確認済み', candidate: '仕様上適合',
       incompatible: '非対応', unknown: '判断材料不足',
     } as const;
     for (const [status, label] of Object.entries(labels)) {
@@ -108,7 +108,7 @@ describe('rendered television detail page', () => {
     expect($('meta[name="robots"]').attr('content')).toBe('noindex, follow');
     // 確認済みと仕様上の候補は同じ一覧に、確認済みを先に並べる。非対応・判断材料不足は出さない。
     expect($('#stands .product-card').map((_, node) => $(node).attr('data-status')).get()).toEqual(['confirmed', 'candidate']);
-    expect($('#stands .fit-count').text()).toContain('確認済み 1件・仕様上の候補 1件');
+    expect($('#stands .fit-count').text()).toContain('確認済み 1件・仕様上適合 1件');
     expect($('#wall .product-candidate').length).toBe(1);
     expect($('.product-incompatible, .product-unknown').length).toBe(0);
     expect($('.other-products').length).toBe(0);
