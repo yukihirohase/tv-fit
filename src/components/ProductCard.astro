@@ -1,6 +1,7 @@
 ---
 import type {Television, Stand, Compatibility} from '../lib/data';
 import {fitBreakdown} from '../lib/fit';
+import {confirmedNotesText, candidateSpecLine, candidateFitText, candidateCondition} from '../lib/compatibility-notes';
 import {displayOffer, availabilityLabels, type Offer} from '../lib/offers';
 import StatusBadge from './StatusBadge.astro';
 import Icon from './Icon.astro';
@@ -12,6 +13,8 @@ const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド',
 const fit = fitBreakdown(television, stand);
 const tvVesa = fit.vesaMatch === null ? null : `${television.vesa_width_mm} × ${television.vesa_height_mm}`;
 const allPatterns = stand.vesa_patterns.map(p=>`${p.width} × ${p.height}`).join(' / ');
+const notes = compatibility?.notes ? (status === 'confirmed' ? confirmedNotesText(compatibility.notes) : compatibility.notes) : '';
+const condition = status === 'candidate' && compatibility?.notes ? candidateCondition(compatibility.notes) : null;
 // ASP の商品データにアフィリエイトリンクがあればそれを使い、無ければ登録済みの販売ページへ直接リンクする。
 const purchaseUrl = sale?.affiliateUrl ?? stand.product_url;
 const isAd = !!sale?.affiliateUrl;
@@ -34,10 +37,16 @@ const showPurchase = !!purchaseUrl && status !== 'incompatible' && (sale?.purcha
     </div>
   </dl>
   {tvVesa !== null && <details class="product-more"><summary>対応VESAをすべて見る（{stand.vesa_patterns.length}通り）</summary><p class="vesa-all">{allPatterns} mm</p></details>}
-  {status === 'candidate' && <p class="candidate-warning">仕様上の候補です。背面形状・ネジ・スペーサーを含めた個別の取付適合は未確認です。</p>}
   {status === 'unknown' && <p class="candidate-warning">このテレビとの適合を判断できる情報が不足しています。</p>}
   {status === 'incompatible' && <p class="incompatible-warning">この組み合わせは非対応として記録されています。購入候補から除外してください。</p>}
-  {compatibility?.notes && <details class="product-more"><summary>適合の根拠と取付時の注意</summary><p class="product-notes">{compatibility.notes}</p></details>}
+  {status === 'candidate'
+    ? <details class="product-more"><summary>適合の根拠と取付時の注意</summary>
+        {candidateSpecLine(television) && <p class="product-notes">{candidateSpecLine(television)}</p>}
+        <p class="product-notes">{candidateFitText}</p>
+        {condition && <p class="product-notes">{condition}</p>}
+        {television.source_url && <p class="product-notes">出典：<a href={television.source_url} target="_blank" rel="noopener noreferrer">{television.manufacturer} {television.model} の仕様（メーカー公式） <Icon name="external" size={12}/></a></p>}
+      </details>
+    : notes && <details class="product-more"><summary>適合の根拠と取付時の注意</summary><p class="product-notes">{notes}</p></details>}
   <div class="product-sources"><a href={stand.source_url} target="_blank" rel="noopener noreferrer">公式の商品詳細 <Icon name="external" size={13}/></a>{compatibility?.evidence_url && <a href={compatibility.evidence_url} target="_blank" rel="noopener noreferrer">適合判断の出典 <Icon name="external" size={13}/></a>}{compatibility?.checked_at && <span>確認日：<time datetime={compatibility.checked_at}>{compatibility.checked_at}</time></span>}</div>
   {sale && status !== 'incompatible' && <div class:list={['offer-info', `offer-${sale.availability}`]}>
     <span class="offer-availability">{availabilityLabels[sale.availability]}</span>

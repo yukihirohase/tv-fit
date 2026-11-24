@@ -75,18 +75,25 @@ describe('rendered product cards', () => {
     expect($('[data-compatibility-view]').attr('data-status')).toBe('unknown');
   });
 
-  it('warns about unverified candidate details and preserves escaped notes', async () => {
+  it('explains a candidate from the television specs, fit text and official source', async () => {
     const { default: ProductCard } = await import('../src/components/ProductCard.astro');
     const container = await AstroContainer.create();
     const compatibility = fixtures.compatibility.find(item => item.status === 'candidate')!;
     const stand = fixtures.stands.find(item => item.id === compatibility.stand_id)!;
-    const notes = '<img src=x onerror=alert(1)> ネジ・背面は未確認';
+    const television = fixtures.televisions[0]!;
+    const notes = '<img src=x onerror=alert(1)> 仕様上の候補（メーカーによる個別の適合確認ではありません）。';
     const $ = load(await container.renderToString(ProductCard, {
-      props: { television: fixtures.televisions[0]!, stand, compatibility: { ...compatibility, notes } },
+      props: { television, stand, compatibility: { ...compatibility, notes } },
     }));
     expect($('.status-candidate').length).toBe(1);
-    expect($('.candidate-warning').text()).toContain('スペーサー');
-    expect($('.product-notes').text()).toBe(notes);
+    expect($('.candidate-warning').length).toBe(0);
+    const paragraphs = $('.product-notes').map((_, node) => $(node).text()).get();
+    expect(paragraphs[0]).toBe(`VESA ${television.vesa_width_mm}×${television.vesa_height_mm}mm、本体質量 ${television.weight_kg}kg、${television.screen_inches}型`);
+    expect(paragraphs[1]).toContain('いずれも適合条件を満たしています');
+    expect(paragraphs[1]).toContain('スペーサー');
+    expect(paragraphs.at(-1)).toContain('出典');
+    expect($('.product-notes a').attr('href')).toBe(television.source_url);
+    expect($('.product-notes').text()).not.toContain('onerror');
     expect($('img').length).toBe(0);
     expect($('time').attr('datetime')).toBe(compatibility.checked_at);
     expect($('[data-affiliate-link]').attr('data-status')).toBe('candidate');
