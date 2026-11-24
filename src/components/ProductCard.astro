@@ -12,8 +12,13 @@ const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド',
 const fit = fitBreakdown(television, stand);
 const tvVesa = fit.vesaMatch === null ? null : `${television.vesa_width_mm} × ${television.vesa_height_mm}`;
 const allPatterns = stand.vesa_patterns.map(p=>`${p.width} × ${p.height}`).join(' / ');
+// ASP の商品データにアフィリエイトリンクがあればそれを使い、無ければ登録済みの販売ページへ直接リンクする。
+const purchaseUrl = sale?.affiliateUrl ?? stand.product_url;
+const isAd = !!sale?.affiliateUrl;
+const showPurchase = !!purchaseUrl && status !== 'incompatible' && (sale?.purchasable ?? true);
 ---
 <article class:list={['product-card', `product-${status}`]} data-compatibility-view data-tv-id={television.id} data-status={status}>
+  {sale?.imageUrl && <div class="product-image"><img src={sale.imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}
   <div class="product-card-heading"><StatusBadge status={status}/><span class="product-type">{standType[stand.stand_type]}</span></div>
   <p class="product-manufacturer">{stand.manufacturer}</p><h3>{stand.sku}</h3>
   <dl class="product-specs fit-breakdown">
@@ -40,5 +45,9 @@ const allPatterns = stand.vesa_patterns.map(p=>`${p.width} × ${p.height}`).join
     <span class="offer-meta">{sale.shopName}{sale.priceAt && `・${sale.priceAt}`}</span>
     {sale.availability === 'discontinued' && <span class="offer-meta">販売先で販売終了を確認しました。</span>}
   </div>}
-  {stand.product_url && status !== 'incompatible' && (sale?.purchasable ?? true) && <a class="button affiliate-button" href={stand.product_url} target="_blank" rel="sponsored nofollow noopener noreferrer" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>}
+  {showPurchase && <div class="purchase-row">
+    <a class="button affiliate-button" href={purchaseUrl} target="_blank" rel="sponsored nofollow noopener" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>
+    {isAd && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
+    {isAd && sale?.pvImgUrl && <img class="ad-pixel" src={sale.pvImgUrl} width="1" height="1" alt=""/>}
+  </div>}
 </article>
