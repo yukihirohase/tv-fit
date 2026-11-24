@@ -1,16 +1,19 @@
 import type { Stand } from './data';
-import { isAutoCheckedShop, nextOffer, observeOffer, offerTargetUrl, shopForUrl, type Observation, type Offer } from './offers';
+import { isAutoCheckedShop, nextOffer, observeOffer, offerTargetUrl, shopForUrl, shops, type Observation, type Offer } from './offers';
 import { deleteOffer, ensureOffersTable, readOffers, saveOffer, type OfferDatabase } from './offer-store';
+import { observeValueCommerce } from './valuecommerce';
 
 export interface OfferCheckOptions {
   db: OfferDatabase;
-  stands: readonly Pick<Stand, 'id' | 'product_url'>[];
+  stands: readonly Pick<Stand, 'id' | 'product_url' | 'sku'>[];
+  /** バリューコマース商品APIのトークン（Cloudflare のシークレット VC_API_TOKEN）。 */
+  vcToken?: string | null;
   fetcher?: typeof fetch;
   now?: () => Date;
   /** 販売サイトに負荷をかけないよう、1件ごとに空ける時間。 */
   delayMs?: number;
   sleep?: (ms: number) => Promise<void>;
-  /** 確認する販売店。既定は shops の autoCheck が true のもの。 */
+  /** 確認する販売店。既定は shops の source とトークンの有無で決める。 */
   isChecked?: (shop: string) => boolean;
 }
 
@@ -21,7 +24,10 @@ export interface OfferCheckResult { checked: number; found: number; missing: num
  * 対応していない販売店のリンクは飛ばす。
  */
 export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCheckResult> {
-  const { db, stands, fetcher = fetch, now = () => new Date(), delayMs = 1000, isChecked = isAutoCheckedShop } = options;
+  const { db, stands, vcToken = null, fetcher = fetch, now = () => new Date(), delayMs = 1000 } = options;
+  const isChecked = options.isChecked ?? ((shop: string) => isAutoCheckedShop(shop, { vcToken }));
+  const observe = (shop: string, url: string, sku: string): Promise<Observation> =>
+    shops[shop]?.source === 'valuecommerce' && vcToken ? observeValueCommerce(url, sku, vcToken, fetcher) : observeOffer(url, fetcher);
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
   await ensureOffersTable(db);
   const previous = new Map((await readOffers(db)).map(offer => [`${offer.stand_id}:${offer.shop}`, offer]));
@@ -36,7 +42,7 @@ export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCh
     const key = `${stand.id}:${shop}`;
     current.add(key);
     if (observed.length > 0) await sleep(delayMs);
-    observed.push({ key, base: { stand_id: stand.id, shop, url }, observation: await observeOffer(url, fetcher), at: now() });
+    observed.push({ key, base: { stand_id: stand.id, shop, url }, observation: await observe(shop, url, stand.sku), at: now() });
   }
   // 1件も商品情報を読めなかった回は、販売店側の障害やアクセス制限とみなす。
   // 「見つからない」を数えると全商品が販売終了扱いになってしまうため、一時的なエラーとして記録する。

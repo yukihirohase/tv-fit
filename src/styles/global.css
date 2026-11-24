@@ -36,3 +36,9 @@
 /* 型番ページ：確認済みと仕様上の候補の凡例・件数 */
 .fit-legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:12px;font-size:12px;color:#64768e}.fit-legend>span{display:inline-flex;align-items:center;gap:8px}.fit-count{margin-top:10px;font-size:12px;font-weight:600;color:#3d5573}
 @media(max-width:1000px){.tv-specifications{grid-template-columns:repeat(2,minmax(0,1fr));padding:0}.tv-specifications>div{padding:16px 20px}.tv-specifications>div:nth-child(2n){border-right:0}.tv-specifications>div:nth-child(n+3){border-top:1px solid #dce5f1}}
+.product-image{display:flex;justify-content:center;align-items:center;margin:-4px 0 16px;padding:12px;border-radius:6px;background:#fff;border:1px solid var(--line);aspect-ratio:4/3}
+.product-image img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.purchase-row{position:relative;display:flex;align-items:center;gap:8px}
+.purchase-row .affiliate-button{flex:1}
+.pr-label{flex:none;font-size:11px;font-weight:700;line-height:1;padding:4px 6px;border:1px solid #b8c4d3;border-radius:4px;color:var(--muted);background:#fff}
+.ad-pixel{position:absolute;width:1px;height:1px;border:0;opacity:0;pointer-events:none}
