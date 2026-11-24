@@ -29,8 +29,18 @@ export const OFFERS_TABLE_SQL = `CREATE TABLE IF NOT EXISTS tvfit_stand_offers (
   PRIMARY KEY (stand_id, shop)
 )`;
 
+/** 後から足した列。既にあれば ALTER は失敗するので無視する。 */
+const ADDED_COLUMNS = ['affiliate_url TEXT', 'pv_img_url TEXT'] as const;
+
 export async function ensureOffersTable(db: OfferDatabase): Promise<void> {
   await db.prepare(OFFERS_TABLE_SQL).bind().run();
+  for (const column of ADDED_COLUMNS) {
+    try {
+      await db.prepare(`ALTER TABLE tvfit_stand_offers ADD COLUMN ${column}`).bind().run();
+    } catch (error) {
+      if (!(error instanceof Error && /duplicate column/iu.test(error.message))) throw error;
+    }
+  }
 }
 
 function toOffer(row: Record<string, unknown>): Offer | null {
@@ -46,6 +56,7 @@ function toOffer(row: Record<string, unknown>): Offer | null {
     checked_at: row.checked_at, last_success_at: text(row.last_success_at),
     missing_count: int(row.missing_count) ?? 0, error_count: int(row.error_count) ?? 0,
     last_error: text(row.last_error),
+    affiliate_url: text(row.affiliate_url), pv_img_url: text(row.pv_img_url),
   };
 }
 
@@ -62,15 +73,17 @@ export async function readOffers(db: OfferDatabase): Promise<Offer[]> {
 
 export async function saveOffer(db: OfferDatabase, offer: Offer): Promise<void> {
   await db.prepare(`INSERT INTO tvfit_stand_offers
-    (stand_id, shop, url, price_jpy, availability, image_url, mpn, checked_at, last_success_at, missing_count, error_count, last_error)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (stand_id, shop, url, price_jpy, availability, image_url, mpn, checked_at, last_success_at, missing_count, error_count, last_error, affiliate_url, pv_img_url)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT (stand_id, shop) DO UPDATE SET
       url = excluded.url, price_jpy = excluded.price_jpy, availability = excluded.availability,
       image_url = excluded.image_url, mpn = excluded.mpn, checked_at = excluded.checked_at,
       last_success_at = excluded.last_success_at, missing_count = excluded.missing_count,
-      error_count = excluded.error_count, last_error = excluded.last_error`)
+      error_count = excluded.error_count, last_error = excluded.last_error,
+      affiliate_url = excluded.affiliate_url, pv_img_url = excluded.pv_img_url`)
     .bind(offer.stand_id, offer.shop, offer.url, offer.price_jpy, offer.availability, offer.image_url, offer.mpn,
-      offer.checked_at, offer.last_success_at, offer.missing_count, offer.error_count, offer.last_error)
+      offer.checked_at, offer.last_success_at, offer.missing_count, offer.error_count, offer.last_error,
+      offer.affiliate_url, offer.pv_img_url)
     .run();
 }
 

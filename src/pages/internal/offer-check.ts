@@ -16,7 +16,9 @@ export const POST: APIRoute = async () => {
   const db = env.DB as OfferDatabase | undefined;
   if (!db) return new Response('DB binding is unavailable', { status: 500 });
   const catalog = await getPublishedCatalog({ compatibility: 'none' });
-  const result = await runOfferCheck({ db, stands: catalog.stands });
+  // トークンは Cloudflare のシークレットにだけ置く。未設定なら商品APIの販売店は確認しない。
+  const vcToken = typeof env.VC_API_TOKEN === 'string' && env.VC_API_TOKEN.trim() ? env.VC_API_TOKEN.trim() : null;
+  const result = await runOfferCheck({ db, stands: catalog.stands, vcToken });
   clearPublishedOffersCache();
   console.log('[offers] check finished', JSON.stringify(result));
   return Response.json(result, { headers: { 'Cache-Control': 'no-store' } });

@@ -24,19 +24,31 @@ export interface Offer {
   /** 通信エラー等が続いた回数。 */
   error_count: number;
   last_error: string | null;
+  /** ASP の商品データが返したアフィリエイトリンク（https）。無ければ販売ページへ直接リンクする。 */
+  affiliate_url: string | null;
+  /** アフィリエイトリンクと一緒に表示する表示数計測タグの画像URL（ASP の規約で必須）。 */
+  pv_img_url: string | null;
 }
 
-/** 販売店の識別子と表示名。新しい販売店はここに足す。 */
 /**
- * autoCheck: 販売ページを定期的に読みに行くか。
- * サンワダイレクトは Cloudflare からのアクセスを HTTP 403 で拒否するため止めている（2026-11-22）。
- * 価格・在庫は ASP（バリューコマースなど）の商品データから取る方針。
+ * 販売店の識別子と表示名。新しい販売店はここに足す。
+ * source: 価格・在庫の取り方。
+ *   'page'          販売ページの JSON-LD を直接読む
+ *   'valuecommerce' バリューコマースの商品API（シークレット VC_API_TOKEN があるときだけ）
+ *   'none'          取らない
+ * サンワダイレクトは Cloudflare からのアクセスを HTTP 403 で拒否するため、ページは読まずに
+ * バリューコマースの商品APIを使う（2026-11-24 提携承認）。
  */
-export const shops: Record<string, { name: string; hosts: readonly string[]; autoCheck: boolean }> = {
-  sanwa_direct: { name: 'サンワダイレクト', hosts: ['direct.sanwa.co.jp'], autoCheck: false },
+export type OfferSource = 'page' | 'valuecommerce' | 'none';
+export const shops: Record<string, { name: string; hosts: readonly string[]; source: OfferSource }> = {
+  sanwa_direct: { name: 'サンワダイレクト', hosts: ['direct.sanwa.co.jp'], source: 'valuecommerce' },
 };
 
-export const isAutoCheckedShop = (shop: string): boolean => shops[shop]?.autoCheck === true;
+/** その販売店を今回確認するか。商品APIの販売店はトークンがあるときだけ。 */
+export function isAutoCheckedShop(shop: string, credentials: { vcToken?: string | null } = {}): boolean {
+  const source = shops[shop]?.source;
+  return source === 'page' || (source === 'valuecommerce' && !!credentials.vcToken);
+}
 
 /** 何回続けて「ページがない」と確認されたら販売終了とみなすか。一時的な障害で誤って隠さないため。 */
 export const DISCONTINUED_AFTER_MISSES = 3;
@@ -78,6 +90,8 @@ export interface ParsedOffer {
   availability: Availability;
   image_url: string | null;
   mpn: string | null;
+  affiliate_url?: string | null;
+  pv_img_url?: string | null;
 }
 
 const schemaAvailability: Record<string, Availability> = {
@@ -177,9 +191,12 @@ export function nextOffer(previous: Offer | null, base: Pick<Offer, 'stand_id' |
     image_url: previous?.image_url ?? null,
     mpn: previous?.mpn ?? null,
     last_success_at: previous?.last_success_at ?? null,
+    affiliate_url: previous?.affiliate_url ?? null,
+    pv_img_url: previous?.pv_img_url ?? null,
   };
   if (observation.kind === 'found') {
-    return { ...base, ...observation.offer, checked_at, last_success_at: checked_at, missing_count: 0, error_count: 0, last_error: null };
+    const { affiliate_url = null, pv_img_url = null, ...offer } = observation.offer;
+    return { ...base, ...offer, affiliate_url, pv_img_url, checked_at, last_success_at: checked_at, missing_count: 0, error_count: 0, last_error: null };
   }
   if (observation.kind === 'missing') {
     const missing_count = (previous?.missing_count ?? 0) + 1;
@@ -230,6 +247,12 @@ export interface OfferDisplay {
   priceAt: string | null;
   /** 販売終了なら購入ボタンを出さない。 */
   purchasable: boolean;
+  /** 購入ボタンのリンク先にするアフィリエイトリンク（無ければ登録済みの販売ページ）。 */
+  affiliateUrl: string | null;
+  /** アフィリエイトリンクと対で表示する表示数計測タグ。 */
+  pvImgUrl: string | null;
+  /** 商品画像（ASP の商品データが返したもの）。 */
+  imageUrl: string | null;
 }
 
 const jstFormat = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -245,6 +268,10 @@ export function displayOffer(offer: Offer | null | undefined, now: Date = new Da
     price_jpy: fresh && availability !== 'discontinued' ? offer.price_jpy : null,
     priceAt: fresh && successAt ? `${jstFormat.format(successAt)}時点` : null,
     purchasable: availability !== 'discontinued',
+    // リンクと計測タグは必ず対で使う（片方だけでは使わない）。
+    affiliateUrl: offer.affiliate_url && offer.pv_img_url ? offer.affiliate_url : null,
+    pvImgUrl: offer.affiliate_url && offer.pv_img_url ? offer.pv_img_url : null,
+    imageUrl: offer.image_url,
   };
 }
 

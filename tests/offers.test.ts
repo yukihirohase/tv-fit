@@ -91,6 +91,7 @@ describe('表示', () => {
   it('新しい価格は確認日時つきで出し、48時間を過ぎたら価格も在庫も出さない', () => {
     expect(displayOffer(offer, new Date('2026-11-22T06:00:00Z'))).toEqual({
       shopName: 'サンワダイレクト', availability: 'in_stock', price_jpy: 32800, priceAt: '11/22 9:00時点', purchasable: true,
+      affiliateUrl: null, pvImgUrl: null, imageUrl: 'https://cdn.sanwadirect.jp/images/goods/CR-LAST1_MX.JPG',
     });
     expect(displayOffer(offer, new Date('2026-11-25T00:00:00Z'))).toMatchObject({ availability: 'unknown', price_jpy: null, priceAt: null, purchasable: true });
   });
@@ -113,7 +114,7 @@ describe('表示', () => {
 /** SQL の形だけを見て動く、テスト用の小さな D1。 */
 function memoryDb(initial: Offer[] = []) {
   const rows = new Map(initial.map(row => [`${row.stand_id}:${row.shop}`, row]));
-  const columns = ['stand_id', 'shop', 'url', 'price_jpy', 'availability', 'image_url', 'mpn', 'checked_at', 'last_success_at', 'missing_count', 'error_count', 'last_error'] as const;
+  const columns = ['stand_id', 'shop', 'url', 'price_jpy', 'availability', 'image_url', 'mpn', 'checked_at', 'last_success_at', 'missing_count', 'error_count', 'last_error', 'affiliate_url', 'pv_img_url'] as const;
   const db: OfferDatabase = {
     prepare(query: string) {
       let values: unknown[] = [];
@@ -140,11 +141,11 @@ describe('定期チェック', () => {
     const { db, rows } = memoryDb([stale]);
     const fetcher = vi.fn(async (url: string) => url.endsWith('CR-LAST1') ? new Response(productPage()) : new Response('', { status: 404 })) as unknown as typeof fetch;
     const sleep = vi.fn(async () => undefined);
-    const stands: Pick<Stand, 'id' | 'product_url'>[] = [
-      { id: 'sanwa-cr-last1', product_url: base.url },
-      { id: 'sanwa-gone', product_url: 'https://direct.sanwa.co.jp/ItemPage/GONE' },
-      { id: 'amazon-only', product_url: 'https://www.amazon.co.jp/dp/B000' },
-      { id: 'no-link', product_url: null },
+    const stands: Pick<Stand, 'id' | 'product_url' | 'sku'>[] = [
+      { id: 'sanwa-cr-last1', sku: 'CR-LAST1', product_url: base.url },
+      { id: 'sanwa-gone', sku: 'GONE', product_url: 'https://direct.sanwa.co.jp/ItemPage/GONE' },
+      { id: 'amazon-only', sku: 'X', product_url: 'https://www.amazon.co.jp/dp/B000' },
+      { id: 'no-link', sku: 'Y', product_url: null },
     ];
     const result = await runOfferCheck({ db, stands, fetcher, sleep, now: () => t0, isChecked: () => true });
     expect(result).toEqual({ checked: 2, found: 1, missing: 1, errors: 0, removed: 1 });
@@ -158,7 +159,7 @@ describe('定期チェック', () => {
   it('1件も商品情報を読めなかった回は、見つからないと数えず一時的なエラーにする', async () => {
     const { db, rows } = memoryDb([]);
     const fetcher = vi.fn(async () => new Response('<html><title>Just a moment</title></html>')) as unknown as typeof fetch;
-    const stands = [{ id: 'a', product_url: base.url }, { id: 'b', product_url: 'https://direct.sanwa.co.jp/ItemPage/B' }];
+    const stands = [{ id: 'a', sku: 'A', product_url: base.url }, { id: 'b', sku: 'B', product_url: 'https://direct.sanwa.co.jp/ItemPage/B' }];
     const result = await runOfferCheck({ db, stands, fetcher, sleep: async () => undefined, now: () => t0, isChecked: () => true });
     expect(result).toMatchObject({ checked: 2, found: 0, missing: 0, errors: 2 });
     expect(rows.get('a:sanwa_direct')).toMatchObject({ missing_count: 0, error_count: 1, last_error: expect.stringContaining('全件で取得できず保留') });
@@ -167,7 +168,7 @@ describe('定期チェック', () => {
   it('自動チェックを止めている販売店は読みに行かず、残っていた記録を消す', async () => {
     const { db, rows } = memoryDb([nextOffer(null, { ...base, stand_id: 'sanwa-cr-last1' }, { kind: 'error', detail: 'HTTP 403' }, t0)]);
     const fetcher = vi.fn() as unknown as typeof fetch;
-    const result = await runOfferCheck({ db, stands: [{ id: 'sanwa-cr-last1', product_url: base.url }], fetcher });
+    const result = await runOfferCheck({ db, stands: [{ id: 'sanwa-cr-last1', sku: 'CR-LAST1', product_url: base.url }], fetcher });
     expect(fetcher).not.toHaveBeenCalled();
     expect(result).toEqual({ checked: 0, found: 0, missing: 0, errors: 0, removed: 1 });
     expect(rows.size).toBe(0);
