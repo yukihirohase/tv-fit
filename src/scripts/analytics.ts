@@ -45,6 +45,13 @@ document.addEventListener('click', event => {
       tv_id: resultLink.dataset.tvId, manufacturer: resultLink.dataset.manufacturer, match: 'selection',
     });
   }
+  const mallLink = target.closest<HTMLAnchorElement>('a[data-mall-link]');
+  if (mallLink) {
+    trackEvent('mall_click', {
+      tv_id: mallLink.dataset.tvId, stand_id: mallLink.dataset.standId, status: mallLink.dataset.status, mall: mallLink.dataset.mallLink,
+    });
+    return;
+  }
   const link = target.closest<HTMLAnchorElement>('a[data-affiliate-link]');
   if (!link) return;
   trackEvent('affiliate_click', {

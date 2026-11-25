@@ -2,11 +2,11 @@
 import type {Television, Stand, Compatibility} from '../lib/data';
 import {fitBreakdown} from '../lib/fit';
 import {confirmedNotesText, candidateSpecLine, candidateFitText, candidateCondition} from '../lib/compatibility-notes';
-import {displayOffer, availabilityLabels, type Offer} from '../lib/offers';
+import {displayOffer, availabilityLabels, malls, mallSearchQuery, shopForUrl, YAHOO_SHOP, type Offer} from '../lib/offers';
 import StatusBadge from './StatusBadge.astro';
 import Icon from './Icon.astro';
-interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; }
-const {television,stand,compatibility,offer} = Astro.props;
+interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; }
+const {television,stand,compatibility,offer,offers} = Astro.props;
 const sale = displayOffer(offer);
 const status = compatibility?.status ?? 'unknown';
 const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド', wall:'壁掛け金具'};
@@ -15,10 +15,26 @@ const tvVesa = fit.vesaMatch === null ? null : `${television.vesa_width_mm} × $
 const allPatterns = stand.vesa_patterns.map(p=>`${p.width} × ${p.height}`).join(' / ');
 const notes = compatibility?.notes ? (status === 'confirmed' ? confirmedNotesText(compatibility.notes) : compatibility.notes) : '';
 const condition = status === 'candidate' && compatibility?.notes ? candidateCondition(compatibility.notes) : null;
+// offer は在庫・価格の表示に使う代表の1件。購入ボタンは販売店ごとの記録（offers）から作る。
+const shopOffers = offers ?? (offer ? [offer] : []);
+const directShop = stand.product_url ? shopForUrl(stand.product_url) : null;
+const direct = displayOffer(shopOffers.find(item => item.shop === directShop && item.shop !== YAHOO_SHOP));
 // ASP の商品データにアフィリエイトリンクがあればそれを使い、無ければ登録済みの販売ページへ直接リンクする。
-const purchaseUrl = sale?.affiliateUrl ?? stand.product_url;
-const isAd = !!sale?.affiliateUrl;
-const showPurchase = !!purchaseUrl && status !== 'incompatible' && (sale?.purchasable ?? true);
+const purchaseUrl = direct?.affiliateUrl ?? stand.product_url;
+const isAd = !!direct?.affiliateUrl;
+const showPurchase = !!purchaseUrl && status !== 'incompatible' && (direct?.purchasable ?? true);
+// Amazon・楽天市場は型番の検索結果へ。Yahoo!ショッピングは公式ストアの商品が取れていればその商品ページ
+// （アフィリエイトリンク）へ、取れていなければ検索結果へ。
+const yahooRecord = shopOffers.find(item => item.shop === YAHOO_SHOP && item.last_success_at) ?? null;
+const yahooSale = displayOffer(yahooRecord);
+const query = mallSearchQuery(stand);
+const mallLinks = malls.map(mall => {
+  if (mall.id === 'yahoo' && yahooRecord && yahooSale) {
+    return { id: mall.id, name: mall.name, href: yahooSale.affiliateUrl ?? yahooRecord.url, search: false, ad: !!yahooSale.affiliateUrl, pvImgUrl: yahooSale.pvImgUrl, price: yahooSale.price_jpy, availability: yahooSale.availability };
+  }
+  return { id: mall.id, name: mall.name, href: mall.search(query), search: true, ad: false, pvImgUrl: null, price: null, availability: null };
+});
+const showMalls = status !== 'incompatible';
 ---
 <article class:list={['product-card', `product-${status}`]} data-compatibility-view data-tv-id={television.id} data-status={status}>
   {sale?.imageUrl && <div class="product-image"><img src={sale.imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}
@@ -57,6 +73,16 @@ const showPurchase = !!purchaseUrl && status !== 'incompatible' && (sale?.purcha
   {showPurchase && <div class="purchase-row">
     <a class="button affiliate-button" href={purchaseUrl} target="_blank" rel="sponsored nofollow noopener" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>
     {isAd && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
-    {isAd && sale?.pvImgUrl && <img class="ad-pixel" src={sale.pvImgUrl} width="1" height="1" alt=""/>}
+    {isAd && direct?.pvImgUrl && <img class="ad-pixel" src={direct.pvImgUrl} width="1" height="1" alt=""/>}
+  </div>}
+  {showMalls && <div class="mall-links">
+    <div class="mall-row">{mallLinks.map(link => <span class="mall-item">
+      <a class="mall-button" href={link.href} target="_blank" rel={link.ad ? 'sponsored nofollow noopener' : 'nofollow noopener'} data-mall-link={link.id} data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>
+        <span>{link.name}</span>
+        {link.price !== null ? <small class="mall-price">¥{link.price.toLocaleString('ja-JP')}{link.availability && link.availability !== 'unknown' && `・${availabilityLabels[link.availability]}`}</small> : link.search && <small>検索結果</small>}
+      </a>
+      {link.ad && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
+      {link.ad && link.pvImgUrl && <img class="ad-pixel" src={link.pvImgUrl} width="1" height="1" alt=""/>}
+    </span>)}</div>
   </div>}
 </article>

@@ -1,5 +1,6 @@
 import type { Stand } from './data';
-import { isAutoCheckedShop, nextOffer, observeOffer, offerTargetUrl, shopForUrl, shops, type Observation, type Offer } from './offers';
+import { isAutoCheckedShop, nextOffer, observeOffer, offerTargetUrl, shopForUrl, shops, YAHOO_SHOP, yahooMirroredShops, type Observation, type Offer } from './offers';
+import { observeYahooShopping, yahooItemUrl, type YahooCredentials } from './yahoo-shopping';
 import { deleteOffer, ensureOffersTable, readOffers, saveOffer, type OfferDatabase } from './offer-store';
 import { observeValueCommerce } from './valuecommerce';
 
@@ -8,6 +9,8 @@ export interface OfferCheckOptions {
   stands: readonly Pick<Stand, 'id' | 'product_url' | 'sku'>[];
   /** バリューコマース商品APIのトークン（Cloudflare のシークレット VC_API_TOKEN）。 */
   vcToken?: string | null;
+  /** Yahoo!ショッピング商品検索APIの設定（シークレット YAHOO_APP_ID / YAHOO_VC_SID / YAHOO_VC_PID）。 */
+  yahoo?: YahooCredentials | null;
   fetcher?: typeof fetch;
   now?: () => Date;
   /** 販売サイトに負荷をかけないよう、1件ごとに空ける時間。 */
@@ -24,10 +27,13 @@ export interface OfferCheckResult { checked: number; found: number; missing: num
  * 対応していない販売店のリンクは飛ばす。
  */
 export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCheckResult> {
-  const { db, stands, vcToken = null, fetcher = fetch, now = () => new Date(), delayMs = 1000 } = options;
-  const isChecked = options.isChecked ?? ((shop: string) => isAutoCheckedShop(shop, { vcToken }));
-  const observe = (shop: string, url: string, sku: string): Promise<Observation> =>
-    shops[shop]?.source === 'valuecommerce' && vcToken ? observeValueCommerce(url, sku, vcToken, fetcher) : observeOffer(url, fetcher);
+  const { db, stands, vcToken = null, yahoo = null, fetcher = fetch, now = () => new Date(), delayMs = 1000 } = options;
+  const isChecked = options.isChecked ?? ((shop: string) => isAutoCheckedShop(shop, { vcToken, yahooAppId: yahoo?.appId ?? null }));
+  const observe = (shop: string, url: string, sku: string): Promise<Observation> => {
+    const source = shops[shop]?.source;
+    if (source === 'yahoo') return yahoo ? observeYahooShopping(sku, yahoo, fetcher) : Promise.resolve({ kind: 'error', detail: 'Yahoo API: アプリケーションID未設定' });
+    return source === 'valuecommerce' && vcToken ? observeValueCommerce(url, sku, vcToken, fetcher) : observeOffer(url, fetcher);
+  };
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
   await ensureOffersTable(db);
   const previous = new Map((await readOffers(db)).map(offer => [`${offer.stand_id}:${offer.shop}`, offer]));
@@ -37,12 +43,17 @@ export async function runOfferCheck(options: OfferCheckOptions): Promise<OfferCh
   for (const stand of stands) {
     if (!stand.product_url) continue;
     const shop = shopForUrl(stand.product_url);
-    if (!shop || !isChecked(shop)) continue;
-    const url = offerTargetUrl(stand.product_url);
-    const key = `${stand.id}:${shop}`;
-    current.add(key);
-    if (observed.length > 0) await sleep(delayMs);
-    observed.push({ key, base: { stand_id: stand.id, shop, url }, observation: await observe(shop, url, stand.sku), at: now() });
+    if (!shop) continue;
+    const targets: { shop: string; url: string }[] = [];
+    if (isChecked(shop)) targets.push({ shop, url: offerTargetUrl(stand.product_url) });
+    // 直販サイトで売っている商品は、Yahoo!ショッピングの公式ストアの出品も確認する。
+    if (yahooMirroredShops.includes(shop) && yahoo && isChecked(YAHOO_SHOP)) targets.push({ shop: YAHOO_SHOP, url: yahooItemUrl(stand.sku) });
+    for (const target of targets) {
+      const key = `${stand.id}:${target.shop}`;
+      current.add(key);
+      if (observed.length > 0) await sleep(delayMs);
+      observed.push({ key, base: { stand_id: stand.id, shop: target.shop, url: target.url }, observation: await observe(target.shop, target.url, stand.sku), at: now() });
+    }
   }
   // 1件も商品情報を読めなかった回は、販売店側の障害やアクセス制限とみなす。
   // 「見つからない」を数えると全商品が販売終了扱いになってしまうため、一時的なエラーとして記録する。
