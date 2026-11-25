@@ -1,14 +1,18 @@
 import type { Television } from './data';
 
 /**
- * テレビの売れ筋順。楽天市場ランキングAPI（楽天ウェブサービス）の「テレビ」ジャンルの順位を週1回取得し、
+ * テレビの売れ筋順。モールの「テレビ」ランキングを週1回取得し、
  * 商品名に含まれる型番で当サイトのテレビと照合して、当サイト掲載機種の中で 1位から振り直す。
  *
+ * 元データは次の優先順で、認証情報があるものを使う。
+ * 1. 楽天市場ランキングAPI（楽天ウェブサービス）：シークレット RAKUTEN_APP_ID / RAKUTEN_ACCESS_KEY。
+ *    楽天ウェブサービスの管理画面で、アプリの「許可されたWebサイト」に tv-fit.com を登録しておく
+ *    （サーバーからの呼び出しでも Referer / Origin が必要）。
+ * 2. Yahoo!ショッピング 高評価トレンドランキングAPI：シークレット YAHOO_APP_ID（販売情報と共用）。
+ *    注文した人の数やレビュー評価を組み合わせた順位（純粋な売上順ではない）。
+ *
  * - 価格.com のランキングは利用規約（情報の複製・転載の禁止）により使わない。
- * - 認証情報は Cloudflare のシークレット RAKUTEN_APP_ID / RAKUTEN_ACCESS_KEY。未設定なら更新しない。
- * - 楽天ウェブサービスの管理画面で、アプリの「許可されたWebサイト」に tv-fit.com を登録しておく
- *   （サーバーからの呼び出しでも Referer / Origin が必要）。
- * - データを表示するページには楽天ウェブサービスのクレジットを出す（フッター）。
+ * - データを表示するページには各APIのクレジットを出す（フッター）。
  */
 export const RAKUTEN_RANKING_URL = 'https://openapi.rakuten.co.jp/ichibaranking/api/IchibaItem/Ranking/20220601';
 /** 楽天市場の「TV・オーディオ・カメラ > テレビ」ジャンル（https://ranking.rakuten.co.jp/daily/563843/）。 */
@@ -20,8 +24,82 @@ export const RANKING_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000 - 3 * 60 * 60 * 1000;
 /** これより古い順位は表示しない（取得が止まったときに古い順位を出し続けないため）。 */
 export const RANKING_STALE_MS = 30 * 24 * 60 * 60 * 1000;
 
+/** Yahoo!ショッピング 高評価トレンドランキングAPI。 */
+export const YAHOO_RANKING_URL = 'https://shopping.yahooapis.jp/ShoppingWebService/V1/highRatingTrendRanking';
+/** Yahoo!ショッピングの「テレビ、オーディオ、カメラ > テレビ、映像機器 > テレビ > テレビ」（https://shopping.yahoo.co.jp/categoryranking/49520/list）。 */
+export const YAHOO_TV_CATEGORY_ID = '49520';
+/** 1回の取得件数（API の上限 100）と、取得する最大件数（API は 1,000 件まで）。 */
+export const YAHOO_RANKING_LIMIT = 100;
+export const YAHOO_RANKING_MAX_ITEMS = 1000;
+
+export type RankingSource = 'rakuten' | 'yahoo';
+export const RANKING_SOURCE_NAMES: Record<RankingSource, string> = { rakuten: '楽天市場', yahoo: 'Yahoo!ショッピング' };
+
 export interface RakutenCredentials { appId: string; accessKey: string; referer?: string }
+export interface YahooRankingCredentials { appId: string }
+export type RankingCredentials = ({ source: 'rakuten' } & RakutenCredentials) | ({ source: 'yahoo' } & YahooRankingCredentials);
 export interface RankingSourceItem { rank: number; name: string }
+
+/** 楽天の認証情報がそろっていれば楽天、無ければ Yahoo!（アプリケーションIDがあれば）。どちらも無ければ null。 */
+export function chooseRankingCredentials(secrets: { rakutenAppId?: string | null; rakutenAccessKey?: string | null; yahooAppId?: string | null }): RankingCredentials | null {
+  if (secrets.rakutenAppId && secrets.rakutenAccessKey) return { source: 'rakuten', appId: secrets.rakutenAppId, accessKey: secrets.rakutenAccessKey };
+  if (secrets.yahooAppId) return { source: 'yahoo', appId: secrets.yahooAppId };
+  return null;
+}
+
+type FetchResult = { ok: true; items: RankingSourceItem[] } | { ok: false; detail: string };
+interface FetchOptions { fetcher?: typeof fetch; sleep?: (ms: number) => Promise<void>; delayMs?: number }
+const defaultSleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+
+/** Yahoo! の応答から順位と商品名を取り出す。 */
+export function parseYahooRanking(data: unknown): { items: RankingSourceItem[]; total: number | null } {
+  const root = ((data as { high_rating_trend_ranking?: unknown } | null)?.high_rating_trend_ranking ?? data) as { ranking_data?: unknown; meta?: { total_results_available?: unknown } } | null;
+  const list = Array.isArray(root?.ranking_data) ? root.ranking_data : [];
+  const items = list.flatMap(entry => {
+    const item = entry as { rank?: unknown; item_information?: { name?: unknown }; name?: unknown } | null;
+    const rank = Number(item?.rank);
+    const name = item?.item_information?.name ?? item?.name;
+    return Number.isInteger(rank) && rank > 0 && typeof name === 'string' ? [{ rank, name }] : [];
+  });
+  const total = Number(root?.meta?.total_results_available);
+  return { items, total: Number.isFinite(total) ? total : null };
+}
+
+/** Yahoo! の「テレビ」ランキングを最大 1,000 件取得する（100件ずつ、1秒以上あける）。 */
+export async function fetchYahooRanking(credentials: YahooRankingCredentials, options: FetchOptions & { limit?: number; maxItems?: number } = {}): Promise<FetchResult> {
+  const { fetcher = fetch, delayMs = 1100, limit = YAHOO_RANKING_LIMIT, maxItems = YAHOO_RANKING_MAX_ITEMS } = options;
+  const sleep = options.sleep ?? defaultSleep;
+  const items: RankingSourceItem[] = [];
+  for (let offset = 1; offset <= maxItems; offset += limit) {
+    if (offset > 1) await sleep(delayMs);
+    const url = new URL(YAHOO_RANKING_URL);
+    url.searchParams.set('appid', credentials.appId);
+    url.searchParams.set('genre_category_id', YAHOO_TV_CATEGORY_ID);
+    url.searchParams.set('offset', String(offset));
+    url.searchParams.set('limit', String(Math.min(limit, maxItems - offset + 1)));
+    let response: Response;
+    try {
+      response = await fetcher(url.href, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(20_000) });
+    } catch (error) {
+      return { ok: false, detail: error instanceof Error ? `Yahoo API ${error.name}: ${error.message}`.slice(0, 200) : 'Yahoo API fetch failed' };
+    }
+    let body: unknown = null;
+    try { body = await response.json(); } catch { /* 下で扱う */ }
+    if (!response.ok) {
+      if (response.status === 404 && items.length > 0) break;
+      const message = (body as { Error?: { Message?: unknown } } | null)?.Error?.Message;
+      return { ok: false, detail: `Yahoo API HTTP ${response.status}${typeof message === 'string' ? ` ${message}` : ''}`.slice(0, 300) };
+    }
+    const page = parseYahooRanking(body);
+    if (page.items.length === 0) {
+      if (items.length > 0) break;
+      return { ok: false, detail: 'Yahoo API: ランキングを読めませんでした（0件）' };
+    }
+    items.push(...page.items);
+    if (page.items.length < limit || (page.total !== null && offset + limit > page.total)) break;
+  }
+  return { ok: true, items };
+}
 
 /** API の応答から順位と商品名を取り出す（formatVersion 1 の {Item: {...}} と 2 の平らな形の両方に対応）。 */
 export function parseRakutenRanking(data: unknown): RankingSourceItem[] {
@@ -76,9 +154,9 @@ export function matchRanking(items: readonly RankingSourceItem[], televisions: r
 }
 
 /** ランキングを全ページ取得する。途中で失敗したら、それまでのページだけで判断しない（エラーにする）。 */
-export async function fetchRakutenRanking(credentials: RakutenCredentials, options: { fetcher?: typeof fetch; sleep?: (ms: number) => Promise<void>; delayMs?: number; maxPages?: number } = {}): Promise<{ ok: true; items: RankingSourceItem[] } | { ok: false; detail: string }> {
+export async function fetchRakutenRanking(credentials: RakutenCredentials, options: FetchOptions & { maxPages?: number } = {}): Promise<FetchResult> {
   const { fetcher = fetch, delayMs = 1500, maxPages = RAKUTEN_RANKING_MAX_PAGES } = options;
-  const sleep = options.sleep ?? ((ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
+  const sleep = options.sleep ?? defaultSleep;
   const referer = credentials.referer ?? 'https://tv-fit.com/';
   const items: RankingSourceItem[] = [];
   for (let page = 1; page <= maxPages; page += 1) {
@@ -138,59 +216,72 @@ const RANKING_RUNS_SQL = `CREATE TABLE IF NOT EXISTS tvfit_ranking_runs (
   matched INTEGER,
   last_error TEXT
 )`;
-const SOURCE = 'rakuten_tv';
+/** tvfit_ranking_runs.source の値（元データごとに1行）。 */
+const RUN_KEYS: Record<RankingSource, string> = { rakuten: 'rakuten_tv', yahoo: 'yahoo_tv' };
+const sourceOfRunKey = (key: unknown): RankingSource | null => (Object.entries(RUN_KEYS).find(([, value]) => value === key)?.[0] as RankingSource | undefined) ?? null;
 
 export async function ensureRankingTables(db: RankingDatabase): Promise<void> {
   await db.prepare(RANKING_TABLE_SQL).bind().run();
   await db.prepare(RANKING_RUNS_SQL).bind().run();
 }
 
-export interface RankingRun { attempted_at: string; succeeded_at: string | null; source_items: number | null; matched: number | null; last_error: string | null }
+export interface RankingRun { source?: RankingSource | null; attempted_at: string; succeeded_at: string | null; source_items: number | null; matched: number | null; last_error: string | null }
 
-export async function readRankingRun(db: RankingDatabase): Promise<RankingRun | null> {
-  const { results } = await db.prepare('SELECT attempted_at, succeeded_at, source_items, matched, last_error FROM tvfit_ranking_runs WHERE source = ?').bind(SOURCE).all<RankingRun>();
-  return results[0] ?? null;
+/** 元データを指定すればその更新状況、指定しなければ最後に試行した元データの更新状況。 */
+export async function readRankingRun(db: RankingDatabase, source?: RankingSource): Promise<RankingRun | null> {
+  const columns = 'source, attempted_at, succeeded_at, source_items, matched, last_error FROM tvfit_ranking_runs';
+  const { results } = source
+    ? await db.prepare(`SELECT ${columns} WHERE source = ?`).bind(RUN_KEYS[source]).all<RankingRun & { source: unknown }>()
+    : await db.prepare(`SELECT ${columns} ORDER BY attempted_at DESC LIMIT 1`).bind().all<RankingRun & { source: unknown }>();
+  const row = results[0];
+  return row ? { ...row, source: sourceOfRunKey(row.source) } : null;
 }
 
-export interface TvRanking { asOf: string; ranks: Map<string, number> }
+export interface TvRanking { asOf: string; ranks: Map<string, number>; source?: RankingSource | null }
 
 export async function readRanking(db: RankingDatabase): Promise<TvRanking | null> {
   const { results } = await db.prepare('SELECT television_id, rank, as_of FROM tvfit_tv_ranking ORDER BY rank').bind().all<{ television_id: string; rank: number; as_of: string }>();
   if (results.length === 0) return null;
-  return { asOf: results[0]!.as_of, ranks: new Map(results.map(row => [row.television_id, Number(row.rank)])) };
+  const asOf = results[0]!.as_of;
+  // 今の順位がどの元データか（その時刻に成功した更新）。
+  const runs = await db.prepare('SELECT source FROM tvfit_ranking_runs WHERE succeeded_at = ?').bind(asOf).all<{ source: unknown }>();
+  return { asOf, ranks: new Map(results.map(row => [row.television_id, Number(row.rank)])), source: sourceOfRunKey(runs.results[0]?.source) };
 }
 
-async function recordRun(db: RankingDatabase, run: RankingRun): Promise<void> {
+async function recordRun(db: RankingDatabase, source: RankingSource, run: RankingRun): Promise<void> {
   await db.prepare(`INSERT INTO tvfit_ranking_runs (source, attempted_at, succeeded_at, source_items, matched, last_error) VALUES (?, ?, ?, ?, ?, ?)
     ON CONFLICT(source) DO UPDATE SET attempted_at = excluded.attempted_at, succeeded_at = COALESCE(excluded.succeeded_at, tvfit_ranking_runs.succeeded_at),
       source_items = COALESCE(excluded.source_items, tvfit_ranking_runs.source_items), matched = COALESCE(excluded.matched, tvfit_ranking_runs.matched), last_error = excluded.last_error`)
-    .bind(SOURCE, run.attempted_at, run.succeeded_at, run.source_items, run.matched, run.last_error).run();
+    .bind(RUN_KEYS[source], run.attempted_at, run.succeeded_at, run.source_items, run.matched, run.last_error).run();
 }
 
-export type RankingUpdateResult = { status: 'skipped'; reason: string } | { status: 'updated'; sourceItems: number; matched: number } | { status: 'error'; detail: string };
+export type RankingUpdateResult = { status: 'skipped'; reason: string } | { status: 'updated'; source: RankingSource; sourceItems: number; matched: number } | { status: 'error'; detail: string };
 
 /**
  * 前回の試行から RANKING_INTERVAL_MS 以上たっていれば、ランキングを取り直して保存する。
  * 取得に失敗したときは前回の順位を残す（エラーだけ記録する）。
  */
-export async function updateRankingIfDue(options: { db: RankingDatabase; televisions: readonly Pick<Television, 'id' | 'model'>[]; credentials: RakutenCredentials | null; fetcher?: typeof fetch; sleep?: (ms: number) => Promise<void>; now?: () => Date; force?: boolean }): Promise<RankingUpdateResult> {
+export async function updateRankingIfDue(options: { db: RankingDatabase; televisions: readonly Pick<Television, 'id' | 'model'>[]; credentials: RankingCredentials | null; fetcher?: typeof fetch; sleep?: (ms: number) => Promise<void>; now?: () => Date; force?: boolean }): Promise<RankingUpdateResult> {
   const { db, televisions, credentials, now = () => new Date() } = options;
-  if (!credentials) return { status: 'skipped', reason: '楽天APIの認証情報が未設定' };
+  if (!credentials) return { status: 'skipped', reason: 'ランキングAPIの認証情報が未設定' };
   if (televisions.length === 0) return { status: 'skipped', reason: 'テレビを読めなかった' };
+  const { source } = credentials;
   await ensureRankingTables(db);
-  const previous = await readRankingRun(db);
+  // 間隔は元データごとに数える（Yahoo!から楽天に切り替えたら、すぐ楽天で取り直す）。
+  const previous = await readRankingRun(db, source);
   const started = now();
   if (!options.force && previous && started.getTime() - new Date(previous.attempted_at).getTime() < RANKING_INTERVAL_MS) return { status: 'skipped', reason: '前回から7日たっていない' };
-  const fetched = await fetchRakutenRanking(credentials, { ...(options.fetcher ? { fetcher: options.fetcher } : {}), ...(options.sleep ? { sleep: options.sleep } : {}) });
+  const fetchOptions = { ...(options.fetcher ? { fetcher: options.fetcher } : {}), ...(options.sleep ? { sleep: options.sleep } : {}) };
+  const fetched = source === 'rakuten' ? await fetchRakutenRanking(credentials, fetchOptions) : await fetchYahooRanking(credentials, fetchOptions);
   const attempted_at = started.toISOString();
   if (!fetched.ok) {
-    await recordRun(db, { attempted_at, succeeded_at: null, source_items: null, matched: null, last_error: fetched.detail });
+    await recordRun(db, source, { attempted_at, succeeded_at: null, source_items: null, matched: null, last_error: fetched.detail });
     return { status: 'error', detail: fetched.detail };
   }
   const ranks = matchRanking(fetched.items, televisions);
   if (ranks.size === 0) {
-    const detail = `楽天API: 掲載中の型番に一致する商品がありませんでした（${fetched.items.length}件）`;
-    await recordRun(db, { attempted_at, succeeded_at: null, source_items: fetched.items.length, matched: 0, last_error: detail });
+    const detail = `${source === 'rakuten' ? '楽天API' : 'Yahoo API'}: 掲載中の型番に一致する商品がありませんでした（${fetched.items.length}件）`;
+    await recordRun(db, source, { attempted_at, succeeded_at: null, source_items: fetched.items.length, matched: 0, last_error: detail });
     return { status: 'error', detail };
   }
   const statements = [db.prepare('DELETE FROM tvfit_tv_ranking').bind(),
@@ -198,8 +289,8 @@ export async function updateRankingIfDue(options: { db: RankingDatabase; televis
   // 入れ替えは1回の batch（D1 ではトランザクション）で行い、途中で順位が欠けた状態を見せない。
   if (db.batch) await db.batch(statements);
   else for (const statement of statements) await statement.run();
-  await recordRun(db, { attempted_at, succeeded_at: attempted_at, source_items: fetched.items.length, matched: ranks.size, last_error: null });
-  return { status: 'updated', sourceItems: fetched.items.length, matched: ranks.size };
+  await recordRun(db, source, { attempted_at, succeeded_at: attempted_at, source_items: fetched.items.length, matched: ranks.size, last_error: null });
+  return { status: 'updated', source, sourceItems: fetched.items.length, matched: ranks.size };
 }
 
 // ---- 表示 ----

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { load } from 'cheerio';
-import { fetchRakutenRanking, matchRanking, parseRakutenRanking, rankingLabel, RAKUTEN_RANKING_URL, RAKUTEN_TV_GENRE_ID, updateRankingIfDue, type RankingDatabase } from '../src/lib/tv-ranking';
+import { chooseRankingCredentials, fetchRakutenRanking, fetchYahooRanking, matchRanking, parseRakutenRanking, rankingLabel, readRanking, readRankingRun, RAKUTEN_RANKING_URL, RAKUTEN_TV_GENRE_ID, updateRankingIfDue, YAHOO_RANKING_URL, YAHOO_TV_CATEGORY_ID, type RankingDatabase } from '../src/lib/tv-ranking';
 import { compareModels } from '../src/lib/model-filter';
 import ModelList from '../src/components/ModelList.astro';
 import type { Television } from '../src/lib/data';
@@ -61,10 +61,41 @@ describe('楽天市場ランキングAPIの取得', () => {
   });
 });
 
+describe('Yahoo!ショッピング 高評価トレンドランキングAPIの取得', () => {
+  const yahooPage = (from: number, count: number, total: number) => ({ high_rating_trend_ranking: { meta: { total_results_available: total }, ranking_data: Array.from({ length: count }, (_, i) => ({ rank: from + i, item_information: { name: `TV ${from + i}` } })) } });
+
+  it('テレビのカテゴリを100件ずつ、件数の上限まで取る', async () => {
+    const fetcher = json({ body: yahooPage(1, 100, 150) }, { body: yahooPage(101, 50, 150) });
+    const result = await fetchYahooRanking({ appId: 'Y' }, { fetcher, sleep: async () => {} });
+    expect(result.ok && result.items.length).toBe(150);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    const first = new URL(fetcher.mock.calls[0]![0] as string);
+    expect(`${first.origin}${first.pathname}`).toBe(YAHOO_RANKING_URL);
+    expect(Object.fromEntries(first.searchParams)).toMatchObject({ appid: 'Y', genre_category_id: YAHOO_TV_CATEGORY_ID, offset: '1', limit: '100' });
+    expect(new URL(fetcher.mock.calls[1]![0] as string).searchParams.get('offset')).toBe('101');
+  });
+
+  it('最大1,000件で止め、エラーは内容を返す', async () => {
+    const fetcher = json({ body: yahooPage(1, 100, 1000) });
+    const result = await fetchYahooRanking({ appId: 'Y' }, { fetcher, sleep: async () => {} });
+    expect(fetcher).toHaveBeenCalledTimes(10);
+    expect(new URL(fetcher.mock.calls[9]![0] as string).searchParams.get('offset')).toBe('901');
+    expect(result.ok).toBe(true);
+    const denied = await fetchYahooRanking({ appId: 'Y' }, { fetcher: json({ body: { Error: { Message: 'Your Request was Forbidden' } }, status: 403 }) });
+    expect(denied).toEqual({ ok: false, detail: 'Yahoo API HTTP 403 Your Request was Forbidden' });
+  });
+
+  it('楽天の認証情報がそろっていれば楽天、無ければ Yahoo!', () => {
+    expect(chooseRankingCredentials({ rakutenAppId: 'R', rakutenAccessKey: 'K', yahooAppId: 'Y' })).toEqual({ source: 'rakuten', appId: 'R', accessKey: 'K' });
+    expect(chooseRankingCredentials({ rakutenAppId: 'R', rakutenAccessKey: null, yahooAppId: 'Y' })).toEqual({ source: 'yahoo', appId: 'Y' });
+    expect(chooseRankingCredentials({})).toBeNull();
+  });
+});
+
 describe('週1回の更新', () => {
   function memoryDb() {
     const ranking: Record<string, unknown>[] = [];
-    let run: Record<string, unknown> | null = null;
+    const runs = new Map<string, Record<string, unknown>>();
     const db: RankingDatabase = {
       prepare(query: string) {
         return {
@@ -73,11 +104,16 @@ describe('週1回の更新', () => {
               async run() {
                 if (query.startsWith('DELETE')) ranking.length = 0;
                 else if (query.startsWith('INSERT INTO tvfit_tv_ranking')) ranking.push({ television_id: values[0], rank: values[1], source_rank: values[2], as_of: values[3] });
-                else if (query.startsWith('INSERT INTO tvfit_ranking_runs')) run = { attempted_at: values[1], succeeded_at: values[2] ?? (run?.succeeded_at ?? null), source_items: values[3], matched: values[4], last_error: values[5] };
+                else if (query.startsWith('INSERT INTO tvfit_ranking_runs')) {
+                  const before = runs.get(String(values[0]));
+                  runs.set(String(values[0]), { source: values[0], attempted_at: values[1], succeeded_at: values[2] ?? (before?.succeeded_at ?? null), source_items: values[3], matched: values[4], last_error: values[5] });
+                }
                 return undefined;
               },
               async all<T>() {
-                if (query.includes('FROM tvfit_ranking_runs')) return { results: (run ? [run] : []) as T[] };
+                if (query.includes('FROM tvfit_ranking_runs WHERE source = ?')) return { results: [runs.get(String(values[0]))].filter(Boolean) as T[] };
+                if (query.includes('FROM tvfit_ranking_runs WHERE succeeded_at = ?')) return { results: [...runs.values()].filter(run => run.succeeded_at === values[0]) as T[] };
+                if (query.includes('FROM tvfit_ranking_runs')) return { results: [...runs.values()].sort((a, b) => String(b.attempted_at).localeCompare(String(a.attempted_at))).slice(0, 1) as T[] };
                 return { results: [...ranking].sort((a, b) => Number(a.rank) - Number(b.rank)) as T[] };
               },
             };
@@ -85,8 +121,9 @@ describe('週1回の更新', () => {
         };
       },
     };
-    return { db, ranking, getRun: () => run };
+    return { db, ranking, getRun: (key = 'rakuten_tv') => runs.get(key) ?? null };
   }
+  const rakuten = { source: 'rakuten' as const, appId: 'A', accessKey: 'K' };
 
   it('認証情報が無ければ何もしない。7日以内は取り直さない。失敗しても前回の順位を残す', async () => {
     const { db, ranking, getRun } = memoryDb();
@@ -94,13 +131,27 @@ describe('週1回の更新', () => {
     expect(await updateRankingIfDue({ db, televisions, credentials: null })).toMatchObject({ status: 'skipped' });
     const t0 = new Date('2026-11-25T00:00:00Z');
     const ok = json({ body: page([{ rank: 4, itemName: 'REGZA 55E350R' }]) });
-    expect(await updateRankingIfDue({ db, televisions, credentials: { appId: 'A', accessKey: 'K' }, fetcher: ok, sleep: async () => {}, now: () => t0 })).toEqual({ status: 'updated', sourceItems: 1, matched: 1 });
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: ok, sleep: async () => {}, now: () => t0 })).toEqual({ status: 'updated', source: 'rakuten', sourceItems: 1, matched: 1 });
     expect(ranking).toEqual([{ television_id: 'a', rank: 1, source_rank: 4, as_of: t0.toISOString() }]);
-    expect(await updateRankingIfDue({ db, televisions, credentials: { appId: 'A', accessKey: 'K' }, fetcher: ok, now: () => new Date('2026-11-28T00:00:00Z') })).toMatchObject({ status: 'skipped' });
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: ok, now: () => new Date('2026-11-28T00:00:00Z') })).toMatchObject({ status: 'skipped' });
     const fail = json({ body: {}, status: 500 });
-    expect(await updateRankingIfDue({ db, televisions, credentials: { appId: 'A', accessKey: 'K' }, fetcher: fail, sleep: async () => {}, now: () => new Date('2026-12-02T00:00:00Z') })).toMatchObject({ status: 'error' });
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: fail, sleep: async () => {}, now: () => new Date('2026-12-02T00:00:00Z') })).toMatchObject({ status: 'error' });
     expect(ranking).toHaveLength(1);
     expect(getRun()).toMatchObject({ last_error: '楽天API HTTP 500', succeeded_at: t0.toISOString() });
+  });
+
+  it('Yahoo!で取得し、あとから楽天を設定したら7日を待たずに楽天で取り直す', async () => {
+    const { db } = memoryDb();
+    const televisions = [tv('a', '55E350R'), tv('b', '65E350R')];
+    const t0 = new Date('2026-11-26T00:00:00Z');
+    const yahooBody = { high_rating_trend_ranking: { meta: { total_results_available: 2 }, ranking_data: [{ rank: 1, item_information: { name: 'REGZA 65E350R' } }, { rank: 2, item_information: { name: 'REGZA 55E350R' } }] } };
+    expect(await updateRankingIfDue({ db, televisions, credentials: { source: 'yahoo', appId: 'Y' }, fetcher: json({ body: yahooBody }), now: () => t0 })).toEqual({ status: 'updated', source: 'yahoo', sourceItems: 2, matched: 2 });
+    expect(await readRanking(db)).toMatchObject({ source: 'yahoo', ranks: new Map([['b', 1], ['a', 2]]) });
+    expect(await readRankingRun(db)).toMatchObject({ source: 'yahoo', matched: 2 });
+    const t1 = new Date('2026-11-27T00:00:00Z');
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: json({ body: page([{ rank: 1, itemName: 'REGZA 55E350R' }]) }), sleep: async () => {}, now: () => t1 })).toMatchObject({ status: 'updated', source: 'rakuten' });
+    expect(await readRanking(db)).toMatchObject({ source: 'rakuten', ranks: new Map([['a', 1]]) });
+    expect(await readRankingRun(db)).toMatchObject({ source: 'rakuten' });
   });
 });
 
@@ -132,5 +183,8 @@ describe('売れ筋の表示と並べ替え', () => {
     expect($('[data-model-item]').first().attr('data-rank')).toBe('7');
     expect($('.model-card-rank').text()).toMatch(/^売れ筋ランキング 7位（436件中）（\d+\/\d+時点）$/u);
     expect($('[data-model-filter-sort] option[selected]').text()).toBe('売れ筋順');
+    expect($('.ranking-note').text()).toContain('楽天市場');
+    const yahooHtml = await container.renderToString(ModelList, { props: { televisions, manufacturerName: 'TVS REGZA', ranking: { asOf: new Date().toISOString(), ranks: new Map([['b', 7]]), source: 'yahoo' }, rankingTotal: 436 } });
+    expect(load(yahooHtml)('.ranking-note').text()).toContain('Yahoo!ショッピング');
   });
 });
