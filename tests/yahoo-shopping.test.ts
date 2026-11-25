@@ -103,8 +103,8 @@ describe('商品カード（モールのボタン）', () => {
   const yahooOffer: Offer = nextOffer(null, { stand_id: stand.id, shop: 'yahoo_sanwa', url: itemUrl }, { kind: 'found', offer: yahooHitOffer(hit(), { vcSid: '1', vcPid: '2' }) }, new Date());
   const render = async (props: Record<string, unknown>) => load(await (await AstroContainer.create()).renderToString(ProductCard, { props: { television, stand, compatibility: null, ...props } }));
 
-  it('販売情報が無ければ、Amazon・楽天・Yahoo!は型番の検索結果へリンクし、PRは付けない', async () => {
-    const $ = await render({});
+  it('商品ページが未登録なら、Amazon・楽天・Yahoo!は型番の検索結果へリンクし、PRは付けない', async () => {
+    const $ = await render({ stand: { ...stand, id: 'not-registered' } });
     expect($('[data-mall-link]').map((_, a) => $(a).attr('data-mall-link')).get()).toEqual(['amazon', 'rakuten', 'yahoo']);
     const q = encodeURIComponent('サンワサプライ CR-LAST1');
     expect($('[data-mall-link="amazon"]').attr('href')).toBe(`https://www.amazon.co.jp/s?k=${q}`);
@@ -113,6 +113,15 @@ describe('商品カード（モールのボタン）', () => {
     expect($('[data-mall-link="amazon"]').attr('rel')).not.toContain('sponsored');
     expect($('.pr-label').length).toBe(0);
     expect($('[data-affiliate-link]').attr('href')).toBe(stand.product_url);
+  });
+
+  it('登録済みの商品ページへリンクする（PRなし）', async () => {
+    const $ = await render({});
+    expect($('[data-mall-link="amazon"]').attr('href')).toBe('https://www.amazon.co.jp/dp/B0013Z58I0/');
+    expect($('[data-mall-link="rakuten"]').attr('href')).toBe('https://item.rakuten.co.jp/sanwadirect/cr-last1/');
+    expect($('[data-mall-link="yahoo"]').attr('href')).toBe(itemUrl);
+    expect($('.mall-button small').length).toBe(0);
+    expect($('.pr-label').length).toBe(0);
   });
 
   it('公式ストアの商品が取れていれば、Yahoo!はアフィリエイトリンク・PR・計測タグ・価格を出す', async () => {

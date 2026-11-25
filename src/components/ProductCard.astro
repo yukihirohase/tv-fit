@@ -3,6 +3,7 @@ import type {Television, Stand, Compatibility} from '../lib/data';
 import {fitBreakdown} from '../lib/fit';
 import {confirmedNotesText, candidateSpecLine, candidateFitText, candidateCondition} from '../lib/compatibility-notes';
 import {displayOffer, availabilityLabels, malls, mallSearchQuery, shopForUrl, YAHOO_SHOP, type Offer} from '../lib/offers';
+import {mallPagesFor} from '../lib/mall-links';
 import StatusBadge from './StatusBadge.astro';
 import Icon from './Icon.astro';
 interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; }
@@ -23,16 +24,19 @@ const direct = displayOffer(shopOffers.find(item => item.shop === directShop && 
 const purchaseUrl = direct?.affiliateUrl ?? stand.product_url;
 const isAd = !!direct?.affiliateUrl;
 const showPurchase = !!purchaseUrl && status !== 'incompatible' && (direct?.purchasable ?? true);
-// Amazon・楽天市場は型番の検索結果へ。Yahoo!ショッピングは公式ストアの商品が取れていればその商品ページ
-// （アフィリエイトリンク）へ、取れていなければ検索結果へ。
+// Amazon・楽天市場は登録済みの商品ページへ。Yahoo!ショッピングは公式ストアの商品が取れていればその商品ページ
+// （アフィリエイトリンク）へ、取れていなければ登録済みの商品ページへ。
 const yahooRecord = shopOffers.find(item => item.shop === YAHOO_SHOP && item.last_success_at) ?? null;
 const yahooSale = displayOffer(yahooRecord);
 const query = mallSearchQuery(stand);
+// 商品ページが登録されていれば（data/mall-links.csv）そこへ、無ければ検索結果へ。
+const mallPages = mallPagesFor(stand.id);
 const mallLinks = malls.map(mall => {
   if (mall.id === 'yahoo' && yahooRecord && yahooSale) {
     return { id: mall.id, name: mall.name, href: yahooSale.affiliateUrl ?? yahooRecord.url, search: false, ad: !!yahooSale.affiliateUrl, pvImgUrl: yahooSale.pvImgUrl, price: yahooSale.price_jpy, availability: yahooSale.availability };
   }
-  return { id: mall.id, name: mall.name, href: mall.search(query), search: true, ad: false, pvImgUrl: null, price: null, availability: null };
+  const page = mallPages?.[mall.id] ?? null;
+  return { id: mall.id, name: mall.name, href: page ?? mall.search(query), search: !page, ad: false, pvImgUrl: null, price: null, availability: null };
 });
 const showMalls = status !== 'incompatible';
 ---

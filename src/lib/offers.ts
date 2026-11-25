@@ -60,8 +60,8 @@ export function isAutoCheckedShop(shop: string, credentials: { vcToken?: string 
 }
 
 /**
- * Amazon・楽天市場・Yahoo!ショッピングの検索結果ページ。各モールの商品ページURLは持っていない
- * （推測で作らない）ので、メーカー名＋型番での検索結果へリンクする。
+ * Amazon・楽天市場・Yahoo!ショッピングの検索結果ページ。商品ページURL（data/mall-links.csv）が
+ * 登録されていないスタンドだけ、メーカー名＋型番での検索結果へリンクする（推測でURLを作らない）。
  */
 export const malls = [
   { id: 'amazon', name: 'Amazon', search: (q: string) => `https://www.amazon.co.jp/s?k=${encodeURIComponent(q)}` },
