@@ -3,7 +3,7 @@ import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { runOfferCheck } from '../../lib/offer-check';
 import type { OfferDatabase } from '../../lib/offer-store';
 import { clearPublishedOffersCache } from '../../lib/published-offers';
-import { clearRankingCache, updateRankingIfDue, type RankingDatabase } from '../../lib/tv-ranking';
+import { chooseRankingCredentials, clearRankingCache, updateRankingIfDue, type RankingDatabase } from '../../lib/tv-ranking';
 
 export const prerender = false;
 
@@ -26,12 +26,12 @@ export const POST: APIRoute = async () => {
   const result = await runOfferCheck({ db, stands: catalog.stands, vcToken, yahoo });
   clearPublishedOffersCache();
   console.log('[offers] check finished', JSON.stringify(result));
-  // テレビの売れ筋順（楽天市場ランキング）。前回から7日たっていれば更新する。失敗しても販売情報の結果には影響させない。
-  const rakutenAppId = secret(env.RAKUTEN_APP_ID);
-  const rakutenAccessKey = secret(env.RAKUTEN_ACCESS_KEY);
+  // テレビの売れ筋順（楽天市場ランキング、楽天が未設定なら Yahoo!ショッピングのランキング）。
+  // 前回から7日たっていれば更新する。失敗しても販売情報の結果には影響させない。
+  const credentials = chooseRankingCredentials({ rakutenAppId: secret(env.RAKUTEN_APP_ID), rakutenAccessKey: secret(env.RAKUTEN_ACCESS_KEY), yahooAppId });
   let ranking: unknown;
   try {
-    ranking = await updateRankingIfDue({ db: db as unknown as RankingDatabase, televisions: catalog.televisions, credentials: rakutenAppId && rakutenAccessKey ? { appId: rakutenAppId, accessKey: rakutenAccessKey } : null });
+    ranking = await updateRankingIfDue({ db: db as unknown as RankingDatabase, televisions: catalog.televisions, credentials });
     clearRankingCache();
   } catch (error) {
     ranking = { status: 'error', detail: error instanceof Error ? error.message : String(error) };
