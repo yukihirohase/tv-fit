@@ -2,14 +2,20 @@
 import Icon from './Icon.astro';
 import { televisionPath, formatReleaseDate, type Television } from '../lib/data';
 import { screenSizeOptions, compareModels, releaseSortKey, modelSortOrders, modelSortLabels, defaultModelSortOrder } from '../lib/model-filter';
+import { rankingLabel, type TvRanking } from '../lib/tv-ranking';
 interface Props {
   televisions: Television[];
   manufacturerName: string;
+  /** 売れ筋順位（楽天市場ランキングを当サイト掲載機種内で振り直したもの）。 */
+  ranking?: TvRanking | null;
+  /** 順位の分母（当サイトに掲載しているテレビの総数）。 */
+  rankingTotal?: number;
 }
-const { televisions: unsorted, manufacturerName } = Astro.props;
+const { televisions: unsorted, manufacturerName, ranking = null, rankingTotal = 0 } = Astro.props;
+const rankOf = (id: string) => ranking?.ranks.get(id) ?? null;
 const televisions = [...unsorted].sort((a, b) => compareModels(
-  { model: a.model, size: a.screen_inches, release: releaseSortKey(a.release_date) },
-  { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date) },
+  { model: a.model, size: a.screen_inches, release: releaseSortKey(a.release_date), rank: rankOf(a.id) },
+  { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date), rank: rankOf(b.id) },
 ));
 const sizes = screenSizeOptions(televisions.map(television => television.screen_inches));
 ---
@@ -34,12 +40,14 @@ const sizes = screenSizeOptions(televisions.map(television => television.screen_
     </div>
     <button type="button" class="model-filter-reset" data-model-filter-reset hidden>条件をクリア</button>
   </form>
+  {ranking && <p class="model-filter-hint ranking-note">売れ筋順は、楽天市場の「テレビ」ランキングを週1回取得し、当サイトに掲載している型番の中で順位を付け直したものです。</p>}
   <p class="model-filter-hint">型番の一部だけでも探せます。ハイフンなどの記号、大文字・小文字、全角・半角の違いは区別しません。</p>
   <p class="model-filter-status" data-model-filter-status role="status" aria-live="polite">{televisions.length}件の型番を表示しています。</p>
   <ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
-    {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)} data-release={television.release_date ?? ''}>
+    {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)} data-release={television.release_date ?? ''} data-rank={rankOf(television.id) ?? ''}>
       <a class="model-card" data-model-link data-tv-result-link data-tv-id={television.id} data-manufacturer={television.manufacturer} href={televisionPath(television)}>
         <div class="model-card-body"><span class="model-card-name">{television.model}</span>
+          {rankingLabel(rankOf(television.id), rankingTotal, ranking?.asOf) && <span class="model-card-rank">{rankingLabel(rankOf(television.id), rankingTotal, ranking?.asOf)}</span>}
           <span class="model-card-specs">
             {television.screen_inches !== null && <span>{television.screen_inches}インチ</span>}
             {television.vesa_width_mm !== null && television.vesa_height_mm !== null && <span>VESA {television.vesa_width_mm} × {television.vesa_height_mm} mm</span>}
