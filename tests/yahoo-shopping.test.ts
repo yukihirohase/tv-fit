@@ -138,6 +138,15 @@ describe('商品カード（モールのボタン）', () => {
     expect($('.purchase-row .pr-label').length).toBe(0);
   });
 
+  it('商品画像は直販サイトの商品フィードを優先し、無ければ Yahoo!の画像', async () => {
+    const directOffer: Offer = nextOffer(null, { stand_id: stand.id, shop: 'sanwa_direct', url: stand.product_url! }, { kind: 'found', offer: { price_jpy: 13800, availability: 'out_of_stock', image_url: 'https://img.example.jp/sanwa/CR-LAST1.jpg', mpn: 'CR-LAST1' } }, new Date());
+    // 代表（在庫あり・安い）は Yahoo!でも、画像は直販サイトのもの
+    const both = await render({ offer: yahooOffer, offers: [directOffer, yahooOffer] });
+    expect(both('.product-image img').attr('src')).toBe('https://img.example.jp/sanwa/CR-LAST1.jpg');
+    const yahooOnly = await render({ offer: yahooOffer, offers: [{ ...directOffer, image_url: null }, yahooOffer] });
+    expect(yahooOnly('.product-image img').attr('src')).toBe('https://item-shopping.c.yimg.jp/i/n/sanwadirect_cr-last1');
+  });
+
   it('非対応の組み合わせにはモールのボタンも出さない', async () => {
     const $ = await render({ compatibility: { television_id: 'tv', stand_id: stand.id, status: 'incompatible', evidence_type: 'specification', evidence_url: 'https://example.org/', checked_at: '2026-11-25', notes: 'x' } });
     expect($('[data-mall-link]').length).toBe(0);

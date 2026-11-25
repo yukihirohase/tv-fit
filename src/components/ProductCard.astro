@@ -39,9 +39,11 @@ const mallLinks = malls.map(mall => {
   return { id: mall.id, name: mall.name, href: page ?? mall.search(query), search: !page, ad: false, pvImgUrl: null, price: null, availability: null };
 });
 const showMalls = status !== 'incompatible';
+// 商品画像は直販サイト（サンワダイレクトの商品フィード）を優先し、無ければ他の販売店（Yahoo!ショッピング等）の画像。
+const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => item.image_url).find(Boolean) ?? null;
 ---
 <article class:list={['product-card', `product-${status}`]} data-compatibility-view data-tv-id={television.id} data-status={status}>
-  {sale?.imageUrl && <div class="product-image"><img src={sale.imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}
+  {imageUrl && <div class="product-image"><img src={imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}
   <div class="product-card-heading"><StatusBadge status={status}/><span class="product-type">{standType[stand.stand_type]}</span></div>
   <p class="product-manufacturer">{stand.manufacturer}</p><h3>{stand.sku}</h3>
   <dl class="product-specs fit-breakdown">
