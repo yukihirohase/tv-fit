@@ -39,15 +39,39 @@ export interface Offer {
  * サンワダイレクトは Cloudflare からのアクセスを HTTP 403 で拒否するため、ページは読まずに
  * バリューコマースの商品APIを使う（2026-11-24 提携承認）。
  */
-export type OfferSource = 'page' | 'valuecommerce' | 'none';
+// 'yahoo' は Yahoo!ショッピング商品検索API（シークレット YAHOO_APP_ID があるときだけ）。販売ページURLからではなく、
+// 直販サイトで売っている商品の型番から公式ストアの出品を引く。
+export type OfferSource = 'page' | 'valuecommerce' | 'yahoo' | 'none';
 export const shops: Record<string, { name: string; hosts: readonly string[]; source: OfferSource }> = {
   sanwa_direct: { name: 'サンワダイレクト', hosts: ['direct.sanwa.co.jp'], source: 'valuecommerce' },
+  // サンワダイレクトの Yahoo!店。バリューコマース経由で提携済み（2026-11-25）。
+  yahoo_sanwa: { name: 'Yahoo!ショッピング', hosts: ['store.shopping.yahoo.co.jp'], source: 'yahoo' },
 };
 
-/** その販売店を今回確認するか。商品APIの販売店はトークンがあるときだけ。 */
-export function isAutoCheckedShop(shop: string, credentials: { vcToken?: string | null } = {}): boolean {
+/** Yahoo!ショッピングの公式ストア（サンワダイレクト Yahoo!店）。 */
+export const YAHOO_SHOP = 'yahoo_sanwa';
+/** この販売店で売っている商品は、Yahoo!ショッピングの公式ストアも確認する。 */
+export const yahooMirroredShops: readonly string[] = ['sanwa_direct'];
+
+/** その販売店を今回確認するか。APIを使う販売店は、トークン・アプリケーションIDがあるときだけ。 */
+export function isAutoCheckedShop(shop: string, credentials: { vcToken?: string | null; yahooAppId?: string | null } = {}): boolean {
   const source = shops[shop]?.source;
-  return source === 'page' || (source === 'valuecommerce' && !!credentials.vcToken);
+  return source === 'page' || (source === 'valuecommerce' && !!credentials.vcToken) || (source === 'yahoo' && !!credentials.yahooAppId);
+}
+
+/**
+ * Amazon・楽天市場・Yahoo!ショッピングの検索結果ページ。各モールの商品ページURLは持っていない
+ * （推測で作らない）ので、メーカー名＋型番での検索結果へリンクする。
+ */
+export const malls = [
+  { id: 'amazon', name: 'Amazon', search: (q: string) => `https://www.amazon.co.jp/s?k=${encodeURIComponent(q)}` },
+  { id: 'rakuten', name: '楽天市場', search: (q: string) => `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(q)}/` },
+  { id: 'yahoo', name: 'Yahoo!ショッピング', search: (q: string) => `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(q)}` },
+] as const;
+export type MallId = typeof malls[number]['id'];
+
+export function mallSearchQuery(stand: { manufacturer: string; sku: string }): string {
+  return `${stand.manufacturer} ${stand.sku}`.trim();
 }
 
 /** 何回続けて「ページがない」と確認されたら販売終了とみなすか。一時的な障害で誤って隠さないため。 */

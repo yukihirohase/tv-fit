@@ -19,7 +19,7 @@ const catalog=Astro.props.catalog??await getPublishedCatalog({compatibility:{tel
 const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
 const offers=await getPublishedOffers();
 const now=new Date();
-const allEntries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null,offer:primaryOffer(offers.get(stand.id),now)}));
+const allEntries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null,offer:primaryOffer(offers.get(stand.id),now),offers:offers.get(stand.id)??[]}));
 const availabilityOf=(entry:{offer:ReturnType<typeof primaryOffer>})=>displayOffer(entry.offer,now)?.availability;
 // 販売終了の商品は購入候補から外し、ページ下部の「販売終了品」にまとめる（適合情報は残す）。
 const ended=allEntries.filter(entry=>availabilityOf(entry)==='discontinued');

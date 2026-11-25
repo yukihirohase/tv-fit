@@ -1,9 +1,9 @@
-export type AnalyticsEvent = 'tv_search' | 'tv_result_click' | 'affiliate_click' | 'compatibility_view';
+export type AnalyticsEvent = 'tv_search' | 'tv_result_click' | 'affiliate_click' | 'mall_click' | 'compatibility_view';
 export type AnalyticsParams = Record<string, string | number | boolean | null | undefined>;
 export type AnalyticsConsent = 'unknown' | 'granted' | 'denied';
 
-const EVENTS = new Set<AnalyticsEvent>(['tv_search', 'tv_result_click', 'affiliate_click', 'compatibility_view']);
-const PARAMS = new Set(['tv_id', 'stand_id', 'status', 'manufacturer', 'query_length', 'result_count', 'match', 'destination_host']);
+const EVENTS = new Set<AnalyticsEvent>(['tv_search', 'tv_result_click', 'affiliate_click', 'mall_click', 'compatibility_view']);
+const PARAMS = new Set(['tv_id', 'stand_id', 'status', 'manufacturer', 'query_length', 'result_count', 'match', 'destination_host', 'mall']);
 
 export const CONSENT_STORAGE_KEY = 'tv-stand:analytics-consent';
 
