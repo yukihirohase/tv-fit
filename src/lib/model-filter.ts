@@ -19,10 +19,11 @@ export function screenSizeOptions(sizes: readonly (number | null)[]): number[] {
   return [...new Set(sizes.filter((size): size is number => size !== null))].sort((a, b) => a - b);
 }
 
-export const modelSortOrders = ['release-desc', 'release-asc', 'size-desc', 'size-asc'] as const;
+export const modelSortOrders = ['popular', 'release-desc', 'release-asc', 'size-desc', 'size-asc'] as const;
 export type ModelSortOrder = typeof modelSortOrders[number];
-export const defaultModelSortOrder: ModelSortOrder = 'release-desc';
+export const defaultModelSortOrder: ModelSortOrder = 'popular';
 export const modelSortLabels: Record<ModelSortOrder, string> = {
+  popular: '売れ筋順',
   'release-desc': '発売日が新しい順',
   'release-asc': '発売日が古い順',
   'size-desc': 'サイズが大きい順',
@@ -40,7 +41,8 @@ export function releaseSortKey(value: string | null | undefined): number | null 
   return Number(match[1]) * 10000 + Number(match[2]) * 100 + day;
 }
 
-export interface ModelSortItem { model: string; size: number | null; release: number | null }
+/** rank は売れ筋順位（楽天市場ランキングを当サイト掲載機種内で振り直したもの）。無ければ null。 */
+export interface ModelSortItem { model: string; size: number | null; release: number | null; rank?: number | null }
 
 function compareNullable(a: number | null, b: number | null, direction: 1 | -1): number {
   if (a === b) return 0;
@@ -49,11 +51,15 @@ function compareNullable(a: number | null, b: number | null, direction: 1 | -1):
   return (a - b) * direction;
 }
 
-/** 型番一覧の比較。発売日順はサイズの大きい順、サイズ順は発売日の新しい順で同順位を決め、最後は型番順。 */
+/**
+ * 型番一覧の比較。売れ筋順は順位のある型番を上から、順位の無い型番は発売日の新しい順で後ろに並べる。
+ * 発売日順はサイズの大きい順、サイズ順は発売日の新しい順で同順位を決め、最後は型番順。
+ */
 export function compareModels(a: ModelSortItem, b: ModelSortItem, order: ModelSortOrder = defaultModelSortOrder): number {
   const release = (direction: 1 | -1) => compareNullable(a.release, b.release, direction);
   const size = (direction: 1 | -1) => compareNullable(a.size, b.size, direction);
-  const primary = order === 'release-desc' ? release(-1) || size(-1)
+  const primary = order === 'popular' ? compareNullable(a.rank ?? null, b.rank ?? null, 1) || release(-1) || size(-1)
+    : order === 'release-desc' ? release(-1) || size(-1)
     : order === 'release-asc' ? release(1) || size(-1)
     : order === 'size-desc' ? size(-1) || release(-1)
     : size(1) || release(-1);

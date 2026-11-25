@@ -11,11 +11,12 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-model-filter-ro
   const items = [...root.querySelectorAll<HTMLElement>('[data-model-item]')].map(element => ({
     element, model: element.dataset.model ?? '', key: modelFilterKey(element.dataset.model ?? ''), size: element.dataset.size ?? '',
     sizeValue: element.dataset.size ? Number(element.dataset.size) : null, release: releaseSortKey(element.dataset.release),
+    rank: element.dataset.rank ? Number(element.dataset.rank) : null,
   }));
   const reorder = () => {
     if (!list || !sort) return;
     const order = isModelSortOrder(sort.value) ? sort.value : defaultModelSortOrder;
-    const sorted = [...items].sort((a, b) => compareModels({ model: a.model, size: a.sizeValue, release: a.release }, { model: b.model, size: b.sizeValue, release: b.release }, order));
+    const sorted = [...items].sort((a, b) => compareModels({ model: a.model, size: a.sizeValue, release: a.release, rank: a.rank }, { model: b.model, size: b.sizeValue, release: b.release, rank: b.rank }, order));
     list.append(...sorted.map(item => item.element));
   };
   if (!input || !size || !status || !empty) continue;

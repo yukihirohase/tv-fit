@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { readOffers, type OfferDatabase } from '../lib/offer-store';
+import { readRankingRun, type RankingDatabase } from '../lib/tv-ranking';
 
 export const prerender = false;
 
@@ -23,6 +24,8 @@ export const GET: APIRoute = async () => {
     last_success_at: latest(offers.map(offer => offer.last_success_at)),
     availability: Object.fromEntries(count(offers.map(offer => offer.availability))),
     errors: count(offers.map(offer => offer.last_error)).filter(([key]) => key !== '-'),
+    // 売れ筋順（楽天市場ランキング）の更新状況。表がまだ無ければ null。
+    ranking: db ? await readRankingRun(db as unknown as RankingDatabase).catch(() => null) : null,
   };
   return Response.json(body, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
 };

@@ -42,8 +42,8 @@ describe('model list filter', () => {
       { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date) },
     )).map(tv => tv.model);
     expect(items.map((_, node) => $(node).attr('data-model')).get()).toEqual(expected);
-    expect($('[data-model-filter-sort] option[selected]').attr('value')).toBe('release-desc');
-    expect($('[data-model-filter-sort] option').length).toBe(4);
+    expect($('[data-model-filter-sort] option[selected]').attr('value')).toBe('popular');
+    expect($('[data-model-filter-sort] option').length).toBe(5);
     expect($('[data-model-filter-empty]').attr('hidden')).toBeDefined();
   });
 });

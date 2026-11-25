@@ -7,6 +7,7 @@ import { isIndexableTelevision, televisionPath, type Catalog } from '../../lib/d
 import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { getManufacturers, isIndexableManufacturer, type Manufacturer } from '../../lib/manufacturers';
 import { breadcrumbSchema, canonicalUrl } from '../../lib/seo';
+import { getPublishedRanking } from '../../lib/tv-ranking';
 
 interface Props { manufacturer?: Manufacturer; catalog?: Catalog; }
 // 一覧の表示に適合情報は使わない。インデックス可否は、型番ごとの適合情報を
@@ -22,6 +23,7 @@ else for (const television of manufacturer.televisions) {
   if (isIndexableTelevision(television, await getPublishedCatalog({ compatibility: { televisionId: television.id } }))) { indexable = true; break; }
 }
 const televisions = manufacturer.televisions;
+const ranking = await getPublishedRanking();
 const structuredData: unknown[] = [breadcrumbSchema([
   { name: 'ホーム', path: '/' },
   { name: `${manufacturer.name}のテレビ型番一覧`, path: manufacturer.url },
@@ -41,7 +43,7 @@ if (televisions.length > 0) structuredData.push({
     <nav class="manufacturer-navigation" aria-label="選択の進み具合"><a href="/#manufacturers">01 メーカーを選ぶ</a><span aria-hidden="true">→</span><span aria-current="step">02 型番を選ぶ</span><span aria-hidden="true">→</span><span>03 対応情報を見る</span></nav>
     <header class="manufacturer-header"><p class="eyebrow">STEP 02 / SELECT YOUR TV</p><h1>{manufacturer.name}の<br class="mobile-break"/>テレビ型番を選ぶ</h1><p>お使いのテレビと同じ、正式な型番を選んでください。</p><a class="text-link" href="/#manufacturers">← メーカーを選び直す</a></header>
     <section class="manufacturer-models" aria-labelledby="manufacturer-models-title"><div class="section-heading"><div><h2 id="manufacturer-models-title">{manufacturer.name}のテレビ型番一覧</h2></div><p>登録済み {televisions.length} 型番</p></div>
-      {televisions.length > 0 ? <ModelList televisions={televisions} manufacturerName={manufacturer.name}/> : <div class="model-list-empty"><span class="model-list-empty-icon"><Icon name="tv" size={31}/></span><h3>{manufacturer.name}の型番データを準備中です</h3><p>現在、このメーカーのテレビ型番は登録されていません。<br/>出典を確認できた型番から順次掲載します。</p><a class="button-secondary" href="/#manufacturers">メーカー選択に戻る <Icon name="arrow" size={16}/></a></div>}
+      {televisions.length > 0 ? <ModelList televisions={televisions} manufacturerName={manufacturer.name} ranking={ranking} rankingTotal={catalog.televisions.length}/> : <div class="model-list-empty"><span class="model-list-empty-icon"><Icon name="tv" size={31}/></span><h3>{manufacturer.name}の型番データを準備中です</h3><p>現在、このメーカーのテレビ型番は登録されていません。<br/>出典を確認できた型番から順次掲載します。</p><a class="button-secondary" href="/#manufacturers">メーカー選択に戻る <Icon name="arrow" size={16}/></a></div>}
     </section>
     <aside class="manufacturer-help"><Icon name="info" size={20}/><div><h2>型番がわからないときは</h2><p>テレビ背面のラベルや取扱説明書に記載された型番を、末尾の記号まで確認してください。適合情報は公式の出典を確認して登録し、確認済みと未確認を区別して表示します。</p><a class="text-link" href="/guides/vesa/">VESAの確認方法を見る <Icon name="arrow" size={15}/></a></div></aside>
   </div>
