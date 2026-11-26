@@ -131,11 +131,21 @@ describe('商品カード（モールのボタン）', () => {
     expect(yahoo.attr('rel')).toContain('sponsored');
     expect(yahoo.text()).toContain('¥12,800');
     expect(yahoo.text()).toContain('在庫あり');
-    expect($('.mall-item .pr-label').length).toBe(1);
+    // 「PR」はモールのボタンの下ではなく、直販サイトのボタンの右に1つだけ出す
+    expect($('.mall-links .pr-label').length).toBe(0);
+    expect($('.pr-label').length).toBe(1);
     expect($('.mall-item img.ad-pixel').attr('src')).toBe('https://ad.jp.ap.valuecommerce.com/servlet/gifbanner?sid=1&pid=2');
     // 直販サイトのボタンは、Yahoo!のアフィリエイトリンクを使わない
     expect($('[data-affiliate-link]').attr('href')).toBe(stand.product_url);
-    expect($('.purchase-row .pr-label').length).toBe(0);
+    expect($('.purchase-row .pr-label').length).toBe(1);
+    expect($('[data-mall-link="yahoo"]').text()).toContain('Yahoo!');
+    expect($('[data-mall-link="yahoo"]').text()).not.toContain('ショッピング');
+  });
+
+  it('直販サイトのボタンが出ないときは、モールのボタンの下に「PR」を出す', async () => {
+    const $ = await render({ offer: yahooOffer, offers: [yahooOffer], stand: { ...stand, product_url: null } });
+    expect($('.purchase-row').length).toBe(0);
+    expect($('.mall-links .pr-label').length).toBe(1);
   });
 
   it('商品画像は直販サイトの商品フィードを優先し、無ければ Yahoo!の画像', async () => {

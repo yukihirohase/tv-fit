@@ -54,3 +54,7 @@
 .product-card .mall-button span{word-break:keep-all;line-height:1.35}
 /* 商品画像は枠線・余白なしで横幅いっぱいに出す（縦横比は画像のまま）。 */
 .product-card .product-image{display:block;height:auto;aspect-ratio:auto;margin:0 0 12px;padding:0;border:0;border-radius:6px;overflow:hidden;background:none}.product-card .product-image img{display:block;width:100%;height:auto;max-height:none}
+/* モールのボタンの「PR」は直販サイトのボタンが無いときだけ、ボタンの下に出す。 */
+.mall-links .mall-pr{display:inline-block;margin-top:6px}
+/* モールのボタンは高さをそろえ、価格と在庫は語の途中で折り返さない。 */
+.mall-item>.mall-button{flex:1 1 auto}.mall-button .mall-price>span{display:inline-block}
