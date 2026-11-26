@@ -55,6 +55,9 @@ describe('バリューコマース商品API', () => {
   it('商品説明の引用符と文字化け（〜→?）を直し、【WEB限定商品】を外す', () => {
     expect(vcItemOffer(item({ description: '"液晶モニタを取り付ける移動に便利なキャスター付きスタンド。高さ110?170cm可変。"' })).description)
       .toBe('液晶モニタを取り付ける移動に便利なキャスター付きスタンド。高さ110〜170cm可変。');
+    // 2026-11-27 に本番の商品説明で見つかった、単位を挟む形。
+    expect(vcItemOffer(item({ description: '"52型?86型程度まで対応。本当?ではない"' })).description)
+      .toBe('52型〜86型程度まで対応。本当?ではない');
     expect(vcItemOffer(item({ description: '"最大65インチ対応。【WEB限定商品】【WEB限定商品】"' })).description).toBe('最大65インチ対応。');
     expect(vcItemOffer(item({ description: '""' })).description).toBeNull();
     expect(vcItemOffer(item()).description).toBeNull();

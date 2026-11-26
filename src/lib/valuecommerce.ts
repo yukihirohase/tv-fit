@@ -105,13 +105,13 @@ export function matchVcItem(items: readonly VcItem[], productUrl: string, sku: s
 }
 
 /**
- * 商品説明を表示用に整える。商品APIは値を「"…"」で囲んで返し、「〜」が「?」に化けている（例「110?170cm」）。
- * 前後の引用符を外し、数字に挟まれた「?」を「〜」に戻し、空白をまとめる。「【WEB限定商品】」の表記は外す。
+ * 商品説明を表示用に整える。商品APIは値を「"…"」で囲んで返し、「〜」が「?」に化けている（例「110?170cm」「52型?86型」）。
+ * 前後の引用符を外し、数字（単位付きを含む）と数字に挟まれた「?」を「〜」に戻し、空白をまとめる。「【WEB限定商品】」の表記は外す。
  */
 export function vcDescription(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const text = value.trim().replace(/^"+|"+$/gu, '')
-    .replace(/(\d)\?(\d)/gu, '$1〜$2')
+    .replace(/(\d(?:型|インチ|cm|mm|kg|V|W|%)?)\?(\d)/gu, '$1〜$2')
     .replace(/【WEB限定商品】/gu, '')
     .replace(/\s+/gu, ' ').trim();
   return text ? text.slice(0, 400) : null;
