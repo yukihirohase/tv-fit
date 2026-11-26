@@ -3,6 +3,7 @@ import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { runOfferCheck } from '../../lib/offer-check';
 import type { OfferDatabase } from '../../lib/offer-store';
 import { clearPublishedOffersCache } from '../../lib/published-offers';
+import { runStandRankingProbe, saveStandRankingProbe } from '../../lib/stand-ranking-probe';
 import { chooseRankingCredentials, clearRankingCache, updateRankingIfDue, type RankingDatabase } from '../../lib/tv-ranking';
 
 export const prerender = false;
@@ -37,5 +38,17 @@ export const POST: APIRoute = async () => {
     ranking = { status: 'error', detail: error instanceof Error ? error.message : String(error) };
   }
   console.log('[ranking] update finished', JSON.stringify(ranking));
-  return Response.json({ offers: result, ranking }, { headers: { 'Cache-Control': 'no-store' } });
+  // スタンドの売れ筋順（サンワダイレクト）を商品APIの rank=monthly で取れるかの試験。表示には使わない。
+  let standRankingProbe: unknown = null;
+  if (vcToken) {
+    try {
+      const probe = await runStandRankingProbe({ token: vcToken, stands: catalog.stands });
+      await saveStandRankingProbe(db as unknown as RankingDatabase, probe);
+      standRankingProbe = { monthly_items: probe.monthly.items, monthly_error: probe.monthly.error, same_order_as_score: probe.same_order_as_score, stands_found: Object.keys(probe.stand_positions).length };
+    } catch (error) {
+      standRankingProbe = { error: error instanceof Error ? error.message : String(error) };
+    }
+    console.log('[stand-ranking-probe] finished', JSON.stringify(standRankingProbe));
+  }
+  return Response.json({ offers: result, ranking, standRankingProbe }, { headers: { 'Cache-Control': 'no-store' } });
 };
