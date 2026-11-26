@@ -28,6 +28,8 @@ export interface Offer {
   affiliate_url: string | null;
   /** アフィリエイトリンクと一緒に表示する表示数計測タグの画像URL（ASP の規約で必須）。 */
   pv_img_url: string | null;
+  /** ASP の商品データの商品説明（サンワダイレクトの商品API）。無ければ null。 */
+  description?: string | null;
 }
 
 /**
@@ -116,6 +118,7 @@ export interface ParsedOffer {
   mpn: string | null;
   affiliate_url?: string | null;
   pv_img_url?: string | null;
+  description?: string | null;
 }
 
 const schemaAvailability: Record<string, Availability> = {
@@ -217,10 +220,11 @@ export function nextOffer(previous: Offer | null, base: Pick<Offer, 'stand_id' |
     last_success_at: previous?.last_success_at ?? null,
     affiliate_url: previous?.affiliate_url ?? null,
     pv_img_url: previous?.pv_img_url ?? null,
+    description: previous?.description ?? null,
   };
   if (observation.kind === 'found') {
-    const { affiliate_url = null, pv_img_url = null, ...offer } = observation.offer;
-    return { ...base, ...offer, affiliate_url, pv_img_url, checked_at, last_success_at: checked_at, missing_count: 0, error_count: 0, last_error: null };
+    const { affiliate_url = null, pv_img_url = null, description = null, ...offer } = observation.offer;
+    return { ...base, ...offer, affiliate_url, pv_img_url, description, checked_at, last_success_at: checked_at, missing_count: 0, error_count: 0, last_error: null };
   }
   if (observation.kind === 'missing') {
     const missing_count = (previous?.missing_count ?? 0) + 1;
@@ -277,6 +281,7 @@ export interface OfferDisplay {
   pvImgUrl: string | null;
   /** 商品画像（ASP の商品データが返したもの）。 */
   imageUrl: string | null;
+  description: string | null;
 }
 
 const jstFormat = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -296,6 +301,7 @@ export function displayOffer(offer: Offer | null | undefined, now: Date = new Da
     affiliateUrl: offer.affiliate_url && offer.pv_img_url ? offer.affiliate_url : null,
     pvImgUrl: offer.affiliate_url && offer.pv_img_url ? offer.pv_img_url : null,
     imageUrl: offer.image_url,
+    description: offer.description ?? null,
   };
 }
 

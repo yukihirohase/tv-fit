@@ -46,5 +46,14 @@ describe('直販サイトの MyLink 形式のアフィリエイトリンク', ()
     const container = await AstroContainer.create();
     const $ = load(await container.renderToString(ProductCard, { props: { television, stand, compatibility: null, offer, offers: [offer], directIds: ids } }));
     expect($('[data-affiliate-link]').attr('href')).toBe(offer.affiliate_url);
+    expect($('.product-description').length).toBe(0);
+  });
+
+  it('直販サイトの商品説明を品番の下に出す', async () => {
+    const at = new Date().toISOString();
+    const offer: Offer = { stand_id: stand.id, shop: 'sanwa_direct', url: productUrl, price_jpy: 32800, availability: 'in_stock', image_url: null, mpn: null, checked_at: at, last_success_at: at, missing_count: 0, error_count: 0, last_error: null, affiliate_url: null, pv_img_url: null, description: 'キャスター付きスタンド。高さ110〜170cm可変。' };
+    const container = await AstroContainer.create();
+    const $ = load(await container.renderToString(ProductCard, { props: { television, stand, compatibility: null, offer, offers: [offer] } }));
+    expect($('h3').next('.product-description').text()).toBe('キャスター付きスタンド。高さ110〜170cm可変。');
   });
 });

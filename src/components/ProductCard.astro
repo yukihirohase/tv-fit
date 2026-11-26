@@ -43,6 +43,8 @@ const mallLinks = malls.map(mall => {
   return { id: mall.id, name: mall.name, href: page ?? mall.search(query), search: !page, ad: false, pvImgUrl: null, price: null, availability: null };
 });
 const showMalls = status !== 'incompatible';
+// 商品説明はサンワダイレクトの商品API（バリューコマース）の説明文。取れていなければ出さない。
+const description = direct?.description ?? null;
 // 商品画像は直販サイト（サンワダイレクトの商品フィード）を優先し、無ければ他の販売店（Yahoo!ショッピング等）の画像。
 const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => item.image_url).find(Boolean) ?? null;
 ---
@@ -50,6 +52,7 @@ const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => it
   {imageUrl && <div class="product-image"><img src={imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}
   <div class="product-card-heading"><StatusBadge status={status}/><span class="product-type">{standType[stand.stand_type]}</span></div>
   <p class="product-manufacturer">{stand.manufacturer}</p><h3>{stand.sku}</h3>
+  {description && <p class="product-description" title={description}>{description}</p>}
   <dl class="product-specs fit-breakdown">
     <div class:list={['fit-row', fit.weightMarginKg === null ? 'fit-unknown' : fit.weightMarginKg >= 0 ? 'fit-ok' : 'fit-ng']}>
       <dt>耐荷重</dt>
@@ -74,6 +77,7 @@ const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => it
       </details>
     : notes && <details class="product-more"><summary>適合の根拠と取付時の注意</summary><p class="product-notes">{notes}</p></details>}
   <div class="product-sources"><a href={stand.source_url} target="_blank" rel="noopener noreferrer">公式の商品詳細 <Icon name="external" size={13}/></a>{compatibility?.evidence_url && <a href={compatibility.evidence_url} target="_blank" rel="noopener noreferrer">適合判断の出典 <Icon name="external" size={13}/></a>}{compatibility?.checked_at && <span>確認日：<time datetime={compatibility.checked_at}>{compatibility.checked_at}</time></span>}</div>
+  <div class="product-buy">
   {sale && status !== 'incompatible' && <div class:list={['offer-info', `offer-${sale.availability}`]}>
     <span class="offer-availability">{availabilityLabels[sale.availability]}</span>
     {sale.price_jpy !== null && <strong class="offer-price">¥{sale.price_jpy.toLocaleString('ja-JP')}<small>（税込）</small></strong>}
@@ -95,4 +99,5 @@ const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => it
       {link.ad && link.pvImgUrl && <img class="ad-pixel" src={link.pvImgUrl} width="1" height="1" alt=""/>}
     </span>)}</div>
   </div>}
+  </div>
 </article>

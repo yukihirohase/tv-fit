@@ -33,6 +33,7 @@ describe('バリューコマース商品API', () => {
       mpn: 'CR-LAST1',
       affiliate_url: `https://ck.jp.ap.valuecommerce.com/servlet/referral?vs=111&vp=222&va=333&vc_url=${encodeURIComponent(pageUrl)}`,
       pv_img_url: 'https://ad.jp.ap.valuecommerce.com/servlet/gifbanner?vs=111&vp=222',
+      description: null,
     });
   });
 
@@ -49,6 +50,14 @@ describe('バリューコマース商品API', () => {
       pv_img_url: 'https://ad.jp.ap.valuecommerce.com/servlet/gifbanner?vs=3789293&vp=892757190',
       image_url: 'https://direct.sanwa.co.jp/images/goods/CR-LAST1_MA.JPG',
     });
+  });
+
+  it('商品説明の引用符と文字化け（〜→?）を直し、【WEB限定商品】を外す', () => {
+    expect(vcItemOffer(item({ description: '"液晶モニタを取り付ける移動に便利なキャスター付きスタンド。高さ110?170cm可変。"' })).description)
+      .toBe('液晶モニタを取り付ける移動に便利なキャスター付きスタンド。高さ110〜170cm可変。');
+    expect(vcItemOffer(item({ description: '"最大65インチ対応。【WEB限定商品】【WEB限定商品】"' })).description).toBe('最大65インチ対応。');
+    expect(vcItemOffer(item({ description: '""' })).description).toBeNull();
+    expect(vcItemOffer(item()).description).toBeNull();
   });
 
   it('在庫の表記を区分に変換し、他ホストのリンクは使わない', () => {
@@ -108,8 +117,8 @@ describe('バリューコマース商品API', () => {
     expect(result).toMatchObject({ checked: 1, found: 1 });
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(String(fetcher.mock.calls[0]![0])).toContain('webservice.valuecommerce.ne.jp');
-    // 末尾2列が affiliate_url と pv_img_url
-    expect(saved[0]!.slice(-2)).toEqual([expect.stringContaining('https://ck.jp.ap.valuecommerce.com/'), expect.stringContaining('https://ad.jp.ap.valuecommerce.com/')]);
+    // 末尾3列が affiliate_url・pv_img_url・description
+    expect(saved[0]!.slice(-3, -1)).toEqual([expect.stringContaining('https://ck.jp.ap.valuecommerce.com/'), expect.stringContaining('https://ad.jp.ap.valuecommerce.com/')]);
   });
 });
 
