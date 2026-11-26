@@ -91,7 +91,7 @@ describe('表示', () => {
   it('新しい価格は確認日時つきで出し、48時間を過ぎたら価格も在庫も出さない', () => {
     expect(displayOffer(offer, new Date('2026-11-22T06:00:00Z'))).toEqual({
       shopName: 'サンワダイレクト', availability: 'in_stock', price_jpy: 32800, priceAt: '11/22 9:00時点', purchasable: true,
-      affiliateUrl: null, pvImgUrl: null, imageUrl: 'https://cdn.sanwadirect.jp/images/goods/CR-LAST1_MX.JPG',
+      affiliateUrl: null, pvImgUrl: null, imageUrl: 'https://cdn.sanwadirect.jp/images/goods/CR-LAST1_MX.JPG', description: null,
     });
     expect(displayOffer(offer, new Date('2026-11-25T00:00:00Z'))).toMatchObject({ availability: 'unknown', price_jpy: null, priceAt: null, purchasable: true });
   });

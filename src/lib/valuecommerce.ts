@@ -23,6 +23,7 @@ export interface VcItem {
   link?: unknown;
   guid?: unknown;
   pvImg?: unknown;
+  description?: unknown;
   modelCode?: unknown;
   productCode?: unknown;
   price?: unknown;
@@ -103,6 +104,19 @@ export function matchVcItem(items: readonly VcItem[], productUrl: string, sku: s
     && (normalizeCode(item.modelCode) === code || normalizeCode(item.productCode) === code)) ?? null;
 }
 
+/**
+ * 商品説明を表示用に整える。商品APIは値を「"…"」で囲んで返し、「〜」が「?」に化けている（例「110?170cm」）。
+ * 前後の引用符を外し、数字に挟まれた「?」を「〜」に戻し、空白をまとめる。「【WEB限定商品】」の表記は外す。
+ */
+export function vcDescription(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim().replace(/^"+|"+$/gu, '')
+    .replace(/(\d)\?(\d)/gu, '$1〜$2')
+    .replace(/【WEB限定商品】/gu, '')
+    .replace(/\s+/gu, ' ').trim();
+  return text ? text.slice(0, 400) : null;
+}
+
 export function vcItemOffer(item: VcItem): ParsedOffer {
   const stock = typeof item.stock === 'string' ? item.stock.trim() : '';
   return {
@@ -112,6 +126,7 @@ export function vcItemOffer(item: VcItem): ParsedOffer {
     mpn: typeof item.modelCode === 'string' && item.modelCode.trim() ? item.modelCode.trim() : null,
     affiliate_url: secureUrl(item.link, CLICK_HOST),
     pv_img_url: pvImageUrl(item.pvImg),
+    description: vcDescription(item.description),
   };
 }
 
