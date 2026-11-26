@@ -83,6 +83,8 @@ describe('Yahoo!ショッピング 高評価トレンドランキングAPIの取
     expect(result.ok).toBe(true);
     const denied = await fetchYahooRanking({ appId: 'Y' }, { fetcher: json({ body: { Error: { Message: 'Your Request was Forbidden' } }, status: 403 }) });
     expect(denied).toEqual({ ok: false, detail: 'Yahoo API HTTP 403 Your Request was Forbidden' });
+    const xml = vi.fn(async () => new Response('<?xml version="1.0"?><Error><Message>rate limit exceeded</Message></Error>', { status: 403 })) as unknown as typeof fetch;
+    expect(await fetchYahooRanking({ appId: 'Y' }, { fetcher: xml })).toEqual({ ok: false, detail: 'Yahoo API HTTP 403 rate limit exceeded' });
   });
 
   it('楽天の認証情報がそろっていれば楽天、無ければ Yahoo!', () => {
@@ -138,6 +140,9 @@ describe('週1回の更新', () => {
     expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: fail, sleep: async () => {}, now: () => new Date('2026-12-02T00:00:00Z') })).toMatchObject({ status: 'error' });
     expect(ranking).toHaveLength(1);
     expect(getRun()).toMatchObject({ last_error: '楽天API HTTP 500', succeeded_at: t0.toISOString() });
+    // 失敗したら7日を待たず、次の定期チェック（約6時間後）でやり直す。
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: ok, now: () => new Date('2026-12-02T01:00:00Z') })).toMatchObject({ status: 'skipped' });
+    expect(await updateRankingIfDue({ db, televisions, credentials: rakuten, fetcher: ok, sleep: async () => {}, now: () => new Date('2026-12-02T06:00:00Z') })).toMatchObject({ status: 'updated' });
   });
 
   it('Yahoo!で取得し、あとから楽天を設定したら7日を待たずに楽天で取り直す', async () => {
