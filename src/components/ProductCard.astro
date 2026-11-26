@@ -43,6 +43,11 @@ const mallLinks = malls.map(mall => {
   return { id: mall.id, name: mall.name, href: page ?? mall.search(query), search: !page, ad: false, pvImgUrl: null, price: null, availability: null };
 });
 const showMalls = status !== 'incompatible';
+// 「PR」は直販サイトのボタンの右に1つだけ出す。直販サイトがアフィリエイトでなくても、モール（Yahoo!）の
+// ボタンがアフィリエイトリンクなら同じ位置に出す（ステルスマーケティング規制の表示を欠かさない）。
+const hasAd = isAd || (showMalls && mallLinks.some(link => link.ad));
+// 直販サイトのボタンが無いときだけ、モールのボタンの下に「PR」を出す。
+const mallPr = !showPurchase && showMalls && mallLinks.some(link => link.ad);
 // 商品説明はサンワダイレクトの商品API（バリューコマース）の説明文。取れていなければ出さない。
 const description = direct?.description ?? null;
 // 商品画像は直販サイト（サンワダイレクトの商品フィード）を優先し、無ければ他の販売店（Yahoo!ショッピング等）の画像。
@@ -86,18 +91,18 @@ const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => it
   </div>}
   {showPurchase && <div class="purchase-row">
     <a class="button affiliate-button" href={purchaseUrl} target="_blank" rel="sponsored nofollow noopener" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>
-    {isAd && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
+    {hasAd && <span class="pr-label" title="アフィリエイト広告のリンクを含みます">PR</span>}
     {isAd && purchasePixel && <img class="ad-pixel" src={purchasePixel} width="1" height="1" alt=""/>}
   </div>}
   {showMalls && <div class="mall-links">
     <div class="mall-row">{mallLinks.map(link => <span class="mall-item">
       <a class="mall-button" href={link.href} target="_blank" rel={link.ad ? 'sponsored nofollow noopener' : 'nofollow noopener'} data-mall-link={link.id} data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>
         <span>{link.name}</span>
-        {link.price !== null ? <small class="mall-price">¥{link.price.toLocaleString('ja-JP')}{link.availability && link.availability !== 'unknown' && `・${availabilityLabels[link.availability]}`}</small> : link.search && <small>検索結果</small>}
+        {link.price !== null ? <small class="mall-price"><span>¥{link.price.toLocaleString('ja-JP')}</span>{link.availability && link.availability !== 'unknown' && <span>・{availabilityLabels[link.availability]}</span>}</small> : link.search && <small>検索結果</small>}
       </a>
-      {link.ad && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
       {link.ad && link.pvImgUrl && <img class="ad-pixel" src={link.pvImgUrl} width="1" height="1" alt=""/>}
     </span>)}</div>
+    {mallPr && <span class="pr-label mall-pr" title="アフィリエイト広告のリンクを含みます">PR</span>}
   </div>}
   </div>
 </article>

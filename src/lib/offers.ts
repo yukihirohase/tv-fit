@@ -68,7 +68,7 @@ export function isAutoCheckedShop(shop: string, credentials: { vcToken?: string 
 export const malls = [
   { id: 'amazon', name: 'Amazon', search: (q: string) => `https://www.amazon.co.jp/s?k=${encodeURIComponent(q)}` },
   { id: 'rakuten', name: '楽天市場', search: (q: string) => `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(q)}/` },
-  { id: 'yahoo', name: 'Yahoo!ショッピング', search: (q: string) => `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(q)}` },
+  { id: 'yahoo', name: 'Yahoo!', search: (q: string) => `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(q)}` },
 ] as const;
 export type MallId = typeof malls[number]['id'];
 
