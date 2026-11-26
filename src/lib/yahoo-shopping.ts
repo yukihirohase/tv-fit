@@ -88,6 +88,20 @@ export function yahooHitOffer(hit: YahooHit, credentials: Pick<YahooCredentials,
 }
 
 /**
+ * Yahoo! API のエラー応答を「Yahoo API HTTP 403 <理由>」にする。
+ * 本文は JSON（{"Error":{"Message":...}}）か XML（<Message>...</Message>）。読めなければ状態コードだけ。
+ */
+export async function yahooErrorDetail(response: Response): Promise<string> {
+  let text = '';
+  try { text = await response.text(); } catch { /* 状態コードだけ */ }
+  let message: unknown = null;
+  try { message = (JSON.parse(text) as { Error?: { Message?: unknown } } | null)?.Error?.Message; } catch { /* XML など */ }
+  if (typeof message !== 'string') message = /<Message>([\s\S]*?)<\/Message>/u.exec(text)?.[1] ?? null;
+  const reason = typeof message === 'string' ? message.replace(/\s+/gu, ' ').trim() : '';
+  return `Yahoo API HTTP ${response.status}${reason ? ` ${reason}` : ''}`.slice(0, 300);
+}
+
+/**
  * 型番で公式ストアを検索し、結果を分類する。
  * 公式ストアに無い・API の不調は「一時的なエラー」とし、販売終了とは数えない
  * （Yahoo!ショッピングのボタンは検索結果へのリンクになるだけ）。
@@ -105,7 +119,7 @@ export async function observeYahooShopping(sku: string, credentials: YahooCreden
   } catch (error) {
     return { kind: 'error', detail: error instanceof Error ? `Yahoo API ${error.name}: ${error.message}`.slice(0, 200) : 'Yahoo API fetch failed' };
   }
-  if (!response.ok) return { kind: 'error', detail: `Yahoo API HTTP ${response.status}` };
+  if (!response.ok) return { kind: 'error', detail: await yahooErrorDetail(response) };
   let data: { hits?: unknown };
   try { data = await response.json() as typeof data; } catch { return { kind: 'error', detail: 'Yahoo API: JSON を読めませんでした' }; }
   const hits = Array.isArray(data.hits) ? data.hits.filter((hit): hit is YahooHit => hit !== null && typeof hit === 'object') : [];

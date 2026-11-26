@@ -1,4 +1,5 @@
 import type { Television } from './data';
+import { yahooErrorDetail } from './yahoo-shopping';
 
 /**
  * テレビの売れ筋順。モールの「テレビ」ランキングを週1回取得し、
@@ -21,6 +22,8 @@ export const RAKUTEN_TV_GENRE_ID = '563843';
 export const RAKUTEN_RANKING_MAX_PAGES = 34;
 /** 更新の間隔。定期チェック（6時間ごと）のたびに、前回からこれ以上たっていれば更新する。 */
 export const RANKING_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000 - 3 * 60 * 60 * 1000;
+/** 失敗したときの再試行の間隔（定期チェック1回おきではなく、毎回やり直す）。 */
+export const RANKING_RETRY_MS = 5 * 60 * 60 * 1000;
 /** これより古い順位は表示しない（取得が止まったときに古い順位を出し続けないため）。 */
 export const RANKING_STALE_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -83,13 +86,12 @@ export async function fetchYahooRanking(credentials: YahooRankingCredentials, op
     } catch (error) {
       return { ok: false, detail: error instanceof Error ? `Yahoo API ${error.name}: ${error.message}`.slice(0, 200) : 'Yahoo API fetch failed' };
     }
-    let body: unknown = null;
-    try { body = await response.json(); } catch { /* 下で扱う */ }
     if (!response.ok) {
       if (response.status === 404 && items.length > 0) break;
-      const message = (body as { Error?: { Message?: unknown } } | null)?.Error?.Message;
-      return { ok: false, detail: `Yahoo API HTTP ${response.status}${typeof message === 'string' ? ` ${message}` : ''}`.slice(0, 300) };
+      return { ok: false, detail: await yahooErrorDetail(response) };
     }
+    let body: unknown = null;
+    try { body = await response.json(); } catch { /* 下で扱う */ }
     const page = parseYahooRanking(body);
     if (page.items.length === 0) {
       if (items.length > 0) break;
@@ -270,7 +272,12 @@ export async function updateRankingIfDue(options: { db: RankingDatabase; televis
   // 間隔は元データごとに数える（Yahoo!から楽天に切り替えたら、すぐ楽天で取り直す）。
   const previous = await readRankingRun(db, source);
   const started = now();
-  if (!options.force && previous && started.getTime() - new Date(previous.attempted_at).getTime() < RANKING_INTERVAL_MS) return { status: 'skipped', reason: '前回から7日たっていない' };
+  if (!options.force && previous) {
+    // 成功してから約7日は取り直さない。失敗が続いているときは、約5時間おき（定期チェックごと）にやり直す。
+    const since = (at: string | null) => (at ? started.getTime() - new Date(at).getTime() : Number.POSITIVE_INFINITY);
+    if (since(previous.succeeded_at) < RANKING_INTERVAL_MS) return { status: 'skipped', reason: '前回の更新から7日たっていない' };
+    if (since(previous.attempted_at) < RANKING_RETRY_MS) return { status: 'skipped', reason: '前回の失敗から間がない' };
+  }
   const fetchOptions = { ...(options.fetcher ? { fetcher: options.fetcher } : {}), ...(options.sleep ? { sleep: options.sleep } : {}) };
   const fetched = source === 'rakuten' ? await fetchRakutenRanking(credentials, fetchOptions) : await fetchYahooRanking(credentials, fetchOptions);
   const attempted_at = started.toISOString();
