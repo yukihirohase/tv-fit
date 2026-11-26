@@ -10,6 +10,7 @@ import {getPublishedCatalog} from '../../lib/cms-catalog';
 import {getPublishedRanking, rankingLabel, type TvRanking} from '../../lib/tv-ranking';
 import {sortByStatus} from '../../lib/fit';
 import {getPublishedOffers} from '../../lib/published-offers';
+import {getDirectAffiliateIds} from '../../lib/direct-affiliate';
 import {primaryOffer, sortByAvailability, displayOffer} from '../../lib/offers';
 interface Props { television?:Television;catalog?:Catalog;ranking?:TvRanking|null; }
 const products=Astro.props.catalog??await getPublishedCatalog({compatibility:'none'});
@@ -21,8 +22,9 @@ const ranking=Astro.props.ranking!==undefined?Astro.props.ranking:await getPubli
 const salesRank=rankingLabel(ranking?.ranks.get(tv.id),products.televisions.length,ranking?.asOf);
 const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
 const offers=await getPublishedOffers();
+const directIds=await getDirectAffiliateIds();
 const now=new Date();
-const allEntries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null,offer:primaryOffer(offers.get(stand.id),now),offers:offers.get(stand.id)??[]}));
+const allEntries=catalog.stands.map(stand=>({stand,compatibility:pairs.find(entry=>entry.stand_id===stand.id)??null,offer:primaryOffer(offers.get(stand.id),now),offers:offers.get(stand.id)??[],directIds}));
 const availabilityOf=(entry:{offer:ReturnType<typeof primaryOffer>})=>displayOffer(entry.offer,now)?.availability;
 // 販売終了の商品は購入候補から外し、ページ下部の「販売終了品」にまとめる（適合情報は残す）。
 const ended=allEntries.filter(entry=>availabilityOf(entry)==='discontinued');

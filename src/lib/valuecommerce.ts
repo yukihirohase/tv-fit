@@ -7,6 +7,14 @@ import type { Availability, Observation, ParsedOffer } from './offers';
  */
 export const VC_SEARCH_URL = 'https://webservice.valuecommerce.ne.jp/productdb/search';
 
+/**
+ * 販売サイトのホスト → バリューコマースの広告主サイトコード（ecCode）。
+ * キーワード検索は商品名・説明文だけが対象で、型番が商品名に無い商品は見つからないため、
+ * ecCode が分かっている販売サイトは「ecCode＋商品コード（product_id）」の完全一致で探す。
+ * サンワダイレクトの j22up は、商品APIの検索結果（2026-11-26）で確認した値。
+ */
+export const VC_EC_CODES: Readonly<Record<string, string>> = { 'direct.sanwa.co.jp': 'j22up' };
+
 const CLICK_HOST = 'ck.jp.ap.valuecommerce.com';
 const PV_HOST = 'ad.jp.ap.valuecommerce.com';
 
@@ -24,11 +32,15 @@ export interface VcItem {
   imageSmall?: VcImage;
 }
 
-/** http の URL を https にし、許可したホストかどうかを確かめる（host 未指定なら https なら何でもよい）。 */
+/**
+ * http の URL を https にし、許可したホストかどうかを確かめる（host 未指定なら https なら何でもよい）。
+ * 商品APIはリンク・計測タグを「//ck.jp.ap.valuecommerce.com/...」の形（スキーム省略）で返すので https を補う。
+ */
 function secureUrl(value: unknown, host?: string): string | null {
   if (typeof value !== 'string' || !value.trim()) return null;
   try {
-    const url = new URL(value.trim());
+    const text = value.trim();
+    const url = new URL(text.startsWith('//') ? `https:${text}` : text);
     if (url.protocol === 'http:') url.protocol = 'https:';
     if (url.protocol !== 'https:' || url.username || url.password) return null;
     if (host && url.hostname !== host) return null;
@@ -107,7 +119,14 @@ export function vcItemOffer(item: VcItem): ParsedOffer {
 export async function observeValueCommerce(productUrl: string, sku: string, token: string, fetcher: typeof fetch = fetch): Promise<Observation> {
   const url = new URL(VC_SEARCH_URL);
   url.searchParams.set('token', token);
-  url.searchParams.set('keyword', sku);
+  let ecCode: string | undefined;
+  try { ecCode = VC_EC_CODES[new URL(productUrl).hostname.toLowerCase()]; } catch { /* キーワード検索にする */ }
+  if (ecCode) {
+    url.searchParams.set('ecCode', ecCode);
+    url.searchParams.set('product_id', sku);
+  } else {
+    url.searchParams.set('keyword', sku);
+  }
   url.searchParams.set('format', 'json');
   url.searchParams.set('results_per_page', '50');
   let response: Response;

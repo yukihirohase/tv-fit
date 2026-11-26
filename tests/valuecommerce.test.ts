@@ -36,6 +36,21 @@ describe('バリューコマース商品API', () => {
     });
   });
 
+  it('商品APIが返すスキーム省略（//）のリンクと計測タグも https にする', () => {
+    // 2026-11-26 に実際の商品API（サンワダイレクト CR-LAST1）が返した形。
+    const real = item({
+      link: '//ck.jp.ap.valuecommerce.com/servlet/referral?vs=3789293&vp=892757190&va=2765078&vc_url=https%3A%2F%2Fdirect.sanwa.co.jp%2FItemPage%2FCR-LAST1',
+      pvImg: '<img src="//ad.jp.ap.valuecommerce.com/servlet/gifbanner?vs=3789293&vp=892757190" height="1" width="1" border="0">',
+      imageFree: { url: '' },
+      imageLarge: { url: 'https://direct.sanwa.co.jp/images/goods/CR-LAST1_MA.JPG' },
+    });
+    expect(vcItemOffer(real)).toMatchObject({
+      affiliate_url: 'https://ck.jp.ap.valuecommerce.com/servlet/referral?vs=3789293&vp=892757190&va=2765078&vc_url=https%3A%2F%2Fdirect.sanwa.co.jp%2FItemPage%2FCR-LAST1',
+      pv_img_url: 'https://ad.jp.ap.valuecommerce.com/servlet/gifbanner?vs=3789293&vp=892757190',
+      image_url: 'https://direct.sanwa.co.jp/images/goods/CR-LAST1_MA.JPG',
+    });
+  });
+
   it('在庫の表記を区分に変換し、他ホストのリンクは使わない', () => {
     expect(vcItemOffer(item({ stock: 'お取り寄せ' })).availability).toBe('backorder');
     expect(vcItemOffer(item({ stock: 'なし' })).availability).toBe('out_of_stock');
@@ -59,7 +74,12 @@ describe('バリューコマース商品API', () => {
     expect(await observeValueCommerce(pageUrl, 'CR-LAST1', 'TOKEN', found)).toMatchObject({ kind: 'found', offer: { price_jpy: 32800 } });
     const requested = new URL(found.mock.calls[0]![0] as string);
     expect(`${requested.origin}${requested.pathname}`).toBe(VC_SEARCH_URL);
-    expect(Object.fromEntries(requested.searchParams)).toMatchObject({ token: 'TOKEN', keyword: 'CR-LAST1', format: 'json' });
+    // サンワダイレクトは広告主コード＋商品コードの完全一致で探す（キーワードは商品名・説明文しか見ないため）。
+    expect(Object.fromEntries(requested.searchParams)).toMatchObject({ token: 'TOKEN', ecCode: 'j22up', product_id: 'CR-LAST1', format: 'json' });
+    expect(requested.searchParams.has('keyword')).toBe(false);
+    const other = json({ status: 'OK', items: [] });
+    await observeValueCommerce('https://shop.example.jp/item/X-1', 'X-1', 'T', other);
+    expect(Object.fromEntries(new URL(other.mock.calls[0]![0] as string).searchParams)).toMatchObject({ keyword: 'X-1' });
     expect(await observeValueCommerce(pageUrl, 'CR-LAST1', 'T', json({ status: 'OK', items: [] }))).toEqual({ kind: 'error', detail: 'VC API: 該当商品なし（検索結果 0件）' });
     expect(await observeValueCommerce(pageUrl, 'CR-LAST1', 'T', json({ status: 'INVALID_TOKEN' }))).toEqual({ kind: 'error', detail: 'VC API status INVALID_TOKEN' });
     expect(await observeValueCommerce(pageUrl, 'CR-LAST1', 'T', json({}, 503))).toEqual({ kind: 'error', detail: 'VC API HTTP 503' });
