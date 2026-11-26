@@ -4,10 +4,11 @@ import {fitBreakdown} from '../lib/fit';
 import {confirmedNotesText, candidateSpecLine, candidateFitText, candidateCondition} from '../lib/compatibility-notes';
 import {displayOffer, availabilityLabels, malls, mallSearchQuery, shopForUrl, YAHOO_SHOP, type Offer} from '../lib/offers';
 import {mallPagesFor} from '../lib/mall-links';
+import {directMyLink, type VcIds} from '../lib/direct-affiliate';
 import StatusBadge from './StatusBadge.astro';
 import Icon from './Icon.astro';
-interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; }
-const {television,stand,compatibility,offer,offers} = Astro.props;
+interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; directIds?:VcIds|null; }
+const {television,stand,compatibility,offer,offers,directIds} = Astro.props;
 const sale = displayOffer(offer);
 const status = compatibility?.status ?? 'unknown';
 const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド', wall:'壁掛け金具'};
@@ -20,9 +21,12 @@ const condition = status === 'candidate' && compatibility?.notes ? candidateCond
 const shopOffers = offers ?? (offer ? [offer] : []);
 const directShop = stand.product_url ? shopForUrl(stand.product_url) : null;
 const direct = displayOffer(shopOffers.find(item => item.shop === directShop && item.shop !== YAHOO_SHOP));
-// ASP の商品データにアフィリエイトリンクがあればそれを使い、無ければ登録済みの販売ページへ直接リンクする。
-const purchaseUrl = direct?.affiliateUrl ?? stand.product_url;
-const isAd = !!direct?.affiliateUrl;
+// ASP の商品データにアフィリエイトリンクがあればそれを使う。無ければ、提携済みの直販サイトは MyLink と同じ形の
+// アフィリエイトリンク（価格・在庫なし）、それも無ければ登録済みの販売ページへ直接リンクする。
+const myLink = direct?.affiliateUrl ? null : directMyLink(stand.product_url, directIds);
+const purchaseUrl = direct?.affiliateUrl ?? myLink?.affiliate_url ?? stand.product_url;
+const purchasePixel = direct?.affiliateUrl ? direct.pvImgUrl : myLink?.pv_img_url ?? null;
+const isAd = !!(direct?.affiliateUrl ?? myLink);
 const showPurchase = !!purchaseUrl && status !== 'incompatible' && (direct?.purchasable ?? true);
 // Amazon・楽天市場は登録済みの商品ページへ。Yahoo!ショッピングは公式ストアの商品が取れていればその商品ページ
 // （アフィリエイトリンク）へ、取れていなければ登録済みの商品ページへ。
@@ -79,7 +83,7 @@ const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => it
   {showPurchase && <div class="purchase-row">
     <a class="button affiliate-button" href={purchaseUrl} target="_blank" rel="sponsored nofollow noopener" data-affiliate-link data-tv-id={television.id} data-stand-id={stand.id} data-status={status}>直販サイト <Icon name="external" size={16}/></a>
     {isAd && <span class="pr-label" title="アフィリエイト広告のリンクです">PR</span>}
-    {isAd && direct?.pvImgUrl && <img class="ad-pixel" src={direct.pvImgUrl} width="1" height="1" alt=""/>}
+    {isAd && purchasePixel && <img class="ad-pixel" src={purchasePixel} width="1" height="1" alt=""/>}
   </div>}
   {showMalls && <div class="mall-links">
     <div class="mall-row">{mallLinks.map(link => <span class="mall-item">

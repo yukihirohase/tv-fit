@@ -10,6 +10,11 @@
 > - アフィリエイトリンク（`link`）は、規約どおり表示数計測タグ（`pvImg` の画像）と必ず対で表示する。どちらかが欠けたらアフィリエイトリンクを使わない。購入ボタンの横に「PR」と表示する（景品表示法のステルスマーケティング規制）。
 > - API が返す `http://` のリンク・画像は `https://` にして保存する。
 >
+> **直販サイトの MyLink 形式のリンク（2026-11-26 追加）**：提携は承認済みでも、商品APIにサンワダイレクトの商品が出てこない（「該当商品なし」）。そのため商品APIのアフィリエイトリンクが無いときは、バリューコマースの MyLink と同じ形（`ck.jp.ap.valuecommerce.com/servlet/referral?sid=…&pid=…&vc_url=<商品ページ>`）で直販ボタンをアフィリエイトリンクにし、計測タグと「PR」を出す（`src/lib/direct-affiliate.ts`）。この場合、価格・在庫は出ない。
+>
+> - `pid` は Cloudflare のシークレット `SANWA_VC_PID`（MyLink のコードの `pid=`）。`sid` は `SANWA_VC_SID`、無ければ `YAHOO_VC_SID`（同じサイトのID）。未設定なら商品ページへ直接リンク。
+> - 対象は `direct.sanwa.co.jp` の商品ページだけ。商品APIで商品が取れたら、そちらのリンクを優先する。
+>
 > **Yahoo!ショッピング（2026-11-25 追加）**：バリューコマース経由で Yahoo!ショッピングと提携済み。直販サイト（サンワダイレクト）で売っている商品は、Yahoo!ショッピングの**サンワダイレクト公式ストア**（ストアID `sanwadirect`）の出品も確認する（`shops.yahoo_sanwa`、`src/lib/yahoo-shopping.ts`）。
 >
 > - 価格・在庫・画像は Yahoo!ショッピング商品検索API（v3）。アプリケーションID（Client ID）を Cloudflare のシークレット `YAHOO_APP_ID` に置く。未設定なら確認しない。
