@@ -115,14 +115,14 @@ export function parseRakutenRanking(data: unknown): RankingSourceItem[] {
 }
 
 /** 照合用：全角→半角、大文字にそろえる。 */
-const normalizeName = (value: string) => value.normalize('NFKC').toUpperCase();
+export const normalizeName = (value: string) => value.normalize('NFKC').toUpperCase();
 const modelChars = (model: string) => normalizeName(model).replace(/[^A-Z0-9]/gu, '');
 
 /**
  * 型番の正規表現。英数字の間のハイフン・空白の有無は問わず、前後が英数字でないこと（似た型番の取り違えを防ぐ）。
  * 例：「43A400 Pro」は「43A400PRO」「43A400 PRO」にも一致するが、「43A400」だけの商品名には一致しない。
  */
-function modelPattern(model: string): RegExp | null {
+export function modelPattern(model: string): RegExp | null {
   const chars = modelChars(model);
   if (chars.length < 4) return null;
   return new RegExp(`(?<![A-Z0-9])${[...chars].join('[-\\s・/]?')}(?![A-Z0-9])`, 'u');

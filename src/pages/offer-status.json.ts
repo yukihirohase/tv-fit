@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { readOffers, type OfferDatabase } from '../lib/offer-store';
 import { readRankingRun, type RankingDatabase } from '../lib/tv-ranking';
 import { readStandRankingProbe } from '../lib/stand-ranking-probe';
+import { readTvOffers, type TvOfferDatabase } from '../lib/tv-offers';
 
 export const prerender = false;
 
@@ -27,6 +28,14 @@ export const GET: APIRoute = async () => {
     errors: count(offers.map(offer => offer.last_error)).filter(([key]) => key !== '-'),
     // 売れ筋順（楽天市場ランキング）の更新状況。表がまだ無ければ null。
     ranking: db ? await readRankingRun(db as unknown as RankingDatabase).catch(() => null) : null,
+    // 型番ページのテレビ画像（Yahoo!ショッピング）の取得状況。件数と失敗理由だけ。
+    tv_offers: db ? await readTvOffers(db as unknown as TvOfferDatabase).then(rows => ({
+      televisions: rows.length,
+      with_image: rows.filter(row => row.image_url).length,
+      with_affiliate: rows.filter(row => row.affiliate_url).length,
+      last_checked_at: latest(rows.map(row => row.checked_at)),
+      errors: count(rows.map(row => row.last_error?.replace(/（検索結果 \d+件）/u, '') ?? null)).filter(([key]) => key !== '-'),
+    })).catch(() => null) : null,
     // スタンドの売れ筋順（サンワダイレクト、商品APIの rank=monthly）を取れるかの試験結果。
     stand_ranking_probe: db ? await readStandRankingProbe(db as unknown as RankingDatabase) : null,
   };
