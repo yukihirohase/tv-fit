@@ -12,20 +12,23 @@
 | `/guides/vesa/` | WebSite, WebPage, BreadcrumbList | |
 | `/privacy/` | WebSite, WebPage, BreadcrumbList | noindex |
 | `/{メーカー}/` | WebSite, CollectionPage, BreadcrumbList, ItemList | 型番一覧。画面の初期表示（売れ筋順）と同じ順・同じ型番名・同じURL |
-| `/{メーカー}/{型番}/` | WebSite, ItemPage, BreadcrumbList, Product（テレビ）, ItemList×2 | テレビ本体と、対応するスタンド・壁掛け金具の一覧（各 Product＋Offer） |
+| `/{メーカー}/{型番}/` | WebSite, ItemPage, BreadcrumbList, Thing（テレビ）, ItemList | テレビ本体と、対応するスタンド・壁掛け金具の一覧（価格を表示している商品は Product＋Offer、それ以外は Thing） |
 | 404 | なし | canonical も出さない |
 
-`@id` は `{正規URL}#webpage`・`#breadcrumb`・`#television`・`#models`・`#stands`・`#wall-mounts`・`#product-{スタンドID}`、サイトは `https://tv-fit.com/#website`。
+`@id` は `{正規URL}#webpage`・`#breadcrumb`・`#television`・`#models`・`#products`・`#product-{スタンドID}`、サイトは `https://tv-fit.com/#website`。
 
 ## ルール
 
 - **パンくず**：画面の `<Breadcrumbs items={crumbs}/>` と同じ `crumbs` を `BaseLayout` に渡す（先頭の「ホーム」は自動）。
 - **型番一覧の並び**：`sortModelsForDisplay`（`src/lib/model-filter.ts`）を画面と構造化データの両方で使う。
-- **テレビ本体**：価格はページに出していないので `offers` を付けない。画像は見出し横に商品画像を表示しているときだけ。
+- **テレビ本体**：価格・レビューを表示していないため Product ではなく Thing（Google は Product に offers・review・aggregateRating のどれかを必須とする）。型番は `identifier`、仕様は `description`。画像は見出し横に商品画像を表示しているときだけ。
 - **スタンド・壁掛け金具**：一覧に表示している商品だけ（確認済み・仕様上適合）。「販売終了品」の折りたたみは対象外。
+  - Google は1ページに ItemList を1つまでとするため、画面の2つの一覧を、ページ上の並び（スタンド → 壁掛け金具）のまま1つの ItemList にする。
+  - 価格を表示している販売店がある商品は Product＋Offer。無い商品は Thing（名前・型番・URL・画像・仕様）。
+  - `category` は Google の商品カテゴリ以外の値が「無効」とされるため書かない。
   - 画像・商品説明は `cardMedia`（`ProductCard.astro` と共通）。
-  - `offers` はカードに価格・在庫を表示している販売店だけ（代表の1件と、Yahoo!ショッピング）。値は `displayOffer` を通したもの。
-  - 48時間より古い価格・不明な価格は `price` を出さない。在庫が不明なら `availability` を出さない（在庫ありで補わない）。どちらも無ければ Offer 自体を出さない。
+  - `offers` はカードに価格を表示している販売店だけ（代表の1件と、Yahoo!ショッピング）。値は `displayOffer` を通したもの。
+  - 48時間より古い価格・不明な価格の販売店は Offer にしない（Google は price を必須とする）。在庫が不明なら `availability` を出さない（在庫ありで補わない）。
   - 在庫：在庫あり→`InStock`、在庫なし→`OutOfStock`、取り寄せ・予約→`BackOrder`、販売終了→`Discontinued`。
   - 価格は税込（画面表示と同じ）。`priceSpecification.valueAddedTaxIncluded: true`。
 - **FAQPage**：ページに FAQ が無いので出さない。FAQ を本文に載せるときに追加する（本文に無い Q&A を構造化データだけに書かない）。
@@ -36,6 +39,12 @@
 型番ページは表示のたびにこの表を読む（Worker 内で最大5分キャッシュ）。画面のカードと構造化データは同じ記録・同じ時刻（`now`）から作るので、別に更新する作業はない。
 
 ## Google の検索機能との関係
+
+リッチリザルトテスト（2026-11-28、型番ページ）で出た指摘と対応：
+- カルーセル「1つのページで複数の ListItem 要素が定義されています」（重大）→ ItemList を1つにした
+- 商品スニペット（テレビ）「offers、review、aggregateRating を指定する必要があります」（重大）→ テレビを Thing にした
+- 「category の値が無効です」（任意）→ category を削除
+- aggregateRating・review・hasMerchantReturnPolicy・shippingDetails が無い（任意）→ このサイトにはレビューが無く、販売者でもないため書かない
 
 schema.org の型・プロパティは公式語彙（schema.org 30.1）で検証済み。以下の Google の扱いは、作成時（2026-11）に
 Google 検索セントラルの最新ページを取得できなかったため未確認。変更前に公式ドキュメントとリッチリザルトテストで確認すること。

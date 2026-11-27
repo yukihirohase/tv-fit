@@ -6,7 +6,7 @@ import Icon from '../../components/Icon.astro';
 import TvVisual from '../../components/TvVisual.astro';
 import {manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, formatReleaseDate, type Television, type Catalog} from '../../lib/data';
 import {canonicalUrl} from '../../lib/seo';
-import {televisionNode, standListNode} from '../../lib/structured-data';
+import {televisionNode, productListNode} from '../../lib/structured-data';
 import {manufacturerPath} from '../../lib/manufacturers';
 import {getPublishedCatalog} from '../../lib/cms-catalog';
 import {getPublishedRanking, rankingLabel, type TvRanking} from '../../lib/tv-ranking';
@@ -51,10 +51,8 @@ const crumbs=[{name:tv.manufacturer,path:manufacturerPath(tv.manufacturer)},{nam
 const pageUrl=canonicalUrl(televisionPath(tv));
 // 見出し横の商品画像は TvVisual と同じ条件（Yahoo!の商品と、そのリンク先がある）で表示している。
 const tvImage=tvOffer&&(tvOffer.affiliate_url??tvOffer.item_url)?tvOffer.image_url:null;
-const productLists=[
-  ...(stands.length?[standListNode('stands',`${name} に対応するテレビスタンド`,stands,pageUrl,now)]:[]),
-  ...(wall.length?[standListNode('wall-mounts',`${name} に対応する壁掛け金具`,wall,pageUrl,now)]:[]),
-];
+// 画面の2つの一覧（スタンド → 壁掛け金具）を、その並びのまま1つの ItemList にする（Google は1ページ1つまで）。
+const productLists=stands.length+wall.length?[productListNode(`${name} に対応するテレビスタンド・壁掛け金具`,[...stands,...wall],pageUrl,now)]:[];
 ---
 <BaseLayout title={`${name} 対応テレビスタンド・壁掛け金具・VESA｜TV FIT`} description={televisionDescription(tv,{stands:stands.length,wall:wall.length})} indexable={isIndexableTelevision(tv,catalog)} canonicalPath={televisionPath(tv)} pageType="ItemPage" crumbs={crumbs} mainEntity={televisionNode(tv,pageUrl,tvImage)} dateModified={checkedAt} graphNodes={productLists}>
   <div class="container detail-page"><Breadcrumbs items={crumbs}/><header class="detail-header"><div class="detail-header-text"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p>{salesRank&&<p class="detail-rank">{salesRank}</p>}<div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></div><TvVisual television={tv} offer={tvOffer}/></header>
