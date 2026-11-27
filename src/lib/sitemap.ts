@@ -1,38 +1,37 @@
-import { isIndexableTelevision, televisionPath, type Catalog } from './data';
-import { getManufacturers, isIndexableManufacturer } from './manufacturers';
+import { isIndexableTelevisionWith, televisionPath, type Television } from './data';
+import { getManufacturers } from './manufacturers';
 import { canonicalUrl, escapeXml } from './seo';
+import type { CompatibilitySummary } from './compatibility-summary';
 
 export interface SitemapEntry { path: string; lastmod?: string }
 
 /** 固定ページ。内容の更新日を正確に追えないため lastmod は付けない。 */
 export const staticSitemapPaths = ['/', '/guides/vesa/', '/about/'] as const;
 
-/** 型番ごとの適合情報の最終確認日（型番ページの「最終確認」・dateModified と同じ値）。 */
-export function latestCheckedAtByTelevision(catalog: Catalog): Map<string, string> {
-  const latest = new Map<string, string>();
-  for (const entry of catalog.compatibility) {
-    if (!entry.checked_at) continue;
-    const current = latest.get(entry.television_id);
-    if (!current || entry.checked_at > current) latest.set(entry.television_id, entry.checked_at);
-  }
-  return latest;
+function indexable(tv: Television, summary: CompatibilitySummary): boolean {
+  return isIndexableTelevisionWith(tv, summary.get(tv.id)?.hasEvidence ?? false);
 }
 
-/** インデックス対象のページだけを、最終確認日つきで返す。 */
-export function sitemapEntries(catalog: Catalog): SitemapEntry[] {
-  const checkedAt = latestCheckedAtByTelevision(catalog);
+/** インデックス対象のメーカーと、その中のインデックス対象の型番。 */
+function indexableManufacturers(televisions: readonly Television[], summary: CompatibilitySummary) {
+  return getManufacturers(televisions)
+    .map(manufacturer => ({ manufacturer, televisions: manufacturer.televisions.filter(tv => indexable(tv, summary)) }))
+    .filter(item => item.televisions.length > 0);
+}
+
+/**
+ * インデックス対象のページだけを、適合情報の最終確認日（型番ページの「最終確認」・dateModified と同じ値）つきで返す。
+ */
+export function sitemapEntries(televisions: readonly Television[], summary: CompatibilitySummary): SitemapEntry[] {
+  const latest = (tv: Television) => summary.get(tv.id)?.latestCheckedAt ?? null;
   const entries: SitemapEntry[] = staticSitemapPaths.map(path => ({ path }));
-  for (const manufacturer of getManufacturers(catalog.televisions)) {
-    if (!isIndexableManufacturer(manufacturer, catalog)) continue;
-    const dates = manufacturer.televisions
-      .filter(tv => isIndexableTelevision(tv, catalog))
-      .flatMap(tv => checkedAt.get(tv.id) ?? []).sort();
-    const lastmod = dates.at(-1);
+  for (const { manufacturer, televisions: models } of indexableManufacturers(televisions, summary)) {
+    const lastmod = models.flatMap(tv => latest(tv) ?? []).sort().at(-1);
     entries.push({ path: manufacturer.url, ...(lastmod ? { lastmod } : {}) });
   }
-  for (const tv of catalog.televisions) {
-    if (!isIndexableTelevision(tv, catalog)) continue;
-    const lastmod = checkedAt.get(tv.id);
+  for (const tv of televisions) {
+    if (!indexable(tv, summary)) continue;
+    const lastmod = latest(tv);
     entries.push({ path: televisionPath(tv), ...(lastmod ? { lastmod } : {}) });
   }
   const seen = new Set<string>();
@@ -51,11 +50,9 @@ export function sitemapXml(entries: readonly SitemapEntry[], siteUrl: string): s
  * AI アシスタント・検索エンジン向けのサイト案内（https://llmstxt.org/ の形式）。
  * 画面に表示している内容だけを要約し、型番データは作らない。
  */
-export function llmsTxt(catalog: Catalog, siteUrl: string, indexingEnabled: boolean): string {
+export function llmsTxt(televisions: readonly Television[], summary: CompatibilitySummary, siteUrl: string, indexingEnabled: boolean): string {
   const url = (path: string) => canonicalUrl(path, siteUrl);
-  const manufacturers = indexingEnabled
-    ? getManufacturers(catalog.televisions).filter(item => isIndexableManufacturer(item, catalog))
-    : [];
+  const manufacturers = indexingEnabled ? indexableManufacturers(televisions, summary) : [];
   const lines = [
     '# TV FIT（テレビスタンド対応検索）',
     '',
@@ -78,9 +75,8 @@ export function llmsTxt(catalog: Catalog, siteUrl: string, indexingEnabled: bool
   ];
   if (manufacturers.length) {
     lines.push('', '## メーカー別の型番一覧', '');
-    for (const manufacturer of manufacturers) {
-      const count = manufacturer.televisions.filter(tv => isIndexableTelevision(tv, catalog)).length;
-      lines.push(`- [${manufacturer.name}のテレビ型番一覧](${url(manufacturer.url)}): 適合情報を掲載している型番 ${count}件`);
+    for (const { manufacturer, televisions: models } of manufacturers) {
+      lines.push(`- [${manufacturer.name}のテレビ型番一覧](${url(manufacturer.url)}): 適合情報を掲載している型番 ${models.length}件`);
     }
   }
   if (indexingEnabled) lines.push('', '## その他', '', `- [サイトマップ](${url('/sitemap.xml')}): 掲載中の全型番ページ`);
