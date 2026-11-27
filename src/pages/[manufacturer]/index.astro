@@ -8,6 +8,7 @@ import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { getManufacturers, isIndexableManufacturer, type Manufacturer } from '../../lib/manufacturers';
 import { breadcrumbSchema, canonicalUrl } from '../../lib/seo';
 import { getPublishedRanking } from '../../lib/tv-ranking';
+import { manufacturerDescription } from '../../lib/page-descriptions';
 
 interface Props { manufacturer?: Manufacturer; catalog?: Catalog; }
 // 一覧の表示に適合情報は使わない。インデックス可否は、型番ごとの適合情報を
@@ -37,7 +38,7 @@ if (televisions.length > 0) structuredData.push({
   })),
 });
 ---
-<BaseLayout title={`${manufacturer.name}のテレビ型番一覧・スタンド対応検索｜TV FIT`} description={`${manufacturer.name}のテレビ型番一覧です。お使いの正式な型番を選択して、テレビスタンド・壁掛け金具の対応情報、VESA、確認の根拠をご覧いただけます。`} indexable={indexable} structuredData={structuredData}>
+<BaseLayout title={`${manufacturer.name}のテレビ型番一覧・スタンド対応検索｜TV FIT`} description={manufacturerDescription(manufacturer.name, televisions.length)} indexable={indexable} canonicalPath={manufacturer.url} structuredData={structuredData}>
   <div class="container manufacturer-page">
     <Breadcrumbs items={[{ name: `${manufacturer.name}のテレビ型番一覧` }]}/>
     <nav class="manufacturer-navigation" aria-label="選択の進み具合"><a href="/#manufacturers">01 メーカーを選ぶ</a><span aria-hidden="true">→</span><span aria-current="step">02 型番を選ぶ</span><span aria-hidden="true">→</span><span>03 対応情報を見る</span></nav>

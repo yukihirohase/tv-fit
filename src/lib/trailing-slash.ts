@@ -26,3 +26,25 @@ export function canonicalPagePath(pathname: string): string {
   const last = pathname.slice(pathname.lastIndexOf('/') + 1);
   return last.includes('.') ? pathname : `${pathname}/`;
 }
+
+/**
+ * 公開ページを正規ドメイン（PUBLIC_SITE_URL）だけで配信する。
+ * workers.dev や www 付きのホストでも同じ内容が表示されるため、301 で正規ドメインへ送る
+ * （末尾スラッシュも同時に整える）。管理画面・API（/_ で始まる経路）と GET/HEAD 以外は対象外。
+ */
+export function canonicalHostRedirect(request: { method: string; url: string }, siteUrl: string | undefined): URL | null {
+  if (!siteUrl || (request.method !== 'GET' && request.method !== 'HEAD')) return null;
+  let url: URL;
+  let site: URL;
+  try {
+    url = new URL(request.url);
+    site = new URL(siteUrl);
+  } catch {
+    return null;
+  }
+  if (url.hostname === site.hostname || url.pathname.startsWith('/_') || url.pathname.startsWith('/internal/')) return null;
+  const alias = url.hostname.endsWith('.workers.dev') || url.hostname === `www.${site.hostname}`;
+  if (!alias) return null;
+  const target = new URL(`${canonicalPagePath(url.pathname)}${url.search}`, site.origin);
+  return target;
+}

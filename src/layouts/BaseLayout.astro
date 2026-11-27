@@ -3,9 +3,13 @@ import '../styles/global.css';
 import Icon from '../components/Icon.astro';
 import { canonicalUrl, robotsMeta, safeJsonLd, websiteSchema } from '../lib/seo';
 import { canonicalPagePath } from '../lib/trailing-slash';
-interface Props { title: string; description: string; indexable?: boolean; structuredData?: unknown[]; }
-const { title, description, indexable = true, structuredData = [] } = Astro.props;
-const canonical = canonicalUrl(canonicalPagePath(Astro.url.pathname));
+/**
+ * canonicalPath: このページの正規URLのパス。型番・メーカーページは表記ゆれのあるURLでも
+ * 同じページが表示されるため、データから組み立てたパスを渡す。null は canonical を出さない（404 など）。
+ */
+interface Props { title: string; description: string; indexable?: boolean; structuredData?: unknown[]; canonicalPath?: string | null; }
+const { title, description, indexable = true, structuredData = [], canonicalPath } = Astro.props;
+const canonical = canonicalPath === null ? null : canonicalUrl(canonicalPagePath(canonicalPath ?? Astro.url.pathname));
 const measurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID ?? '';
 const path = Astro.url.pathname;
 ---
@@ -17,13 +21,13 @@ const path = Astro.url.pathname;
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={robotsMeta(indexable)} />
-    <link rel="canonical" href={canonical} />
+    {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TV FIT｜テレビスタンド対応検索" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {canonical && <meta property="og:url" content={canonical} />}
     <meta name="theme-color" content="#1262ce" />
     <meta name="ga4-measurement-id" content={measurementId} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

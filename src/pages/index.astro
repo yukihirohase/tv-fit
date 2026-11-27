@@ -1,4 +1,5 @@
 ---
+import { homeDescription } from '../lib/page-descriptions';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import type {Catalog} from '../lib/data';
@@ -8,7 +9,7 @@ interface Props { catalog?: Catalog; }
 const catalog = Astro.props.catalog ?? await getPublishedCatalog({compatibility:'none'});
 const manufacturers = getManufacturers(catalog.televisions);
 ---
-<BaseLayout title="テレビのメーカーからスタンド・壁掛け金具を探す｜TV FIT" description="お使いのテレビのメーカーを選び、型番一覧からテレビを選択。テレビスタンドや壁掛け金具の適合情報と、VESA・重量・確認の根拠を確認できます。">
+<BaseLayout title="テレビのメーカーからスタンド・壁掛け金具を探す｜TV FIT" description={homeDescription}>
   <!-- ファーストビュー：まずメーカーを選ぶことが一目でわかるように、選ぶボタンと3ステップをカードにまとめる -->
   <section class="home-hero" aria-labelledby="home-title">
     <div class="container home-hero-grid">
