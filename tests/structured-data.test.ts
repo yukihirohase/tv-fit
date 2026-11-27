@@ -103,3 +103,20 @@ describe('product offers', () => {
     expect(list.itemListElement.map(item => [item.position, item.item.name])).toEqual([[1, 'サンワサプライ 100-TEST1'], [2, 'サンワサプライ 100-TEST2']]);
   });
 });
+
+describe('FAQ', () => {
+  it('uses exactly the shown questions and answers, in order', async () => {
+    const { vesaFaq, aboutFaq } = await import('../src/lib/faq');
+    const { faqNode } = await import('../src/lib/structured-data');
+    for (const items of [vesaFaq, aboutFaq]) {
+      const node = faqNode(items, `${site}/guides/vesa/`) as { '@type': string; isPartOf: unknown; mainEntity: { name: string; acceptedAnswer: { text: string } }[] };
+      expect(node['@type']).toBe('FAQPage');
+      expect(node.isPartOf).toEqual({ '@id': `${site}/guides/vesa/#webpage` });
+      expect(node.mainEntity.map(q => [q.name, q.acceptedAnswer.text])).toEqual(items.map(item => [item.question, item.answer]));
+      for (const item of items) {
+        expect(item.question.length).toBeGreaterThan(0);
+        expect(item.answer).not.toMatch(/<|>/);
+      }
+    }
+  });
+});

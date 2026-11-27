@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
 import { canonicalUrl, robotsMeta, safeJsonLd } from '../lib/seo';
-import { pageGraph, type Crumb, type PageType } from '../lib/structured-data';
+import { faqNode, pageGraph, type Crumb, type PageType } from '../lib/structured-data';
+import type { FaqItem } from '../lib/faq';
 import { canonicalPagePath } from '../lib/trailing-slash';
 /**
  * canonicalPath: このページの正規URLのパス。型番・メーカーページは表記ゆれのあるURLでも
@@ -16,8 +17,10 @@ import { canonicalPagePath } from '../lib/trailing-slash';
 interface Props {
   title: string; description: string; indexable?: boolean; canonicalPath?: string | null;
   pageType?: PageType; crumbs?: Crumb[]; mainEntity?: Record<string, unknown> | undefined; dateModified?: string | undefined; graphNodes?: Record<string, unknown>[];
+  /** 本文の <Faq items={...}/> と同じ配列。FAQPage を出す。 */
+  faq?: readonly FaqItem[];
 }
-const { title, description, indexable = true, canonicalPath, pageType, crumbs, mainEntity, dateModified, graphNodes } = Astro.props;
+const { title, description, indexable = true, canonicalPath, pageType, crumbs, mainEntity, dateModified, graphNodes, faq } = Astro.props;
 const canonical = canonicalPath === null ? null : canonicalUrl(canonicalPagePath(canonicalPath ?? Astro.url.pathname));
 const measurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID ?? '';
 const path = Astro.url.pathname;
@@ -40,7 +43,7 @@ const path = Astro.url.pathname;
     <meta name="theme-color" content="#1262ce" />
     <meta name="ga4-measurement-id" content={measurementId} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {canonical && <script type="application/ld+json" set:html={safeJsonLd(pageGraph({ url: canonical, name: title, description, ...(pageType ? { type: pageType } : {}), ...(crumbs ? { crumbs } : {}), ...(mainEntity ? { mainEntity } : {}), ...(dateModified ? { dateModified } : {}), ...(graphNodes ? { nodes: graphNodes } : {}) }))} />}
+    {canonical && <script type="application/ld+json" set:html={safeJsonLd(pageGraph({ url: canonical, name: title, description, ...(pageType ? { type: pageType } : {}), ...(crumbs ? { crumbs } : {}), ...(mainEntity ? { mainEntity } : {}), ...(dateModified ? { dateModified } : {}), ...(graphNodes || faq?.length ? { nodes: [...(graphNodes ?? []), ...(faq?.length ? [faqNode(faq, canonical)] : [])] } : {}) }))} />}
   </head>
   <body>
     <a class="skip-link" href="#main">本文へ移動</a>

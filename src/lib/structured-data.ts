@@ -240,3 +240,20 @@ export function productListNode(name: string, entries: readonly StandEntry[], pa
     })),
   };
 }
+
+/* ---------- よくある質問 ---------- */
+
+/**
+ * ページ本文の「よくある質問」（components/Faq.astro）と同じ文面の FAQPage。
+ * 本文に載せていない質問・回答は書かない。
+ */
+export function faqNode(items: readonly { question: string; answer: string }[], pageUrl: string): Node {
+  return {
+    '@type': 'FAQPage', '@id': `${pageUrl}#faq`, url: `${pageUrl}#faq`, inLanguage: 'ja',
+    isPartOf: { '@id': pageId(pageUrl) },
+    mainEntity: items.map(item => ({
+      '@type': 'Question', name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  };
+}
