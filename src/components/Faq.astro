@@ -1,0 +1,12 @@
+---
+import type { FaqItem } from '../lib/faq';
+/** よくある質問（本文）。構造化データの FAQPage は同じ items から BaseLayout が作る。 */
+interface Props { items: readonly FaqItem[]; title?: string }
+const { items, title = 'よくある質問' } = Astro.props;
+---
+<section id="faq" class="faq" aria-labelledby="faq-title">
+  <h2 id="faq-title">{title}</h2>
+  <dl class="faq-list">
+    {items.map(item => <div class="faq-item"><dt>{item.question}</dt><dd>{item.answer}</dd></div>)}
+  </dl>
+</section>

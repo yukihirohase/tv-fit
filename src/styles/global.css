@@ -102,3 +102,10 @@ body{background:var(--home-bg)}
 .tv-visual-dim{font-size:11px;font-weight:700;fill:var(--blue)}
 .tv-visual-label{font-size:11px;fill:var(--home-ink-soft)}
 @media(max-width:860px){.detail-header{grid-template-columns:1fr}.tv-visual{width:100%;max-width:380px}.tv-visual-image{height:210px}}
+/* よくある質問（components/Faq.astro） */
+.faq-list{margin:0;border-top:1px solid var(--line)}
+.faq-item{padding:18px 2px;border-bottom:1px solid var(--line)}
+.faq-item dt{font-size:15px;font-weight:700;line-height:1.7}
+.faq-item dt::before{content:"Q.";margin-right:6px;color:var(--blue)}
+.faq-item dd{margin:8px 0 0;font-size:14px;line-height:2;color:#55667c}
+@media (max-width:640px){.faq-item dt{font-size:14px}.faq-item dd{font-size:13px}}
