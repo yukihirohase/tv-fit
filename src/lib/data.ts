@@ -164,11 +164,21 @@ export const televisionPath = (tv: Television): string => `/${encodeURIComponent
 
 /** Thin/unchecked pages remain accessible but stay outside search engine indexes. */
 export function isIndexableTelevision(tv: Television, catalog: Catalog, exclusions: Readonly<Record<string, string>> = indexExclusions): boolean {
+  return isIndexableTelevisionWith(tv, catalog.compatibility.some((entry) => entry.television_id === tv.id && isIndexEvidence(entry)), exclusions);
+}
+
+/** 根拠つきの判定（非対応・候補・確認済み）。型番ページをインデックスする条件の1つ。 */
+export function isIndexEvidence(entry: Pick<Compatibility, 'status' | 'evidence_url' | 'checked_at'>): boolean {
+  return entry.status !== 'unknown' && entry.evidence_url !== null && entry.checked_at !== null;
+}
+
+/** 適合情報の全件を読まずに判定するとき用（hasEvidence は isIndexEvidence を満たす行があるか）。 */
+export function isIndexableTelevisionWith(tv: Television, hasEvidence: boolean, exclusions: Readonly<Record<string, string>> = indexExclusions): boolean {
   return !Object.hasOwn(exclusions, tv.id) &&
     ![tv.id, tv.manufacturer, tv.model].some((value) => fixtureText.test(value)) &&
     tv.source_url !== null && !fixtureUrl(tv.source_url) &&
     tv.screen_inches !== null && tv.weight_kg !== null && tv.vesa_width_mm !== null && tv.vesa_height_mm !== null &&
-    catalog.compatibility.some((entry) => entry.television_id === tv.id && entry.status !== 'unknown' && entry.evidence_url !== null && entry.checked_at !== null);
+    hasEvidence;
 }
 
 /** 発売日の表示（2025-06-07 → 2025年6月7日、2025-06-下旬 → 2025年6月下旬、2025-06 → 2025年6月）。 */
