@@ -18,8 +18,10 @@ describe('スタンドの売れ筋順（商品APIの rank=monthly）の試験', 
       : page(['CR-LAST1', 'ABC-1', '100-PL012'])) as unknown as typeof fetch & ReturnType<typeof vi.fn>;
     const probe = await runStandRankingProbe({ token: 'SECRET', stands, fetcher, sleep: async () => {}, now: () => new Date('2026-11-27T00:00:00Z') });
     const monthlyUrl = new URL(fetcher.mock.calls[0]![0] as string);
-    expect(Object.fromEntries(monthlyUrl.searchParams)).toMatchObject({ ecCode: 'j22up', rank: 'monthly', page: '1', format: 'json' });
-    expect(new URL(fetcher.mock.calls[1]![0] as string).searchParams.has('rank')).toBe(false);
+    expect(Object.fromEntries(monthlyUrl.searchParams)).toMatchObject({ ecCode: 'j22up', keyword: 'スタンド', rank: 'monthly', page: '1', format: 'json' });
+    const scoreUrl = new URL(fetcher.mock.calls[1]![0] as string);
+    expect(scoreUrl.searchParams.has('rank')).toBe(false);
+    expect(scoreUrl.searchParams.get('keyword')).toBe('スタンド');
     expect(probe.monthly).toMatchObject({ status: 'OK', items: 3, pages: 1, top: ['ABC-1', '100-PL012', 'CR-LAST1'], meta: { resultCount: 3 } });
     expect(probe.monthly.item_fields).toEqual(['guid', 'modelCode', 'productCode']);
     expect(probe.same_order_as_score).toBe(false);
