@@ -109,3 +109,21 @@ body{background:var(--home-bg)}
 .faq-item dt::before{content:"Q.";margin-right:6px;color:var(--blue)}
 .faq-item dd{margin:8px 0 0;font-size:14px;line-height:2;color:#55667c}
 @media (max-width:640px){.faq-item dt{font-size:14px}.faq-item dd{font-size:13px}}
+/* 関連するテレビ（components/RelatedModels.astro） */
+.related-models{margin-top:45px}
+.related-models h2{font-size:23px;margin-bottom:6px}
+.related-group{margin-top:20px}
+.related-group h3{font-size:16px;margin-bottom:11px}
+.related-maker{display:block;font-size:11px;color:#73859d;margin-bottom:2px}
+.related-badge{display:inline-block;margin-top:9px;font-size:11px;font-weight:700;color:#0f6b3f;background:#e8f6ee;border-radius:4px;padding:2px 8px}
+.related-note{margin-top:12px;font-size:12px;color:#5f7590;line-height:1.8}
+.model-list.related-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.related-list .model-card{padding:12px 14px}
+.related-list .model-card>svg{display:none}
+.related-list .model-card-name{font-size:15px}
+.related-list .model-card-specs{margin-top:4px;line-height:1.7}
+.related-list .model-card-specs>span{display:inline}
+.related-list .model-card-specs>span+span::before{content:" ・ "}
+.related-list .related-badge{margin-top:6px}
+@media(max-width:1000px){.model-list.related-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.related-models{margin-top:32px}.related-models h2{font-size:20px}.model-list.related-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.related-list .model-card{padding:10px 11px}.related-list .model-card-name{font-size:14px}}

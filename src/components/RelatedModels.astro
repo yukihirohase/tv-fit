@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+import { televisionPath, type Television } from '../lib/data';
+import { sameVesa, type RelatedModels } from '../lib/related-models';
+/** 型番ページ下部の相互リンク（同じシリーズの他のサイズ・同じ画面サイズの他の機種）。 */
+interface Props { television: Television; related: RelatedModels }
+const { television: tv, related } = Astro.props;
+const groups = [
+  { id: 'same-series', title: '同じシリーズの他のサイズ', items: related.series, showMaker: false },
+  { id: 'same-size', title: `同じ${tv.screen_inches}型の他のテレビ`, items: related.sameSize, showMaker: true },
+].filter(group => group.items.length > 0);
+---
+{groups.length > 0 && <section class="related-models" aria-labelledby="related-models-title">
+  <h2 id="related-models-title">関連するテレビ</h2>
+  {groups.map(group => <div class="related-group" id={group.id}>
+    <h3>{group.title}</h3>
+    <ul class="model-list related-list">
+      {group.items.map(item => <li>
+        <a class="model-card" href={televisionPath(item)} data-related-link={group.id} data-tv-id={item.id}>
+          <div class="model-card-body">
+            {group.showMaker && <span class="related-maker">{item.manufacturer}</span>}
+            <span class="model-card-name">{item.model}</span>
+            <span class="model-card-specs">
+              {item.screen_inches !== null && <span>{item.screen_inches}インチ</span>}
+              {item.vesa_width_mm !== null && item.vesa_height_mm !== null && <span>VESA {item.vesa_width_mm} × {item.vesa_height_mm} mm</span>}
+              {item.weight_kg !== null && <span>{item.weight_kg} kg</span>}
+            </span>
+            {sameVesa(tv, item) && <span class="related-badge">VESAが同じ</span>}
+          </div>
+          <Icon name="arrow" size={19}/>
+        </a>
+      </li>)}
+    </ul>
+  </div>)}
+  {[...related.series, ...related.sameSize].some(item => sameVesa(tv, item)) && <p class="related-note">「VESAが同じ」機種は、同じスタンド・壁掛け金具を使える場合があります。耐荷重と対応サイズは、それぞれの型番ページで確認してください。</p>}
+</section>}
