@@ -10,6 +10,7 @@ import {manufacturerPath} from '../../lib/manufacturers';
 import {getPublishedCatalog} from '../../lib/cms-catalog';
 import {getPublishedRanking, rankingLabel, type TvRanking} from '../../lib/tv-ranking';
 import {sortByStatus} from '../../lib/fit';
+import {sortBySalesRank} from '../../lib/stand-sales-rank';
 import {getPublishedOffers} from '../../lib/published-offers';
 import {getDirectAffiliateIds} from '../../lib/direct-affiliate';
 import {primaryOffer, sortByAvailability, displayOffer} from '../../lib/offers';
@@ -35,7 +36,8 @@ const ended=allEntries.filter(entry=>availabilityOf(entry)==='discontinued');
 const entries=sortByAvailability(allEntries.filter(entry=>!ended.includes(entry)),availabilityOf);
 // 個別適合確認済みと仕様上の候補を同じ一覧に並べる（区分はカードのバッジで示す）。非対応・判断材料不足は出さない。
 const fits=(entry:(typeof entries)[number])=>entry.compatibility?.status==='confirmed'||entry.compatibility?.status==='candidate';
-const ordered=sortByAvailability(sortByStatus(entries.filter(fits)),availabilityOf);
+// 並び順：在庫のあるものを先に、その中は売れ筋順（data/stand-sales-rank.csv）、同じ順位・順位なしは確認済みを先に。
+const ordered=sortByAvailability(sortBySalesRank(sortByStatus(entries.filter(fits)),entry=>entry.stand.sku),availabilityOf);
 const stands=ordered.filter(entry=>entry.stand.stand_type!=='wall');
 const wall=ordered.filter(entry=>entry.stand.stand_type==='wall');
 const countOf=(list:typeof ordered,status:'confirmed'|'candidate')=>list.filter(entry=>entry.compatibility?.status===status).length;
