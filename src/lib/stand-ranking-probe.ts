@@ -13,6 +13,8 @@ import { VC_EC_CODES, VC_SEARCH_URL } from './valuecommerce';
  */
 export const SANWA_DIRECT_EC_CODE = VC_EC_CODES['direct.sanwa.co.jp']!;
 export const PROBE_PAGES = 6;
+/** ecCode だけでは INVALID_SEARCH_PARAMETERS になる（2026-11-27 の本番結果）ため、キーワードで絞る。 */
+export const PROBE_KEYWORD = 'スタンド';
 export const PROBE_PER_PAGE = 50;
 
 export interface ProbeVariant {
@@ -92,9 +94,9 @@ async function fetchVariant(token: string, extra: Record<string, string>, pages:
 export async function runStandRankingProbe(options: { token: string; stands: readonly Pick<Stand, 'id' | 'sku' | 'product_url'>[]; fetcher?: typeof fetch; sleep?: (ms: number) => Promise<void>; now?: () => Date; pages?: number }): Promise<StandRankingProbe> {
   const { token, stands, fetcher = fetch, now = () => new Date(), pages = PROBE_PAGES } = options;
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)));
-  const monthly = await fetchVariant(token, { rank: 'monthly' }, pages, fetcher, sleep);
+  const monthly = await fetchVariant(token, { keyword: PROBE_KEYWORD, rank: 'monthly' }, pages, fetcher, sleep);
   await sleep(1000);
-  const score = await fetchVariant(token, {}, 1, fetcher, sleep);
+  const score = await fetchVariant(token, { keyword: PROBE_KEYWORD }, 1, fetcher, sleep);
   const firstPage = (list: Record<string, unknown>[]) => list.slice(0, PROBE_PER_PAGE).map(codeOf).join('|');
   const same = monthly.list.length > 0 && score.list.length > 0 ? firstPage(monthly.list) === firstPage(score.list) : null;
   const positions: Record<string, number> = {};
