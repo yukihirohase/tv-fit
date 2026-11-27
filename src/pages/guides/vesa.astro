@@ -3,9 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import VesaIllustration from '../../components/VesaIllustration.astro';
 import Icon from '../../components/Icon.astro';
-import {breadcrumbSchema} from '../../lib/seo';
 ---
-<BaseLayout title="テレビのVESA・取付穴間隔の確認方法｜TV FIT" description="テレビ背面のVESA取付穴間隔を確認する方法を解説。公式仕様の見方、横×縦の測り方、重量・ネジ・スペーサーなど、スタンドと壁掛け金具を選ぶ前の確認事項を紹介します。" structuredData={[breadcrumbSchema([{name:'ホーム',path:'/'},{name:'VESAの確認方法',path:'/guides/vesa/'}])]}>
+<BaseLayout title="テレビのVESA・取付穴間隔の確認方法｜TV FIT" description="テレビ背面のVESA取付穴間隔を確認する方法を解説。公式仕様の見方、横×縦の測り方、重量・ネジ・スペーサーなど、スタンドと壁掛け金具を選ぶ前の確認事項を紹介します。" crumbs={[{name:'VESAの確認方法'}]}>
   <article class="container article-page"><Breadcrumbs items={[{name:'VESAの確認方法'}]}/><header class="article-header"><p class="eyebrow">VESA GUIDE</p><h1>VESAの確認方法</h1><p>スタンド選びの前に、テレビ背面の「取付穴」を確認しましょう。</p></header>
     <div class="guide-intro"><div><h2>VESAは、取付穴の間隔のこと</h2><p>テレビ背面の4つの取付穴について、横方向と縦方向の中心間距離をミリメートルで表します。表示の順序は「横 × 縦」です。</p><p>取付穴の間隔が合っていても、すべての金具を使用できるとは限りません。メーカーの適合表と取扱説明書をあわせて確認します。</p></div><VesaIllustration/></div>
     <section><h2><span class="article-step">01</span> まずは公式仕様を確認</h2><p>テレビの背面ラベルで正式な型番を確認し、その型番のメーカー公式サイト・取扱説明書・寸法図で「壁掛け」「取付穴」「VESA」などの項目を探します。型番末尾の記号まで一致しているか確認してください。</p><p>テレビの重量は、付属スタンドを除く本体の値を確認します。スタンド込みの重量と混同しないよう、仕様の注記も確認してください。</p></section>

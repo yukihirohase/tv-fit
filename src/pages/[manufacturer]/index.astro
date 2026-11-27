@@ -3,10 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
 import ModelList from '../../components/ModelList.astro';
-import { isIndexableTelevision, televisionPath, type Catalog } from '../../lib/data';
+import { isIndexableTelevision, type Catalog } from '../../lib/data';
 import { getPublishedCatalog } from '../../lib/cms-catalog';
 import { getManufacturers, isIndexableManufacturer, type Manufacturer } from '../../lib/manufacturers';
-import { breadcrumbSchema, canonicalUrl } from '../../lib/seo';
+import { canonicalUrl } from '../../lib/seo';
+import { modelListNode } from '../../lib/structured-data';
+import { sortModelsForDisplay } from '../../lib/model-filter';
 import { getPublishedRanking } from '../../lib/tv-ranking';
 import { manufacturerDescription } from '../../lib/page-descriptions';
 
@@ -25,22 +27,15 @@ else for (const television of manufacturer.televisions) {
 }
 const televisions = manufacturer.televisions;
 const ranking = await getPublishedRanking();
-const structuredData: unknown[] = [breadcrumbSchema([
-  { name: 'ホーム', path: '/' },
-  { name: `${manufacturer.name}のテレビ型番一覧`, path: manufacturer.url },
-])];
-if (televisions.length > 0) structuredData.push({
-  '@context': 'https://schema.org', '@type': 'ItemList',
-  name: `${manufacturer.name}のテレビ型番一覧`, numberOfItems: televisions.length,
-  itemListElement: televisions.map((television, index) => ({
-    '@type': 'ListItem', position: index + 1,
-    name: television.model, url: canonicalUrl(televisionPath(television)),
-  })),
-});
+// 画面のパンくず・型番一覧と同じデータから構造化データを作る（一覧は画面の初期表示と同じ並び）。
+const crumbs = [{ name: `${manufacturer.name}のテレビ型番一覧` }];
+const modelList = televisions.length > 0
+  ? modelListNode(manufacturer.name, sortModelsForDisplay(televisions, ranking?.ranks), canonicalUrl(manufacturer.url))
+  : undefined;
 ---
-<BaseLayout title={`${manufacturer.name}のテレビ型番一覧・スタンド対応検索｜TV FIT`} description={manufacturerDescription(manufacturer.name, televisions.length)} indexable={indexable} canonicalPath={manufacturer.url} structuredData={structuredData}>
+<BaseLayout title={`${manufacturer.name}のテレビ型番一覧・スタンド対応検索｜TV FIT`} description={manufacturerDescription(manufacturer.name, televisions.length)} indexable={indexable} canonicalPath={manufacturer.url} pageType="CollectionPage" crumbs={crumbs} mainEntity={modelList}>
   <div class="container manufacturer-page">
-    <Breadcrumbs items={[{ name: `${manufacturer.name}のテレビ型番一覧` }]}/>
+    <Breadcrumbs items={crumbs}/>
     <nav class="manufacturer-navigation" aria-label="選択の進み具合"><a href="/#manufacturers">01 メーカーを選ぶ</a><span aria-hidden="true">→</span><span aria-current="step">02 型番を選ぶ</span><span aria-hidden="true">→</span><span>03 対応情報を見る</span></nav>
     <header class="manufacturer-header"><p class="eyebrow">STEP 02 / SELECT YOUR TV</p><h1>{manufacturer.name}の<br class="mobile-break"/>テレビ型番を選ぶ</h1><p>お使いのテレビと同じ、正式な型番を選んでください。</p><a class="text-link" href="/#manufacturers">← メーカーを選び直す</a></header>
     <section class="manufacturer-models" aria-labelledby="manufacturer-models-title"><div class="section-heading"><div><h2 id="manufacturer-models-title">{manufacturer.name}のテレビ型番一覧</h2></div><p>登録済み {televisions.length} 型番</p></div>

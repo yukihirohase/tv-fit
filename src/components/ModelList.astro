@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { televisionPath, formatReleaseDate, type Television } from '../lib/data';
-import { screenSizeOptions, compareModels, releaseSortKey, modelSortOrders, modelSortLabels, defaultModelSortOrder } from '../lib/model-filter';
+import { screenSizeOptions, sortModelsForDisplay, modelSortOrders, modelSortLabels, defaultModelSortOrder } from '../lib/model-filter';
 import { rankingLabel, type TvRanking } from '../lib/tv-ranking';
 interface Props {
   televisions: Television[];
@@ -13,10 +13,8 @@ interface Props {
 }
 const { televisions: unsorted, manufacturerName, ranking = null, rankingTotal = 0 } = Astro.props;
 const rankOf = (id: string) => ranking?.ranks.get(id) ?? null;
-const televisions = [...unsorted].sort((a, b) => compareModels(
-  { model: a.model, size: a.screen_inches, release: releaseSortKey(a.release_date), rank: rankOf(a.id) },
-  { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date), rank: rankOf(b.id) },
-));
+// 並び順は構造化データ（メーカーページの ItemList）と同じ関数で決める。
+const televisions = sortModelsForDisplay(unsorted, ranking?.ranks);
 const sizes = screenSizeOptions(televisions.map(television => television.screen_inches));
 ---
 <div class="model-filter-root" data-model-filter-root>

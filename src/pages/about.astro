@@ -2,11 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import StatusBadge from '../components/StatusBadge.astro';
-import {breadcrumbSchema} from '../lib/seo';
 import {getPublishedCatalog} from '../lib/cms-catalog';
 const hasTelevisions=(await getPublishedCatalog({compatibility:'none'})).televisions.length>0;
 ---
-<BaseLayout title="このサイトについて・適合情報の運営方針｜TV FIT" description="TV FITの適合情報の扱い、4種類の適合ステータス、情報源と確認日の見方、広告・アフィリエイトの運営方針を説明します。" structuredData={[breadcrumbSchema([{name:'ホーム',path:'/'},{name:'このサイトについて',path:'/about/'}])]}>
+<BaseLayout title="このサイトについて・適合情報の運営方針｜TV FIT" description="TV FITの適合情報の扱い、4種類の適合ステータス、情報源と確認日の見方、広告・アフィリエイトの運営方針を説明します。" pageType="AboutPage" crumbs={[{name:'このサイトについて'}]}>
   <article class="container article-page narrow"><Breadcrumbs items={[{name:'このサイトについて'}]}/><header class="article-header"><p class="eyebrow">ABOUT TV FIT</p><h1>テレビとスタンドの、<br/>確かな接点を。</h1><p>型番と仕様、その根拠から、納得できる商品選びをお手伝いします。</p></header>
   <section><h2>TV FITについて</h2><p>テレビのメーカー・型番から、テレビスタンドと壁掛け金具の適合情報を確認するための個人運営サイトです。公式仕様・個別適合表などの出典と、適合情報の確認日を商品ごとに表示します。</p>{!hasTelevisions && <p>現在は確認済みの型番データを準備しています。実在する製品の情報は、出典を確認してから登録します。</p>}</section>
   <section id="statuses"><h2>4種類の適合ステータス</h2><div class="status-definition"><StatusBadge status="confirmed"/><p>メーカー等の個別適合情報を根拠に、このテレビ型番と商品の組み合わせが確認されている状態です。</p></div><div class="status-definition"><StatusBadge status="candidate"/><p>VESAと耐荷重の仕様を満たす候補です。背面形状やネジなどを含む個別の取付適合は未確認です。</p></div><div class="status-definition"><StatusBadge status="incompatible"/><p>明確な非対応の根拠がある組み合わせです。購入候補から除外してください。</p></div><div class="status-definition"><StatusBadge status="unknown"/><p>適合を判断する材料が不足している状態です。非対応と判断された状態とは異なります。</p></div></section>

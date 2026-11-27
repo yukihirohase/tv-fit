@@ -45,7 +45,7 @@ describe('manufacturer-first navigation', () => {
     expect($('#main a[href="/#manufacturers"]').length).toBeGreaterThan(0);
     expect($('meta[name="robots"]').attr('content')).toBe('noindex, follow');
     expect($('link[rel="canonical"]').attr('href')).toBe('https://tvfit-navigation.jp/sony/');
-    const schemas = $('script[type="application/ld+json"]').map((_, node) => JSON.parse($(node).text())).get();
+    const schemas = $('script[type="application/ld+json"]').map((_, node) => JSON.parse($(node).text())).get().flatMap(schema => schema['@graph'] ?? [schema]);
     expect(schemas.some(schema => schema['@type'] === 'ItemList')).toBe(false);
   });
 
@@ -66,9 +66,14 @@ describe('manufacturer-first navigation', () => {
     expect(links.text()).not.toContain(other.model);
     expect($('.breadcrumbs [aria-current="page"]').text()).toContain(manufacturer.name);
     expect($('meta[name="robots"]').attr('content')).toBe('noindex, follow');
-    const itemList = $('script[type="application/ld+json"]').map((_, node) => JSON.parse($(node).text())).get().find(schema => schema['@type'] === 'ItemList');
+    const graph = $('script[type="application/ld+json"]').map((_, node) => JSON.parse($(node).text())).get().flatMap(schema => schema['@graph'] ?? [schema]);
+    const itemList = graph.find(schema => schema['@type'] === 'ItemList');
     expect(itemList?.numberOfItems ?? itemList?.itemListElement?.length).toBe(fixtures.televisions.length);
     expect(JSON.stringify(itemList)).not.toContain(other.model);
+    // 構造化データの一覧は、画面の型番一覧と同じ順・同じリンク先。
+    const shown = $('[data-model-list] a[data-model-link]').map((_, node) => $(node).attr('href')).get();
+    expect(itemList.itemListElement.map((item: { url: string }) => new URL(item.url).pathname)).toEqual(shown);
+    expect(itemList.itemListElement.map((item: { position: number }) => item.position)).toEqual(shown.map((_, index) => index + 1));
   });
 
   it('escapes model text in the selectable list without changing the formal label', async () => {
