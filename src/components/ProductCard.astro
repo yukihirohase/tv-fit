@@ -5,11 +5,13 @@ import {confirmedNotesText, candidateSpecLine, candidateFitText, candidateCondit
 import {displayOffer, availabilityLabels, malls, mallSearchQuery, shopForUrl, YAHOO_SHOP, type Offer} from '../lib/offers';
 import {mallPagesFor} from '../lib/mall-links';
 import {directMyLink, type VcIds} from '../lib/direct-affiliate';
+import {cardMedia} from '../lib/structured-data';
 import StatusBadge from './StatusBadge.astro';
 import Icon from './Icon.astro';
-interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; directIds?:VcIds|null; }
-const {television,stand,compatibility,offer,offers,directIds} = Astro.props;
-const sale = displayOffer(offer);
+/** now：価格の新しさの判定に使う日時。型番ページの構造化データと同じ値を渡す。 */
+interface Props { television:Television; stand:Stand; compatibility:Compatibility|null; offer?:Offer|null; offers?:readonly Offer[]; directIds?:VcIds|null; now?:Date; }
+const {television,stand,compatibility,offer,offers,directIds,now = new Date()} = Astro.props;
+const sale = displayOffer(offer, now);
 const status = compatibility?.status ?? 'unknown';
 const standType = {floor:'フロアスタンド', tabletop:'卓上スタンド', wall:'壁掛け金具'};
 const fit = fitBreakdown(television, stand);
@@ -20,7 +22,7 @@ const condition = status === 'candidate' && compatibility?.notes ? candidateCond
 // offer は在庫・価格の表示に使う代表の1件。購入ボタンは販売店ごとの記録（offers）から作る。
 const shopOffers = offers ?? (offer ? [offer] : []);
 const directShop = stand.product_url ? shopForUrl(stand.product_url) : null;
-const direct = displayOffer(shopOffers.find(item => item.shop === directShop && item.shop !== YAHOO_SHOP));
+const direct = displayOffer(shopOffers.find(item => item.shop === directShop && item.shop !== YAHOO_SHOP), now);
 // ASP の商品データにアフィリエイトリンクがあればそれを使う。無ければ、提携済みの直販サイトは MyLink と同じ形の
 // アフィリエイトリンク（価格・在庫なし）、それも無ければ登録済みの販売ページへ直接リンクする。
 const myLink = direct?.affiliateUrl ? null : directMyLink(stand.product_url, directIds);
@@ -31,7 +33,7 @@ const showPurchase = !!purchaseUrl && status !== 'incompatible' && (direct?.purc
 // Amazon・楽天市場は登録済みの商品ページへ。Yahoo!ショッピングは公式ストアの商品が取れていればその商品ページ
 // （アフィリエイトリンク）へ、取れていなければ登録済みの商品ページへ。
 const yahooRecord = shopOffers.find(item => item.shop === YAHOO_SHOP && item.last_success_at) ?? null;
-const yahooSale = displayOffer(yahooRecord);
+const yahooSale = displayOffer(yahooRecord, now);
 const query = mallSearchQuery(stand);
 // 商品ページが登録されていれば（data/mall-links.csv）そこへ、無ければ検索結果へ。
 const mallPages = mallPagesFor(stand.id);
@@ -48,10 +50,8 @@ const showMalls = status !== 'incompatible';
 const hasAd = isAd || (showMalls && mallLinks.some(link => link.ad));
 // 直販サイトのボタンが無いときだけ、モールのボタンの下に「PR」を出す。
 const mallPr = !showPurchase && showMalls && mallLinks.some(link => link.ad);
-// 商品説明はサンワダイレクトの商品API（バリューコマース）の説明文。取れていなければ出さない。
-const description = direct?.description ?? null;
-// 商品画像は直販サイト（サンワダイレクトの商品フィード）を優先し、無ければ他の販売店（Yahoo!ショッピング等）の画像。
-const imageUrl = direct?.imageUrl ?? sale?.imageUrl ?? shopOffers.map(item => item.image_url).find(Boolean) ?? null;
+// 商品説明（サンワダイレクトの商品API）と商品画像。構造化データ（lib/structured-data.ts）と同じ関数で選ぶ。
+const {image: imageUrl, description} = cardMedia(stand, offer, shopOffers, now);
 ---
 <article class:list={['product-card', `product-${status}`]} data-compatibility-view data-tv-id={television.id} data-status={status}>
   {imageUrl && <div class="product-image"><img src={imageUrl} alt={`${stand.manufacturer} ${stand.sku}`} width="240" height="240" loading="lazy" decoding="async" referrerpolicy="no-referrer"/></div>}

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  breadcrumbSchema, canonicalUrl, escapeXml, getSeoConfig, robotsMeta, safeJsonLd, websiteSchema,
-} from '../src/lib/seo';
+import { canonicalUrl, escapeXml, getSeoConfig, robotsMeta, safeJsonLd } from '../src/lib/seo';
+import { breadcrumbNode, websiteNode } from '../src/lib/structured-data';
 
 describe('deployment indexing policy', () => {
   it('keeps an unconfigured build noindex even if indexing is requested', () => {
@@ -45,12 +44,10 @@ describe('canonical and structured data security', () => {
   });
 
   it('has only visible website and breadcrumb information, without reviews or prices', () => {
-    const website = websiteSchema('https://tvstand.jp');
+    const website = websiteNode('https://tvstand.jp');
     expect(website).not.toHaveProperty('aggregateRating');
     expect(website).not.toHaveProperty('offers');
-    const crumbs = breadcrumbSchema([
-      { name: 'ホーム', path: '/' }, { name: 'VESAの確認方法', path: '/guides/vesa/' },
-    ], 'https://tvstand.jp');
+    const crumbs = breadcrumbNode([{ name: 'VESAの確認方法' }], 'https://tvstand.jp/guides/vesa/', 'https://tvstand.jp') as { itemListElement: unknown[] };
     expect(crumbs.itemListElement[1]).toMatchObject({
       position: 2, name: 'VESAの確認方法', item: 'https://tvstand.jp/guides/vesa/',
     });

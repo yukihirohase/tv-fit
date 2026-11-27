@@ -1,14 +1,23 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
-import { canonicalUrl, robotsMeta, safeJsonLd, websiteSchema } from '../lib/seo';
+import { canonicalUrl, robotsMeta, safeJsonLd } from '../lib/seo';
+import { pageGraph, type Crumb, type PageType } from '../lib/structured-data';
 import { canonicalPagePath } from '../lib/trailing-slash';
 /**
  * canonicalPath: このページの正規URLのパス。型番・メーカーページは表記ゆれのあるURLでも
  * 同じページが表示されるため、データから組み立てたパスを渡す。null は canonical を出さない（404 など）。
  */
-interface Props { title: string; description: string; indexable?: boolean; structuredData?: unknown[]; canonicalPath?: string | null; }
-const { title, description, indexable = true, structuredData = [], canonicalPath } = Astro.props;
+/**
+ * 構造化データ（JSON-LD @graph）：WebSite・このページ（pageType）・パンくず（crumbs）・主題（mainEntity）・その他（graphNodes）。
+ * crumbs は画面の <Breadcrumbs items={...}/> と同じ配列を渡す（ホームは自動で先頭に付く）。
+ * canonical を出さないページ（404）には構造化データも出さない。
+ */
+interface Props {
+  title: string; description: string; indexable?: boolean; canonicalPath?: string | null;
+  pageType?: PageType; crumbs?: Crumb[]; mainEntity?: Record<string, unknown> | undefined; dateModified?: string | undefined; graphNodes?: Record<string, unknown>[];
+}
+const { title, description, indexable = true, canonicalPath, pageType, crumbs, mainEntity, dateModified, graphNodes } = Astro.props;
 const canonical = canonicalPath === null ? null : canonicalUrl(canonicalPagePath(canonicalPath ?? Astro.url.pathname));
 const measurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID ?? '';
 const path = Astro.url.pathname;
@@ -31,7 +40,7 @@ const path = Astro.url.pathname;
     <meta name="theme-color" content="#1262ce" />
     <meta name="ga4-measurement-id" content={measurementId} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {[websiteSchema(), ...structuredData].map((data) => <script type="application/ld+json" set:html={safeJsonLd(data)} />)}
+    {canonical && <script type="application/ld+json" set:html={safeJsonLd(pageGraph({ url: canonical, name: title, description, ...(pageType ? { type: pageType } : {}), ...(crumbs ? { crumbs } : {}), ...(mainEntity ? { mainEntity } : {}), ...(dateModified ? { dateModified } : {}), ...(graphNodes ? { nodes: graphNodes } : {}) }))} />}
   </head>
   <body>
     <a class="skip-link" href="#main">本文へ移動</a>

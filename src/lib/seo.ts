@@ -53,27 +53,6 @@ export function safeJsonLd(value: unknown): string {
     .replace(/\u2029/g, '\\u2029');
 }
 
-export interface BreadcrumbItem { name: string; path: string }
-
-export function breadcrumbSchema(items: BreadcrumbItem[], siteUrl = getSeoConfig().siteUrl) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem', position: index + 1, name: item.name,
-      item: canonicalUrl(item.path, siteUrl),
-    })),
-  };
-}
-
-export function websiteSchema(siteUrl = getSeoConfig().siteUrl) {
-  return {
-    '@context': 'https://schema.org', '@type': 'WebSite',
-    name: 'テレビスタンド対応検索', inLanguage: 'ja', url: canonicalUrl('/', siteUrl),
-    description: 'テレビのメーカー・型番から、テレビスタンドと壁掛け金具の適合情報を確認するサイト。',
-  };
-}
-
 export function escapeXml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&apos;');

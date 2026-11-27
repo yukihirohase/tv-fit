@@ -69,3 +69,17 @@ export function compareModels(a: ModelSortItem, b: ModelSortItem, order: ModelSo
 export function isModelSortOrder(value: string): value is ModelSortOrder {
   return (modelSortOrders as readonly string[]).includes(value);
 }
+
+/**
+ * 型番一覧の初期表示の並び（既定の並び順）。画面（ModelList.astro）と構造化データの ItemList の両方で使う。
+ * ranks はテレビIDごとの売れ筋順位。
+ */
+export function sortModelsForDisplay<T extends { id: string; model: string; screen_inches: number | null; release_date: string | null }>(
+  televisions: readonly T[], ranks?: ReadonlyMap<string, number> | null,
+): T[] {
+  const rankOf = (id: string) => ranks?.get(id) ?? null;
+  return [...televisions].sort((a, b) => compareModels(
+    { model: a.model, size: a.screen_inches, release: releaseSortKey(a.release_date), rank: rankOf(a.id) },
+    { model: b.model, size: b.screen_inches, release: releaseSortKey(b.release_date), rank: rankOf(b.id) },
+  ));
+}
