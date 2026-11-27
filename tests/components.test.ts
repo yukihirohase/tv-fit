@@ -121,6 +121,11 @@ describe('rendered television detail page', () => {
     expect($('.other-products').length).toBe(0);
     expect($('table, [data-compare-check]').length).toBe(0);
     expect($('.detail-toc a').map((_, node) => $(node).attr('href')).get()).toEqual(['#stands', '#wall']);
+    // タブ化用の印：タブと一覧の対応、壁掛け金具のハッシュ、件数。凡例は両方の一覧に共通で1つだけ。
+    expect($('[data-product-tabs] a[data-tab]').map((_, node) => `${$(node).attr('data-tab')}:${$(node).attr('data-count')}`).get()).toEqual(['stands:2', 'wall:1']);
+    expect($('#tab-wall').attr('data-hash')).toBe('mounts');
+    expect($('[data-tab-panel]').map((_, node) => node.attribs.id).get()).toEqual(['stands', 'wall']);
+    expect($('.fit-legend').length).toBe(1);
     // 発売日を含む4項目が仕様欄に並ぶ
     expect($('.tv-specifications > div').length).toBe(4);
     expect($('.tv-specifications').text()).toContain('200 × 200');

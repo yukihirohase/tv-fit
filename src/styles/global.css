@@ -69,3 +69,18 @@ body{background:var(--home-bg)}
 .footer-links{font-size:13px;color:#4A443D}
 .footer-bottom{font-size:12px;color:var(--home-ink-soft);border-top-color:var(--home-line)}
 @media(max-width:700px){.footer-links{font-size:13px}.footer-bottom{font-size:12px}}
+
+/* 型番ページ：スタンドと壁掛け金具を切り替えるタブ（JS が動いたときだけ .is-tabs になる）。 */
+.detail-toc.is-tabs{display:flex;flex-wrap:nowrap;gap:6px;margin-block:28px 14px;padding:0;border-bottom:1px solid var(--home-line);scroll-margin-top:84px}
+.detail-toc.is-tabs a{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 10px;min-height:54px;margin-bottom:-1px;padding:10px 14px;border:1px solid var(--home-line);border-bottom-color:transparent;border-radius:10px 10px 0 0;background:var(--home-greige);color:var(--home-ink-soft);font-size:14px;font-weight:600;text-align:center;line-height:1.4}
+.detail-toc.is-tabs a:hover{color:var(--home-ink);background:#EFE8DD}
+.detail-toc.is-tabs a strong{display:inline-block;min-width:3.2em;padding:2px 9px;border-radius:999px;background:var(--home-surface);color:var(--home-ink);font-size:13px}
+.detail-toc.is-tabs a[aria-selected=true]{position:relative;background:var(--home-surface);color:var(--blue);border-color:var(--home-line);border-bottom-color:var(--home-surface);box-shadow:inset 0 3px 0 var(--blue)}
+.detail-toc.is-tabs a[aria-selected=true] strong{background:var(--blue);color:#fff}
+.detail-toc.is-tabs a[aria-disabled=true]{cursor:not-allowed;background:transparent;border-style:dashed;color:#9A9083}
+.detail-toc.is-tabs a[aria-disabled=true] strong{background:transparent;color:inherit;border:1px solid var(--home-line)}
+.detail-toc.is-tabs a:focus-visible{outline-offset:-3px}
+.detail-toc.is-tabs~.fit-legend{margin-top:10px}
+.detail-toc.is-tabs~.product-section{margin-top:26px;scroll-margin-top:84px}
+.product-section[role=tabpanel]:focus-visible{outline-offset:6px;border-radius:4px}
+@media(max-width:700px){.detail-toc.is-tabs{gap:5px;margin-block:22px 12px}.detail-toc.is-tabs a{flex-direction:column;gap:4px;min-height:62px;padding:8px 6px;font-size:12px}.detail-toc.is-tabs a strong{font-size:12px;padding:1px 8px}.detail-toc.is-tabs~.product-section{margin-top:20px}}
