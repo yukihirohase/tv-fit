@@ -38,10 +38,6 @@ const sizes = screenSizeOptions(televisions.map(television => television.screen_
     </div>
     <button type="button" class="model-filter-reset" data-model-filter-reset hidden>条件をクリア</button>
   </form>
-  {ranking && <p class="model-filter-hint ranking-note">{ranking.source === 'yahoo'
-    ? '売れ筋順は、Yahoo!ショッピングの「テレビ」の人気ランキング（注文した人の数やレビュー評価をもとにしたランキング）を週1回取得し、当サイトに掲載している型番の中で順位を付け直したものです。'
-    : '売れ筋順は、楽天市場の「テレビ」ランキングを週1回取得し、当サイトに掲載している型番の中で順位を付け直したものです。'}</p>}
-  <p class="model-filter-hint">型番の一部だけでも探せます。ハイフンなどの記号、大文字・小文字、全角・半角の違いは区別しません。</p>
   <p class="model-filter-status" data-model-filter-status role="status" aria-live="polite">{televisions.length}件の型番を表示しています。</p>
   <ul class="model-list" data-model-list aria-label={`${manufacturerName}のテレビ型番一覧`}>
     {televisions.map(television => <li data-model-item data-model={television.model} data-size={television.screen_inches === null ? '' : String(television.screen_inches)} data-release={television.release_date ?? ''} data-rank={rankOf(television.id) ?? ''}>

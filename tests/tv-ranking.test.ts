@@ -188,8 +188,7 @@ describe('売れ筋の表示と並べ替え', () => {
     expect($('[data-model-item]').first().attr('data-rank')).toBe('7');
     expect($('.model-card-rank').text()).toMatch(/^売れ筋ランキング 7位（436件中）（\d+\/\d+時点）$/u);
     expect($('[data-model-filter-sort] option[selected]').text()).toBe('売れ筋順');
-    expect($('.ranking-note').text()).toContain('楽天市場');
-    const yahooHtml = await container.renderToString(ModelList, { props: { televisions, manufacturerName: 'TVS REGZA', ranking: { asOf: new Date().toISOString(), ranks: new Map([['b', 7]]), source: 'yahoo' }, rankingTotal: 436 } });
-    expect(load(yahooHtml)('.ranking-note').text()).toContain('Yahoo!ショッピング');
+    // 一覧の上の説明文（売れ筋順の出典・検索のヒント）は出さない。売れ筋順の説明は「このサイトについて」にある。
+    expect($('.ranking-note, .model-filter-hint').length).toBe(0);
   });
 });
