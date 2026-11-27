@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import VesaIllustration from '../components/VesaIllustration.astro';
 import type {Catalog} from '../lib/data';
 import {getPublishedCatalog} from '../lib/cms-catalog';
 import {getManufacturers} from '../lib/manufacturers';
@@ -10,17 +9,255 @@ const catalog = Astro.props.catalog ?? await getPublishedCatalog({compatibility:
 const manufacturers = getManufacturers(catalog.televisions);
 ---
 <BaseLayout title="テレビのメーカーからスタンド・壁掛け金具を探す｜TV FIT" description="お使いのテレビのメーカーを選び、型番一覧からテレビを選択。テレビスタンドや壁掛け金具の適合情報と、VESA・重量・確認の根拠を確認できます。">
-  <section class="hero manufacturer-home-hero container">
-    <div class="hero-copy"><p class="eyebrow"><span></span> テレビスタンド選びを、もっと確かに。</p><h1>まずは、テレビの<br/><span>メーカー</span>を選ぶ。</h1><p class="hero-description">メーカーを選んだら、次のページでテレビの型番を選択。<br class="desktop-break"/>対応するスタンド・壁掛け金具を確認できます。</p><ol class="selection-progress" aria-label="対応情報を確認する手順"><li aria-current="step"><span>1</span>メーカー</li><li><span>2</span>テレビの型番</li><li><span>3</span>対応情報</li></ol></div>
-    <div class="hero-visual"><span class="visual-label">FIND YOUR TV’S PERFECT FIT</span><VesaIllustration /></div>
-  </section>
-  <section id="manufacturers" class="container manufacturer-selection" aria-labelledby="manufacturer-title">
-    <div class="manufacturer-picker">
-      <div class="manufacturer-picker-heading"><span class="search-panel-number">01</span><div><p class="eyebrow">SELECT MANUFACTURER</p><h2 id="manufacturer-title">テレビのメーカーを選んでください</h2></div><span class="selection-step-label">STEP 1 / 3</span></div>
-      <p class="manufacturer-picker-description">お使いのテレビのメーカーをクリックすると、型番一覧に進みます。</p>
-      <div class="manufacturer-grid">{manufacturers.map((manufacturer,index)=><a class="manufacturer-card" href={manufacturer.url} data-manufacturer-link aria-label={`${manufacturer.name}のテレビ型番一覧へ`}><span class:list={['manufacturer-wordmark',`manufacturer-${index % 7}`]}>{manufacturer.name}</span><span class="manufacturer-card-bottom">型番一覧へ <Icon name="arrow" size={16}/></span></a>)}</div>
-      <p class="manufacturer-picker-note"><Icon name="info" size={15}/> メーカー名は、テレビ本体のロゴや背面ラベルで確認できます。</p>
+  <!-- ファーストビュー：まずメーカーを選ぶことが一目でわかるように、選ぶボタンと3ステップをカードにまとめる -->
+  <section class="home-hero" aria-labelledby="home-title">
+    <div class="container home-hero-grid">
+      <div class="home-hero-copy">
+        <p class="home-eyebrow">Find your TV’s perfect fit</p>
+        <h1 id="home-title">テレビスタンド選びを、<br/>もっと確かに。</h1>
+        <p class="home-lead">型番から、ぴったり合うスタンド・壁掛け金具がわかります。<span class="home-pc-only"><br/>すっきり整ったテレビまわりを、迷わずに。</span></p>
+        <div class="home-first-step">
+          <p class="home-first-step-title">まずは、テレビの<br class="home-sp-only"/><em>メーカー</em>を選ぶ。</p>
+          <p class="home-first-step-text">次のページで型番を選ぶと、対応するスタンド・壁掛け金具を確認できます。</p>
+          <a class="home-cta" href="#manufacturers">メーカーを選ぶ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <ol class="home-steps" aria-label="対応情報を確認する手順">
+            <li aria-current="step"><span>1</span>メーカー</li>
+            <li><span>2</span>型番</li>
+            <li><span>3</span>対応情報</li>
+          </ol>
+        </div>
+        <a class="home-help-link" href="#guide"><Icon name="info" size={18}/>型番やVESAの確認方法がわからないときは</a>
+      </div>
+      <div class="home-hero-visual">
+        <!--
+          メインビジュアル（写真に差し替える前提のイラスト）。
+          写真の条件：自然光の入るリビング。ソファの斜め後ろ30〜45°から、床置きスタンドの55〜65型テレビを見る構図。
+          オークの床・グレージュの壁・植物かラグを1点。スタンドの支柱と足元が見え、配線が隠れている状態。
+          画面の番組・ロゴ・人物の顔は写さない。4:3、1600×1200px 以上。スマホでは 2:1 に切り抜いて表示する。
+        -->
+        <figure class="home-photo">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="スタンドに設置したテレビのあるリビングのイメージ">
+            <rect width="400" height="300" fill="#E9E1D5"/>
+            <rect width="120" height="210" fill="#E2D8CA"/>
+            <rect x="300" y="20" width="70" height="120" rx="4" fill="#FFF6E6" opacity=".75"/>
+            <rect y="210" width="400" height="90" fill="#C9A27C"/>
+            <path d="M0 230H400M0 252H400M0 276H400" stroke="#B8906A" opacity=".6"/>
+            <rect x="196" y="196" width="8" height="40" fill="#5B544B"/>
+            <rect x="170" y="232" width="60" height="6" rx="3" fill="#4A443D"/>
+            <rect x="128" y="104" width="144" height="86" rx="3" fill="#24211E"/>
+            <rect x="132" y="108" width="136" height="78" rx="1" fill="#3A4A5C"/>
+            <path d="M132 108h60l-40 78h-20z" fill="#fff" opacity=".06"/>
+            <rect x="322" y="200" width="22" height="26" rx="3" fill="#B48A62"/>
+            <ellipse cx="333" cy="178" rx="20" ry="30" fill="#7E8F6A"/>
+            <rect x="-10" y="236" width="230" height="80" rx="22" fill="#CFC3B2"/>
+            <rect x="-10" y="262" width="230" height="60" rx="10" fill="#BFB19E"/>
+          </svg>
+        </figure>
+        <div class="home-vesa-card" aria-hidden="true">
+          <svg viewBox="0 0 200 120" width="100%">
+            <rect x="30" y="10" width="140" height="92" rx="6" fill="#E8E0D4" stroke="#D6CBBB"/>
+            <g fill="#FFFDF9" stroke="#7C5B3E" stroke-width="2"><circle cx="70" cy="40" r="5"/><circle cx="130" cy="40" r="5"/><circle cx="70" cy="80" r="5"/><circle cx="130" cy="80" r="5"/></g>
+            <path d="M70 26H130M70 22v8M130 22v8M182 40V80M178 40h8M178 80h8" stroke="#1262ce" stroke-width="1.5"/>
+            <text x="100" y="20" text-anchor="middle" font-size="10" fill="#1262ce">横の間隔</text>
+          </svg>
+          <p><strong>VESA</strong>：テレビ背面の取付穴の間隔。これが合うかどうかで、取り付けられるかが決まります。</p>
+        </div>
+      </div>
     </div>
   </section>
-  <section class="container manufacturer-home-help"><div class="guide-card"><div class="guide-card-icon"><Icon name="book" size={29}/></div><div><p class="eyebrow">BEFORE YOU CHOOSE</p><h2>型番やVESAの確認方法がわからないときは</h2><p>型番の確認場所と、テレビ背面の取付穴を確認する方法をご案内します。</p></div><a class="button-secondary" href="/guides/vesa/">確認方法を見る <Icon name="arrow" size={17}/></a></div></section>
+
+  <!-- STEP 1：メーカー選択 -->
+  <section id="manufacturers" class="home-section home-makers" aria-labelledby="manufacturer-title">
+    <div class="container">
+      <p class="home-step-badge"><span>STEP 1 / 3</span>メーカーを選ぶ</p>
+      <h2 id="manufacturer-title">テレビのメーカーを<br class="home-sp-only"/>選んでください</h2>
+      <p class="home-section-lead">メーカーを押すと、型番の一覧に進みます。</p>
+      <ul class="home-maker-grid">
+        {manufacturers.map(manufacturer => <li><a class="manufacturer-card" href={manufacturer.url} data-manufacturer-link aria-label={`${manufacturer.name}のテレビ型番一覧へ`}><span class="home-maker-name">{manufacturer.name}</span><span class="home-maker-sub">型番一覧へ</span></a></li>)}
+        <li><a class="home-maker-unknown" href="#guide"><span class="home-maker-name">メーカー・型番が<br/>わからない</span><span class="home-maker-sub">確認方法へ</span></a></li>
+      </ul>
+      <p class="home-maker-note"><Icon name="info" size={18}/>メーカー名は、テレビ本体の前面のロゴや、背面のラベルで確認できます。</p>
+    </div>
+  </section>
+
+  <!-- 型番・VESA の確認方法 -->
+  <section id="guide" class="home-section" aria-labelledby="guide-title">
+    <div class="container">
+      <div class="home-guide">
+        <div>
+          <p class="home-eyebrow">Before you choose</p>
+          <h2 id="guide-title">型番やVESAの確認方法が<br/>わからないときは</h2>
+          <p class="home-section-lead">型番の確認場所と、テレビ背面の取付穴を確認する方法をご案内します。</p>
+          <ol class="home-guide-points">
+            <li><span class="home-num">1</span><span><b>型番：テレビ背面のラベル</b><small>「K-65XR80M2」のような英数字です。リモコンの設定画面や取扱説明書でも確認できます。</small></span></li>
+            <li><span class="home-num">2</span><span><b>VESA：背面の取付穴の間隔</b><small>4つのネジ穴の「横×縦」の間隔（例：300×300mm）。型番を選べば、登録済みのVESAと照らし合わせて表示します。</small></span></li>
+          </ol>
+          <a class="home-button-outline" href="/guides/vesa/">確認方法を見る <Icon name="arrow" size={18}/></a>
+        </div>
+        <figure class="home-vesa-figure">
+          <svg viewBox="0 0 320 220" role="img" aria-label="テレビ背面の取付穴（VESA）の、横と縦の間隔を示す図">
+            <rect x="40" y="20" width="240" height="160" rx="10" fill="#E8E0D4" stroke="#D6CBBB" stroke-width="2"/>
+            <rect x="120" y="150" width="80" height="14" rx="3" fill="#D6CBBB"/>
+            <g fill="#FFFDF9" stroke="#7C5B3E" stroke-width="3"><circle cx="110" cy="62" r="8"/><circle cx="210" cy="62" r="8"/><circle cx="110" cy="132" r="8"/><circle cx="210" cy="132" r="8"/></g>
+            <path d="M110 40H210M110 33v14M210 33v14M300 62V132M293 62h14M293 132h14" stroke="#1262ce" stroke-width="2"/>
+            <text x="160" y="31" text-anchor="middle" font-size="14" font-weight="700" fill="#1262ce">横の間隔</text>
+            <text x="306" y="204" text-anchor="end" font-size="14" font-weight="700" fill="#1262ce">縦の間隔</text>
+            <text x="160" y="104" text-anchor="middle" font-size="13" fill="#5B544B">テレビ背面のイメージ</text>
+          </svg>
+          <figcaption>4つのネジ穴の間隔が、スタンドや金具の対応VESAと同じなら取り付けられます（重さ・画面サイズの条件もあります）。</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 暮らしのシーン（雰囲気づくり。操作の邪魔にならないよう、メーカー選択と確認方法より後に置く） -->
+  <section class="home-section home-scenes" aria-labelledby="scenes-title">
+    <div class="container">
+      <p class="home-eyebrow">Scenes</p>
+      <h2 id="scenes-title">テレビまわりが整うと、<br class="home-sp-only"/>部屋がひろくなる。</h2>
+      <div class="home-scenes-grid">
+        <!-- 写真に差し替える：壁際に寄せたスタンドの全体を正面〜やや斜めから。テレビ台が無く床の余白が見える構図。窓の光は横から。3:2。 -->
+        <figure class="home-scene">
+          <div class="home-photo">
+            <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="300" height="200" fill="#E9E1D5"/>
+              <rect x="210" y="16" width="70" height="100" rx="3" fill="#FFF6E6" opacity=".75"/>
+              <rect y="150" width="300" height="50" fill="#C9A27C"/>
+              <rect x="100" y="120" width="6" height="34" fill="#5B544B"/><rect x="82" y="152" width="42" height="5" rx="2" fill="#4A443D"/>
+              <rect x="52" y="64" width="102" height="60" rx="2" fill="#24211E"/><rect x="55" y="67" width="96" height="54" fill="#3A4A5C"/>
+              <rect x="190" y="132" width="16" height="22" rx="2" fill="#B48A62"/><ellipse cx="198" cy="116" rx="14" ry="22" fill="#7E8F6A"/>
+            </svg>
+          </div>
+          <figcaption><h3>リビングに、スタンドで。</h3><p>テレビ台がなくても置けて、足元の掃除もしやすくなります。高さを合わせれば、ソファからの見やすさも変わります。</p></figcaption>
+        </figure>
+        <!-- 写真に差し替える：会議室の短い方の壁に65〜75型を壁掛け。手前に木の天板のテーブルと椅子。20°ほど斜めから。画面は消すか無地。3:2。 -->
+        <figure class="home-scene">
+          <div class="home-photo">
+            <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="300" height="200" fill="#DCDAD5"/>
+              <rect y="160" width="300" height="40" fill="#9A9187"/>
+              <rect x="88" y="34" width="124" height="72" rx="2" fill="#24211E"/><rect x="91" y="37" width="118" height="66" fill="#3E5063"/>
+              <rect x="40" y="128" width="220" height="10" rx="3" fill="#B48A62"/>
+              <rect x="56" y="138" width="6" height="30" fill="#6E655B"/><rect x="238" y="138" width="6" height="30" fill="#6E655B"/>
+              <rect x="70" y="112" width="34" height="40" rx="6" fill="#4A4F57"/><rect x="196" y="112" width="34" height="40" rx="6" fill="#4A4F57"/>
+            </svg>
+          </div>
+          <figcaption><h3>会議室に、壁掛けで。</h3><p>画面の位置を決めて固定すれば、机の上も配線もすっきり。大きな画面でも圧迫感を抑えられます。</p></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 適合情報の根拠（正確さを伝える） -->
+  <section class="home-section home-trust-section" aria-labelledby="trust-title">
+    <div class="container">
+      <h2 id="trust-title" class="sr-only">TV FIT の適合情報について</h2>
+      <ul class="home-trust">
+        <li><span class="home-trust-icon"><Icon name="book" size={20}/></span><b>メーカー公式の情報が根拠</b><p>テレビの仕様と、スタンドメーカーの適合表をもとに掲載しています。</p></li>
+        <li><span class="home-trust-icon"><Icon name="shield" size={20}/></span><b>確認の度合いを表示</b><p>「確認済み」と「仕様上の候補」を分けて、根拠と確認日も示します。</p></li>
+        <li><span class="home-trust-icon"><Icon name="search" size={20}/></span><b>型番から3ステップ</b><p>メーカー、型番の順に選ぶだけ。専門用語を知らなくても探せます。</p></li>
+      </ul>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  /* 案A「温かみのあるリビング」。色の値は src/styles/global.css の :root（--home-*）にまとめている。 */
+  .home-hero{background:linear-gradient(180deg,#EFE7DB 0%,var(--home-bg) 100%);padding:48px 0 64px}
+  .home-hero-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center}
+  .home-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--home-wood-deep);text-transform:uppercase;margin-bottom:14px}
+  .home-eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
+  .home-hero h1{font-family:var(--home-heading-font);font-weight:700;font-size:clamp(28px,3.2vw,40px);line-height:1.5;letter-spacing:.04em;margin-bottom:14px}
+  .home-lead{color:var(--home-ink-soft);font-size:15px;margin-bottom:24px}
+  .home-first-step{background:var(--home-surface);border:1px solid var(--home-line);border-radius:22px;padding:22px 22px 20px;box-shadow:var(--home-shadow)}
+  .home-first-step-title{font-size:22px;font-weight:700;line-height:1.5;margin-bottom:4px}
+  .home-first-step-title em{font-style:normal;color:var(--blue)}
+  .home-first-step-text{color:var(--home-ink-soft);font-size:14px;margin:0 0 16px!important}
+  .home-cta{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:999px;background:var(--blue);color:#fff;font-weight:700;font-size:17px}
+  .home-cta:hover{background:#0B4FA8;color:#fff}
+  .home-steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 0;padding:0}
+  .home-steps li{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--home-ink-soft);background:var(--home-bg);border-radius:999px;padding:6px 10px 6px 6px}
+  .home-steps span{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--home-greige);color:var(--home-ink)}
+  .home-steps [aria-current="step"]{background:#E6EEFA;color:#0B4FA8}
+  .home-steps [aria-current="step"] span{background:var(--blue);color:#fff}
+  .home-help-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:14px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:4px}
+  .home-hero-visual{position:relative}
+  .home-photo{margin:0;border-radius:22px;overflow:hidden;background:#E9E1D5;aspect-ratio:4/3;box-shadow:var(--home-shadow)}
+  .home-photo svg{display:block;width:100%;height:100%}
+  .home-vesa-card{position:absolute;left:-28px;bottom:-28px;width:224px;background:var(--home-surface);border:1px solid var(--home-line);border-radius:14px;padding:14px 14px 12px;box-shadow:var(--home-shadow)}
+  .home-vesa-card p{margin-top:8px;font-size:12px;line-height:1.6;color:var(--home-ink-soft)}
+  .home-vesa-card strong{color:var(--home-ink)}
+
+  .home-section{padding:64px 0;scroll-margin-top:16px}
+  .home-section h2{font-family:var(--home-heading-font);font-size:clamp(22px,3vw,30px);line-height:1.5;letter-spacing:.04em}
+  .home-section-lead{margin-top:6px;color:var(--home-ink-soft);font-size:15px}
+  .home-step-badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--blue);background:#E6EEFA;border-radius:999px;padding:4px 12px 4px 4px;margin-bottom:10px}
+  .home-step-badge span{background:var(--blue);color:#fff;border-radius:999px;padding:1px 10px}
+
+  .home-makers{background:var(--home-surface);border-block:1px solid var(--home-line)}
+  .home-maker-grid{list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .home-maker-grid a{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;gap:2px;min-height:96px;padding:16px 44px 16px 20px;border:1.5px solid var(--home-line);border-radius:14px;background:var(--home-bg);transition:border-color .15s,background-color .15s,transform .15s}
+  .home-maker-grid a::after{content:"";position:absolute;right:20px;top:50%;width:10px;height:10px;border-top:2px solid var(--blue);border-right:2px solid var(--blue);transform:translateY(-50%) rotate(45deg)}
+  .home-maker-grid a:hover{border-color:var(--blue);background:var(--home-surface);transform:translateY(-1px);color:inherit}
+  .home-maker-name{font-size:22px;font-weight:700;letter-spacing:.04em;line-height:1.3;color:var(--home-ink)}
+  .home-maker-sub{font-size:13px;color:var(--home-ink-soft)}
+  .home-maker-grid .home-maker-unknown{background:transparent;border-style:dashed}
+  .home-maker-unknown .home-maker-name{font-size:15px;color:#0B4FA8}
+  .home-maker-note{display:flex;gap:8px;align-items:flex-start;margin-top:18px;font-size:14px;color:var(--home-ink-soft)}
+  .home-maker-note :global(svg){margin-top:4px}
+
+  .home-guide{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center;background:var(--home-greige);border-radius:22px;padding:36px}
+  .home-guide-points{list-style:none;padding:0;margin:20px 0 24px;display:grid;gap:12px}
+  .home-guide-points li{display:flex;gap:12px;align-items:flex-start;background:var(--home-surface);border-radius:14px;padding:14px 16px}
+  .home-guide-points b{display:block;font-size:15px}
+  .home-guide-points small{display:block;font-size:13px;color:var(--home-ink-soft);line-height:1.7}
+  .home-num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--home-wood-deep);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:2px}
+  .home-button-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 28px;border-radius:999px;border:2px solid var(--blue);color:var(--blue);background:var(--home-surface);font-weight:700}
+  .home-button-outline:hover{background:var(--blue);color:#fff}
+  .home-vesa-figure{margin:0;background:var(--home-surface);border-radius:14px;padding:24px}
+  .home-vesa-figure svg{display:block;width:100%;height:auto}
+  .home-vesa-figure figcaption{margin-top:12px;font-size:13px;color:var(--home-ink-soft);line-height:1.7}
+
+  .home-scenes{padding-top:8px}
+  .home-scenes-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+  .home-scene{margin:0}
+  .home-scene .home-photo{aspect-ratio:3/2}
+  .home-scene figcaption{padding:14px 4px 0}
+  .home-scene h3{font-family:var(--home-heading-font);font-size:19px;letter-spacing:.04em;margin-bottom:4px}
+  .home-scene p{font-size:14px;color:var(--home-ink-soft)}
+
+  .home-trust-section{padding-top:0}
+  .home-trust{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .home-trust li{background:var(--home-surface);border:1px solid var(--home-line);border-radius:14px;padding:20px}
+  .home-trust b{display:block;font-size:16px;margin-bottom:4px}
+  .home-trust p{font-size:14px;color:var(--home-ink-soft)}
+  .home-trust-icon{width:40px;height:40px;border-radius:12px;background:var(--home-greige);display:grid;place-items:center;color:var(--home-wood-deep);margin-bottom:12px}
+
+  .home-sp-only{display:none}
+  @media (max-width:860px){
+    .home-hero{padding:16px 0 36px}
+    .home-hero-grid{grid-template-columns:1fr;gap:20px}
+    .home-hero-visual{order:-1}
+    .home-hero-visual .home-photo{aspect-ratio:2/1}
+    .home-vesa-card,.home-hero .home-eyebrow,.home-pc-only{display:none}
+    .home-hero h1{font-size:26px;margin-bottom:6px}
+    .home-lead{font-size:14px;margin-bottom:14px}
+    .home-first-step{padding:18px 16px 16px}
+    .home-first-step-title{font-size:20px}
+    .home-maker-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+    .home-maker-grid a{min-height:76px;padding:12px 36px 12px 16px}
+    .home-maker-grid a::after{right:14px}
+    .home-maker-name{font-size:19px}
+    .home-maker-unknown .home-maker-name{font-size:14px}
+    .home-maker-grid .home-maker-unknown{padding-right:30px}
+    .home-guide{grid-template-columns:1fr;padding:22px 16px;gap:20px}
+    .home-button-outline{width:100%}
+    .home-scenes-grid,.home-trust{grid-template-columns:1fr}
+  }
+  @media (max-width:700px){
+    .home-section{padding:44px 0}
+    .home-sp-only{display:inline}
+  }
+  @media (max-width:380px){ .home-steps li{font-size:12px;padding-right:6px} }
+  @media (prefers-reduced-motion:reduce){ .home-maker-grid a{transition:none} }
+</style>
