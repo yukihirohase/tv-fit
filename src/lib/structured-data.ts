@@ -6,7 +6,7 @@
  * - 不明な値は書かない（価格が無ければ price を出さない、在庫が不明なら availability を出さない）。
  * - URL は正規URL（canonical）の絶対URL。
  */
-import { televisionPath, type Stand, type Television } from './data';
+import { formatReleaseDate, televisionPath, type Stand, type Television } from './data';
 import { displayOffer, shopForUrl, shops, YAHOO_SHOP, type Availability, type Offer } from './offers';
 import { canonicalUrl, getSeoConfig } from './seo';
 
@@ -94,26 +94,25 @@ export function modelListNode(manufacturerName: string, televisions: readonly Te
 
 /* ---------- テレビ本体（型番ページの主題） ---------- */
 
-const isoDate = /^\d{4}-\d{2}(?:-\d{2})?$/u;
-
 /**
- * 型番ページのテレビ。価格はページに表示していないため offers は付けない。
- * image は見出し横に表示している商品画像があるときだけ。
+ * 型番ページのテレビ。Google は Product に offers・review・aggregateRating のどれかを必須とするが、
+ * このページはテレビの価格・レビューを表示していないため、Product ではなく Thing として、
+ * 画面の仕様欄と同じ内容（型番・画面サイズ・重量・VESA・発売日）を書く。
+ * image は見出し横に商品画像を表示しているときだけ。
  */
 export function televisionNode(tv: Television, url: string, image: string | null): Node {
-  const properties: Node[] = [];
-  if (tv.screen_inches !== null) properties.push({ '@type': 'PropertyValue', name: '画面サイズ', value: tv.screen_inches, unitText: 'インチ' });
-  if (tv.weight_kg !== null) properties.push({ '@type': 'PropertyValue', name: 'テレビ本体の重量', value: tv.weight_kg, unitCode: 'KGM', unitText: 'kg' });
-  if (tv.vesa_width_mm !== null && tv.vesa_height_mm !== null) {
-    properties.push({ '@type': 'PropertyValue', name: 'VESA取付穴（横 × 縦）', value: `${tv.vesa_width_mm} × ${tv.vesa_height_mm}`, unitCode: 'MMT', unitText: 'mm' });
-  }
+  const specs = [
+    tv.screen_inches !== null ? `画面サイズ ${tv.screen_inches}インチ` : null,
+    tv.weight_kg !== null ? `テレビ本体の重量 ${tv.weight_kg}kg` : null,
+    tv.vesa_width_mm !== null && tv.vesa_height_mm !== null ? `VESA取付穴（横 × 縦） ${tv.vesa_width_mm} × ${tv.vesa_height_mm}mm` : null,
+    tv.release_date ? `発売日 ${formatReleaseDate(tv.release_date)}` : null,
+  ].filter((value): value is string => value !== null);
   return {
-    '@type': 'Product', '@id': `${url}#television`,
-    name: `${tv.manufacturer} ${tv.model}`, model: tv.model, category: 'テレビ',
-    brand: { '@type': 'Brand', name: tv.manufacturer },
+    '@type': 'Thing', '@id': `${url}#television`,
+    name: `${tv.manufacturer} ${tv.model}`,
+    identifier: { '@type': 'PropertyValue', name: '型番', value: tv.model },
+    ...(specs.length ? { description: `${tv.manufacturer}のテレビ。${specs.join('、')}。` } : {}),
     ...(image ? { image } : {}),
-    ...(tv.release_date && isoDate.test(tv.release_date) ? { releaseDate: tv.release_date } : {}),
-    ...(properties.length ? { additionalProperty: properties } : {}),
     ...(tv.source_url ? { subjectOf: { '@type': 'WebPage', name: `${tv.manufacturer} ${tv.model} の仕様（メーカー公式）`, url: tv.source_url } } : {}),
   };
 }
@@ -155,21 +154,22 @@ export function shownOffers(primary: Offer | null, offers: readonly Offer[], now
   return shown;
 }
 
+/**
+ * 価格を表示している販売店だけ Offer にする（Google は Offer に price を必須とする）。
+ * 在庫だけ分かっている販売店は書かない。在庫が不明なら availability を書かない（在庫ありで補わない）。
+ */
 export function offerNode(offer: ShownOffer): Node | null {
+  if (offer.price_jpy === null) return null;
   const availability = schemaAvailability[offer.availability];
-  if (offer.price_jpy === null && !availability) return null;
   return {
     '@type': 'Offer', url: offer.url,
     seller: { '@type': 'Organization', name: offer.shopName },
-    ...(offer.price_jpy !== null ? {
-      price: offer.price_jpy, priceCurrency: 'JPY',
-      priceSpecification: { '@type': 'PriceSpecification', price: offer.price_jpy, priceCurrency: 'JPY', valueAddedTaxIncluded: true },
-    } : {}),
+    price: offer.price_jpy, priceCurrency: 'JPY',
+    priceSpecification: { '@type': 'PriceSpecification', price: offer.price_jpy, priceCurrency: 'JPY', valueAddedTaxIncluded: true },
     ...(availability ? { availability } : {}),
   };
 }
 
-const standCategory: Record<Stand['stand_type'], string> = { floor: 'テレビスタンド', tabletop: 'テレビスタンド（卓上）', wall: 'テレビ壁掛け金具' };
 
 export interface StandEntry {
   stand: Stand;
@@ -191,29 +191,50 @@ export function cardMedia(stand: Stand, offer: Offer | null | undefined, offers:
   };
 }
 
+const standKind: Record<Stand['stand_type'], string> = { floor: 'テレビスタンド', tabletop: 'テレビスタンド（卓上）', wall: 'テレビ壁掛け金具' };
+
+/**
+ * 一覧の1商品。価格を表示している販売店があれば Product＋Offer。
+ * 価格を表示していない商品は、Google の商品の必須項目（offers・review・aggregateRating のどれか）を
+ * 満たせないため Thing とし、名前・型番・画像・仕様だけを書く（価格・在庫を補わない）。
+ */
 export function standProductNode(entry: StandEntry, pageUrl: string, now: Date): Node {
   const { stand } = entry;
   const media = cardMedia(stand, entry.offer, entry.offers, now);
   const offers = shownOffers(entry.offer, entry.offers, now).map(offerNode).filter((node): node is Node => node !== null);
+  const id = `${pageUrl}#product-${encodeURIComponent(stand.id)}`;
+  const name = `${stand.manufacturer} ${stand.sku}`;
+  const vesa = stand.vesa_patterns.map(p => `${p.width} × ${p.height}`).join(' / ');
+  if (offers.length === 0) {
+    return {
+      '@type': 'Thing', '@id': id, name,
+      identifier: { '@type': 'PropertyValue', name: '型番', value: stand.sku },
+      url: stand.source_url,
+      ...(media.image ? { image: media.image } : {}),
+      description: `${stand.manufacturer}の${standKind[stand.stand_type]}。耐荷重 ${stand.max_weight_kg}kg、対応VESA ${vesa}mm。${media.description ?? ''}`.trim(),
+    };
+  }
   return {
-    '@type': 'Product', '@id': `${pageUrl}#product-${encodeURIComponent(stand.id)}`,
-    name: `${stand.manufacturer} ${stand.sku}`, sku: stand.sku, category: standCategory[stand.stand_type],
+    '@type': 'Product', '@id': id, name, sku: stand.sku,
     brand: { '@type': 'Brand', name: stand.manufacturer },
     url: stand.source_url,
     ...(media.image ? { image: media.image } : {}),
     ...(media.description ? { description: media.description } : {}),
     additionalProperty: [
       { '@type': 'PropertyValue', name: '耐荷重', value: stand.max_weight_kg, unitCode: 'KGM', unitText: 'kg' },
-      { '@type': 'PropertyValue', name: '対応VESA', value: stand.vesa_patterns.map(p => `${p.width} × ${p.height}`).join(' / '), unitCode: 'MMT', unitText: 'mm' },
+      { '@type': 'PropertyValue', name: '対応VESA', value: vesa, unitCode: 'MMT', unitText: 'mm' },
     ],
-    ...(offers.length === 1 ? { offers: offers[0] } : offers.length > 1 ? { offers } : {}),
+    offers: offers.length === 1 ? offers[0] : offers,
   };
 }
 
-/** 型番ページの「対応するテレビスタンド」「対応する壁掛け金具」の一覧。画面と同じ順で渡す。 */
-export function standListNode(id: string, name: string, entries: readonly StandEntry[], pageUrl: string, now: Date): Node {
+/**
+ * 型番ページの商品一覧。Google は1ページに ItemList を1つまでとするため、画面の「対応するテレビスタンド」と
+ * 「対応する壁掛け金具」を、ページ上の並び（スタンド → 壁掛け金具）のまま1つの一覧にする。
+ */
+export function productListNode(name: string, entries: readonly StandEntry[], pageUrl: string, now: Date): Node {
   return {
-    '@type': 'ItemList', '@id': `${pageUrl}#${id}`, name, numberOfItems: entries.length,
+    '@type': 'ItemList', '@id': `${pageUrl}#products`, name, numberOfItems: entries.length,
     itemListElement: entries.map((entry, index) => ({
       '@type': 'ListItem', position: index + 1, item: standProductNode(entry, pageUrl, now),
     })),
