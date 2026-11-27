@@ -58,3 +58,14 @@
 .mall-links .mall-pr{display:inline-block;margin-top:6px}
 /* モールのボタンは高さをそろえ、価格と在庫は語の途中で折り返さない。 */
 .mall-item>.mall-button{flex:1 1 auto}.mall-button .mall-price>span{display:inline-block}
+
+/* 2026-11 リニューアル（案A「温かみのあるリビング」）：生成り・グレージュ・木目を下地に、青は操作要素の差し色にする。 */
+:root{--home-bg:#F7F3EC;--home-surface:#FFFDF9;--home-greige:#E8E0D4;--home-line:#DDD3C5;--home-wood-deep:#7C5B3E;--home-ink:#2B2722;--home-ink-soft:#5B544B;--home-shadow:0 1px 2px rgba(60,45,30,.06),0 8px 24px rgba(60,45,30,.07);--home-heading-font:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;background:var(--home-bg)}
+body{background:var(--home-bg)}
+.site-header{background:var(--home-surface);border-bottom-color:var(--home-line)}
+.brand-subtitle{color:var(--home-ink-soft)}
+.site-footer{background:#EFE7DB;border-top-color:var(--home-line)}
+.footer-description{font-size:13px;color:var(--home-ink-soft)}
+.footer-links{font-size:13px;color:#4A443D}
+.footer-bottom{font-size:12px;color:var(--home-ink-soft);border-top-color:var(--home-line)}
+@media(max-width:700px){.footer-links{font-size:13px}.footer-bottom{font-size:12px}}
