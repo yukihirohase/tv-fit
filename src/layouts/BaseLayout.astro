@@ -2,9 +2,10 @@
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
 import { canonicalUrl, robotsMeta, safeJsonLd, websiteSchema } from '../lib/seo';
+import { canonicalPagePath } from '../lib/trailing-slash';
 interface Props { title: string; description: string; indexable?: boolean; structuredData?: unknown[]; }
 const { title, description, indexable = true, structuredData = [] } = Astro.props;
-const canonical = canonicalUrl(Astro.url.pathname);
+const canonical = canonicalUrl(canonicalPagePath(Astro.url.pathname));
 const measurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID ?? '';
 const path = Astro.url.pathname;
 ---

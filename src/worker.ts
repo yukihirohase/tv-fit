@@ -1,6 +1,7 @@
 /** EmDash's supported Cloudflare entrypoint, retaining native CMS behavior. */
 import handler from '@emdash-cms/cloudflare/worker';
 import { emdashAdminSlashRedirect, isPrivateSessionRequest } from './lib/private-session-guard';
+import { trailingSlashRedirect } from './lib/trailing-slash';
 import { releaseConfiguredMigrationLock } from './lib/worker-migration-recovery';
 import { isOfferCheckRequest, offerCheckRequest } from './lib/offer-schedule';
 
@@ -15,6 +16,8 @@ export default {
     }
     const adminRedirect = emdashAdminSlashRedirect(args[0]);
     if (adminRedirect) return Response.redirect(adminRedirect, 308);
+    const slashRedirect = trailingSlashRedirect(args[0]);
+    if (slashRedirect) return Response.redirect(slashRedirect, 301);
     await releaseConfiguredMigrationLock(args[1] as Record<string, unknown>);
     return fetchHandler(...args);
   },
