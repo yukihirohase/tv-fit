@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import Icon from '../../components/Icon.astro';
+import TvVisual from '../../components/TvVisual.astro';
 import {manufacturerSlug, modelSlug, isIndexableTelevision, televisionPath, formatReleaseDate, type Television, type Catalog} from '../../lib/data';
 import {breadcrumbSchema, canonicalUrl} from '../../lib/seo';
 import {manufacturerPath} from '../../lib/manufacturers';
@@ -12,7 +13,8 @@ import {sortByStatus} from '../../lib/fit';
 import {getPublishedOffers} from '../../lib/published-offers';
 import {getDirectAffiliateIds} from '../../lib/direct-affiliate';
 import {primaryOffer, sortByAvailability, displayOffer} from '../../lib/offers';
-interface Props { television?:Television;catalog?:Catalog;ranking?:TvRanking|null; }
+import {getPublishedTvOffer, type TvOffer} from '../../lib/tv-offers';
+interface Props { television?:Television;catalog?:Catalog;ranking?:TvRanking|null;tvOffer?:TvOffer|null; }
 const products=Astro.props.catalog??await getPublishedCatalog({compatibility:'none'});
 const tv=Astro.props.television??products.televisions.find(item=>manufacturerSlug(item.manufacturer)===Astro.params.manufacturer&&modelSlug(item.model)===Astro.params.model);
 if(!tv)return Astro.rewrite('/404/');
@@ -20,6 +22,8 @@ if(!tv)return Astro.rewrite('/404/');
 const catalog=Astro.props.catalog??await getPublishedCatalog({compatibility:{televisionId:tv.id}});
 const ranking=Astro.props.ranking!==undefined?Astro.props.ranking:await getPublishedRanking();
 const salesRank=rankingLabel(ranking?.ranks.get(tv.id),products.televisions.length,ranking?.asOf);
+// テレビ本体の商品画像（Yahoo!ショッピング）。無ければ VESA の概略図。
+const tvOffer=Astro.props.tvOffer!==undefined?Astro.props.tvOffer:await getPublishedTvOffer(tv.id);
 const pairs=catalog.compatibility.filter(entry=>entry.television_id===tv.id);
 const offers=await getPublishedOffers();
 const directIds=await getDirectAffiliateIds();
@@ -42,7 +46,7 @@ const breadcrumb=breadcrumbSchema([{name:'ホーム',path:'/'},{name:tv.manufact
 const schema={'@context':'https://schema.org','@type':'WebPage',name:`${name} のテレビスタンド・壁掛け金具の適合情報`,url:canonicalUrl(televisionPath(tv)),...(checkedAt?{dateModified:checkedAt}:{})};
 ---
 <BaseLayout title={`${name} 対応テレビスタンド・壁掛け金具・VESA｜TV FIT`} description={`${name}の画面サイズ、重量、VESA取付穴間隔とテレビスタンド・壁掛け金具の適合情報。個別適合確認済み、仕様上の候補、非対応、判断材料不足を区別して確認できます。`} indexable={isIndexableTelevision(tv,catalog)} structuredData={[breadcrumb,schema]}>
-  <div class="container detail-page"><Breadcrumbs items={[{name:tv.manufacturer,path:manufacturerPath(tv.manufacturer)},{name}]}/><header class="detail-header"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p>{salesRank&&<p class="detail-rank">{salesRank}</p>}<div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></header>
+  <div class="container detail-page"><Breadcrumbs items={[{name:tv.manufacturer,path:manufacturerPath(tv.manufacturer)},{name}]}/><header class="detail-header"><div class="detail-header-text"><p class="eyebrow">TV COMPATIBILITY</p><p class="detail-manufacturer">{tv.manufacturer}</p><h1>{tv.model}</h1><p>テレビスタンド・壁掛け金具の適合情報</p>{salesRank&&<p class="detail-rank">{salesRank}</p>}<div class="detail-meta"><span>適合情報の最終確認：{checkedAt??'未確認'}</span>{tv.source_url && <a href={tv.source_url} target="_blank" rel="noopener noreferrer">テレビの公式仕様 <Icon name="external" size={14}/></a>}</div></div><TvVisual television={tv} offer={tvOffer}/></header>
     <dl class="tv-specifications"><div><dt>画面サイズ</dt><dd>{tv.screen_inches??'未確認'}{tv.screen_inches!==null&&<small> インチ</small>}</dd></div><div><dt>テレビ本体の重量</dt><dd>{tv.weight_kg??'未確認'}{tv.weight_kg!==null&&<small> kg</small>}</dd></div><div><dt>VESA取付穴（横 × 縦）</dt><dd>{tv.vesa_width_mm!==null&&tv.vesa_height_mm!==null?`${tv.vesa_width_mm} × ${tv.vesa_height_mm}`:'未確認'}{tv.vesa_width_mm!==null&&<small> mm</small>}</dd></div><div><dt>発売日</dt><dd>{tv.release_date?formatReleaseDate(tv.release_date):'未確認'}</dd></div></dl>
     <div class="tv-sticky" aria-label="調べているテレビ"><p class="tv-sticky-name"><span>{tv.manufacturer}</span> {tv.model}</p><p class="tv-sticky-specs">{tv.screen_inches!==null&&<span>{tv.screen_inches}型</span>}{tv.weight_kg!==null&&<span>{tv.weight_kg} kg</span>}{tv.vesa_width_mm!==null&&tv.vesa_height_mm!==null&&<span>VESA {tv.vesa_width_mm}×{tv.vesa_height_mm}</span>}</p><a class="tv-sticky-change" href="/#manufacturers">別のテレビ</a></div>
     {/* JS が動くときだけ、下の2つの一覧を切り替えるタブにする（src/scripts/product-tabs.ts）。JS が無いときは両方の一覧へのページ内リンクのまま。 */}

@@ -4,6 +4,7 @@ import { runOfferCheck } from '../../lib/offer-check';
 import type { OfferDatabase } from '../../lib/offer-store';
 import { clearPublishedOffersCache } from '../../lib/published-offers';
 import { runStandRankingProbe, saveStandRankingProbe } from '../../lib/stand-ranking-probe';
+import { updateTvOffers, type TvOfferDatabase } from '../../lib/tv-offers';
 import { chooseRankingCredentials, clearRankingCache, updateRankingIfDue, type RankingDatabase } from '../../lib/tv-ranking';
 
 export const prerender = false;
@@ -38,6 +39,14 @@ export const POST: APIRoute = async () => {
     ranking = { status: 'error', detail: error instanceof Error ? error.message : String(error) };
   }
   console.log('[ranking] update finished', JSON.stringify(ranking));
+  // 型番ページのテレビ本体の画像とリンク（Yahoo!ショッピング）。1回に最大100件、7日ごとに取り直す。
+  let tvOffers: unknown;
+  try {
+    tvOffers = await updateTvOffers({ db: db as unknown as TvOfferDatabase, televisions: catalog.televisions, credentials: yahoo });
+  } catch (error) {
+    tvOffers = { status: 'error', detail: error instanceof Error ? error.message : String(error) };
+  }
+  console.log('[tv-offers] update finished', JSON.stringify(tvOffers));
   // スタンドの売れ筋順（サンワダイレクト）を商品APIの rank=monthly で取れるかの試験。表示には使わない。
   let standRankingProbe: unknown = null;
   if (vcToken) {
@@ -50,5 +59,5 @@ export const POST: APIRoute = async () => {
     }
     console.log('[stand-ranking-probe] finished', JSON.stringify(standRankingProbe));
   }
-  return Response.json({ offers: result, ranking, standRankingProbe }, { headers: { 'Cache-Control': 'no-store' } });
+  return Response.json({ offers: result, ranking, tvOffers, standRankingProbe }, { headers: { 'Cache-Control': 'no-store' } });
 };

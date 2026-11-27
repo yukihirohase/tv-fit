@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import type { Television } from '../lib/data';
+import type { TvOffer } from '../lib/tv-offers';
+
+/**
+ * 型番ページの見出し横：テレビ本体の商品画像（Yahoo!ショッピング）。
+ * 画像が無いときは、画面サイズと VESA から描いた「背面の取付穴の配置」の図（概略）。どちらも描けなければ何も出さない。
+ */
+interface Props { television: Television; offer: TvOffer | null }
+const { television: tv, offer } = Astro.props;
+const name = `${tv.manufacturer} ${tv.model}`;
+const href = offer ? offer.affiliate_url ?? offer.item_url : null;
+const isAd = !!offer?.affiliate_url;
+
+// 背面の図：16:9 の画面の横幅（mm）を画面サイズから求め、取付穴の間隔を同じ縮尺で描く。
+const vesa = tv.screen_inches !== null && tv.vesa_width_mm !== null && tv.vesa_height_mm !== null
+  ? (() => {
+      const widthMm = tv.screen_inches * 25.4 * 16 / Math.sqrt(16 ** 2 + 9 ** 2);
+      const heightMm = widthMm * 9 / 16;
+      const scale = 240 / widthMm;
+      const w = 240, h = heightMm * scale;
+      const x0 = 30, y0 = 24;
+      const vw = tv.vesa_width_mm * scale, vh = tv.vesa_height_mm * scale;
+      const cx = x0 + w / 2, cy = y0 + h / 2;
+      return { w, h, x0, y0, vw, vh, left: cx - vw / 2, top: cy - vh / 2 };
+    })()
+  : null;
+---
+{offer && href ? (
+  <figure class="tv-visual tv-visual-photo">
+    <a class="tv-visual-image" href={href} target="_blank" rel={isAd ? 'sponsored nofollow noopener' : 'nofollow noopener'} data-mall-link="yahoo-tv" data-tv-id={tv.id}>
+      <img src={offer.image_url!} alt={`${name} の商品画像`} width="600" height="600" loading="eager" decoding="async"/>
+    </a>
+    <figcaption>
+      <span class="tv-visual-buy">
+        <a href={href} target="_blank" rel={isAd ? 'sponsored nofollow noopener' : 'nofollow noopener'} data-mall-link="yahoo-tv" data-tv-id={tv.id}>このテレビを Yahoo!ショッピングで見る <Icon name="external" size={14}/></a>
+        {isAd && <span class="pr-label" title="アフィリエイト広告のリンクを含みます">PR</span>}
+      </span>
+      <span class="tv-visual-credit">画像：Yahoo!ショッピング</span>
+    </figcaption>
+    {isAd && offer.pv_img_url && <img class="ad-pixel" src={offer.pv_img_url} width="1" height="1" alt=""/>}
+  </figure>
+) : vesa && (
+  <figure class="tv-visual tv-visual-vesa">
+    <svg viewBox={`0 0 340 ${Math.ceil(vesa.y0 + vesa.h + 34)}`} role="img" aria-labelledby={`vesa-title-${tv.id}`}>
+      <title id={`vesa-title-${tv.id}`}>{`${name} の背面の取付穴：横 ${tv.vesa_width_mm}mm × 縦 ${tv.vesa_height_mm}mm（${tv.screen_inches}型、概略）`}</title>
+      <rect class="tv-visual-body" x={vesa.x0} y={vesa.y0} width={vesa.w} height={vesa.h} rx="6"/>
+      <rect class="tv-visual-pattern" x={vesa.left} y={vesa.top} width={vesa.vw} height={vesa.vh}/>
+      {[[vesa.left, vesa.top], [vesa.left + vesa.vw, vesa.top], [vesa.left, vesa.top + vesa.vh], [vesa.left + vesa.vw, vesa.top + vesa.vh]].map(([x, y]) => <circle class="tv-visual-hole" cx={x} cy={y} r="4.5"/>)}
+      <text class="tv-visual-dim" x={vesa.left + vesa.vw / 2} y={vesa.top - 8} text-anchor="middle">{tv.vesa_width_mm} mm</text>
+      <text class="tv-visual-dim" x={vesa.left + vesa.vw + 10} y={vesa.top + vesa.vh / 2 + 4}>{tv.vesa_height_mm} mm</text>
+      <text class="tv-visual-label" x="150" y={vesa.y0 + vesa.h + 24} text-anchor="middle">{`背面の取付穴（VESA） ${tv.screen_inches}型`}</text>
+    </svg>
+    <figcaption><span class="tv-visual-credit">画面サイズとVESAから描いた概略図です。</span></figcaption>
+  </figure>
+)}

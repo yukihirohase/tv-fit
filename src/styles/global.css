@@ -84,3 +84,21 @@ body{background:var(--home-bg)}
 .detail-toc.is-tabs~.product-section{margin-top:26px;scroll-margin-top:84px}
 .product-section[role=tabpanel]:focus-visible{outline-offset:6px;border-radius:4px}
 @media(max-width:700px){.detail-toc.is-tabs{gap:5px;margin-block:22px 12px}.detail-toc.is-tabs a{flex-direction:column;gap:4px;min-height:62px;padding:8px 6px;font-size:12px}.detail-toc.is-tabs a strong{font-size:12px;padding:1px 8px}.detail-toc.is-tabs~.product-section{margin-top:20px}}
+
+/* 型番ページ：見出しの右にテレビ本体の商品画像（Yahoo!ショッピング）、無ければ背面の取付穴（VESA）の概略図。 */
+.detail-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px 40px}
+.detail-header-text{min-width:0}
+.tv-visual{position:relative;margin:0;width:340px}
+.tv-visual-image{display:flex;align-items:center;justify-content:center;height:230px;padding:14px;background:#fff;border:1px solid var(--home-line);border-radius:12px;box-shadow:var(--home-shadow)}
+.tv-visual-image img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.tv-visual figcaption{display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.tv-visual-buy{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px}
+.tv-visual-buy a{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.tv-visual-credit{font-size:10px;color:var(--home-ink-soft)}
+.tv-visual-vesa svg{display:block;width:100%;height:auto;background:var(--home-surface);border:1px solid var(--home-line);border-radius:12px}
+.tv-visual-body{fill:#EFE8DD;stroke:#B9AC9B;stroke-width:1.5}
+.tv-visual-pattern{fill:none;stroke:var(--blue);stroke-width:1.2;stroke-dasharray:4 3}
+.tv-visual-hole{fill:#fff;stroke:var(--blue);stroke-width:2}
+.tv-visual-dim{font-size:11px;font-weight:700;fill:var(--blue)}
+.tv-visual-label{font-size:11px;fill:var(--home-ink-soft)}
+@media(max-width:860px){.detail-header{grid-template-columns:1fr}.tv-visual{width:100%;max-width:380px}.tv-visual-image{height:210px}}
