@@ -94,6 +94,51 @@ VESA と重量が合っているだけでは `confirmed` にしない（`candida
 - `incompatible`：対応表で「×」。`incompatible` に直す候補（要確認）。
 - `conditional`：「◯※（条件付き）」。条件の内容を確かめるまで `candidate` のままにする。
 
+## 仕様データ（比較表・結論ブロック・機種ごとの独自情報用）
+
+`data/stand-specs.csv` と `data/tv-details.csv` は、型番ページの比較表・おすすめ・取付メモに使う仕様の一覧です。**CMS には登録しません**（CMS import の対象外）。CI の `npm run validate:data` が検証し、エラーがあるとデプロイも止まります。
+
+- 値は **メーカー公式の仕様表・寸法図** から取る。販売店の説明文やレビューは使わない。
+- **分からない値は空欄**。推測で埋めない（表では「—」と表示する）。
+- 数字の列は単位を列名で固定し、セルには数字だけを書く（`mm`・`kg`・型）。範囲は `_min` と `_max` の2列に分ける。
+- 値を入れた行は、出典URL（`https://`）と確認日（`YYYY-MM-DD`、未来日は不可）が必要。
+
+### stand-specs.csv（スタンド・壁掛け金具 1商品1行）
+
+| 列 | 内容 | 値 |
+| --- | --- | --- |
+| `stand_id` / `sku` | stands.csv の `id` と `sku`（一致しないとエラー） | — |
+| `style` | 設置タイプ | 床置き：`wall_close`（壁寄せ）・`floor_caster`（キャスター付き）・`floor`（据え置き）・`low`（ロータイプ）／卓上：`tabletop`／壁掛け：`wall_fixed`（角度固定）・`wall_tilt`（角度調整）・`wall_arm`（アーム） |
+| `height_adjust` | 高さ調整（壁掛けは空欄） | `electric`（電動昇降）・`manual`（ハンドル等でテレビを付けたまま昇降）・`steps`（段階・無段階で設定） |
+| `min_inches` / `max_inches` | 対応テレビサイズ（型） | 最大だけ公表なら `min_inches` は空欄 |
+| `width_mm` / `depth_min_mm` / `depth_max_mm` / `height_min_mm` / `height_max_mm` | 公式の外形寸法 W・D・H。壁掛け金具の D は壁からの奥行 | 「最大H」だけなら `height_min_mm` は空欄 |
+| `size_text` | 公式の外形寸法の表記そのまま（測り方の注記を含む） | — |
+| `bracket_center_min_mm` / `bracket_center_max_mm` | 床からブラケット（取付部）中心までの高さ。公式に明記がある商品だけ | — |
+| `product_weight_kg` | 商品自体の重量 | — |
+| `tilt` / `swivel` | 上下の角度調整・左右の首振り。公式の表記を短く書き写す | `上8°・下12°`、`±10°`、`左右各45°` |
+| `wall_distance_mm` | 壁面から取付面までの距離（公式に明記がある壁掛け金具だけ） | — |
+| `casters` / `shelf` | キャスター・棚板 | `1`（あり）・`0`（なし）・空欄（不明） |
+| `one_liner` | 一行コメント（**40字以内**）。公式の説明文を書き写さず、「誰に・どんな置き方に向くか」を自分の言葉で書く | — |
+| `spec_note` | 空欄にした理由など（例：公式の記載が食い違う） | — |
+| `spec_source_url` / `spec_checked_at` | 出典（サンワサプライ公式またはサンワダイレクトの商品ページ）と確認日 | — |
+
+### tv-details.csv（テレビ 1機種1行）
+
+| 列 | 内容 |
+| --- | --- |
+| `television_id` / `model` | televisions.csv の `id` と `model`（一致しないとエラー） |
+| `width_mm` / `height_mm` / `depth_mm` | 本体のみ（スタンドなし）の外形寸法 |
+| `height_with_stand_mm` / `depth_with_stand_mm` | 純正スタンド込みの高さ・奥行（高さが2段階なら低い方を入れ、`detail_note` に書く） |
+| `stand_width_mm` | 純正スタンドの幅（公表しているメーカーだけ） |
+| `tabletop_min_width_mm` / `tabletop_min_depth_mm` | メーカーが示す「設置に必要なテレビ台の天板の最小サイズ」 |
+| `vesa_center_from_bottom_mm` | 本体下端から VESA 取付穴の中心までの高さ（寸法図から読む） |
+| `back_shape` | 背面の形：`flat`（平ら）・`lower_bulge`（下部が厚い）・`center_bulge`（中央が厚い）・`upper_bulge`（上部が厚い） |
+| `screw` | 取付ネジの径（`M6` など） |
+| `detail_note` | 補足（スタンドの高さが2段階など） |
+| `source_url` / `checked_at` | 出典（メーカー公式の仕様ページ・仕様書PDF・寸法図）と確認日 |
+
+検証では、本体の幅が画面サイズから計算した画面の横幅に合うか（列ずれ・単位違いの検出）、スタンド込みの高さが本体より低くないか、VESA中心が本体の高さを超えないかも確かめます。
+
 ## 守ること
 
 - 架空の型番・推測の数値を入れない。わからない仕様は空欄。

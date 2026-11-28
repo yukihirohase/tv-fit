@@ -1,0 +1,65 @@
+stand_id,sku,style,height_adjust,min_inches,max_inches,width_mm,depth_min_mm,depth_max_mm,height_min_mm,height_max_mm,size_text,bracket_center_min_mm,bracket_center_max_mm,product_weight_kg,tilt,swivel,wall_distance_mm,casters,shelf,one_liner,spec_note,spec_source_url,spec_checked_at
+sanwa-cr-last1,CR-LAST1,floor_caster,steps,17,24,,,,1160,1720,直径640×H1160～1720mm,,,9.3,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST1,2026-11-28
+sanwa-cr-last3,CR-LAST3,,,17,24,575,734,734,1315,1760,W575×D734×H1315～1760mm / ポールの直径/上部35mm、下部50.8mm,,,24.6,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST3,2026-11-28
+sanwa-cr-last9,CR-LAST9,,,17,24,774,625,625,1160,1720,W774×D625×H1160～1720mm,,,21.5,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST9,2026-11-28
+sanwa-cr-last18,CR-LAST18,,,20,32,530,580,580,953,1300,W530×D580×H953～1300mm,,,12,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST18,2026-11-28
+sanwa-cr-last24,CR-LAST24,wall_close,manual,20,43,580,350,350,1107.5,1367.5,W580×D350×H1107.5～1367.5mm,,,13.5,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST24,2026-11-28
+sanwa-cr-last30,CR-LAST30,,,24,43,542,500,500,1240,1240,W542×D500×H1240mm / セキュリティーボックス有効内寸/W437×D260×50mm / セキュリティーボックスケーブル口/直径55mm,,,15.6,0〜8°,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST30,2026-11-28
+sanwa-cr-last36,CR-LAST36,,steps,17,32,400,400,400,910,1600,W400×D400×H910～1600mm / 支柱直径サイズ/35mm、下側/直径42mm,,,7.5,上下45°,左右60°,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST36,2026-11-28
+sanwa-cr-last37bk,CR-LAST37BK,floor_caster,,17,32,405,405,405,1017,1217,W405×D405×H1017～1217mm / 支柱直径サイズ/35mm,,,13.7,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAST37BK,2026-11-28
+sanwa-cr-law117,CR-LAW117,wall_arm,,,40,120,348,348,260,260,W120×D348×H260mm,,,1.9,上15°・下15°,左右90°,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-LAW117,2026-11-28
+sanwa-cr-pl12n,CR-PL12N,floor_caster,,32,65,780,720,720,1613.5,1813.5,W780×D720×H1613.5～1813.5mm,,,20.9,,,,1,1,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL12N,2026-11-28
+sanwa-cr-pl15n,CR-PL15N,,,52,86,1000,717,717,1625,1825,W1000×D717×H1625～1825mm,,,27.9,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL15N,2026-11-28
+sanwa-cr-pl24bk,CR-PL24BK,floor_caster,electric,60,86,865,800,800,1203,1863,W865×D800×H1203～1863mm,,,42.6,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL24BK,2026-11-28
+sanwa-cr-pl25bk,CR-PL25BK,,manual,32,52,800,710,710,1657,1917,W800×D710×H1657～1917mm,1407,1667,25.5,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL25BK,2026-11-28
+sanwa-cr-pl28bk,CR-PL28BK,floor_caster,electric,60,86,865,800,800,1385,2384,W865×D800×H1385～2384mm,,,44.3,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL28BK,2026-11-28
+sanwa-cr-pl30bk,CR-PL30BK,floor_caster,manual,55,75,1000,710,710,1657,1917,W1000×D710×H1657～1917mm,,,38.4,,,,1,1,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL30BK,2026-11-28
+sanwa-cr-pl102scbk,CR-PL102SCBK,,manual,55,75,1000,710,710,1614,1874,W1000×D710×H1614～1874mm,1364,1624,48.7,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL102SCBK,2026-11-28
+sanwa-cr-pl33bk,CR-PL33BK,wall_close,,32,65,910,485,485,1905,1905,W910×D485×H1905mm,,,35.8,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL33BK,2026-11-28
+sanwa-cr-pl34bk,CR-PL34BK,floor_caster,,32,65,912,628,628,1890,1890,W912×D628×H1890mm,,,35.8,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL34BK,2026-11-28
+sanwa-cr-pl35bk,CR-PL35BK,,steps,32,65,875,630,630,1420,1820,W875×D630×H1420～1820mm,,,16.3,±10°,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL35BK,2026-11-28
+sanwa-cr-pl39bk,CR-PL39BK,,,32,65,770,660,660,1576,1801,W770×D660×H1576～1801mm,,,57.1,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL39BK,2026-11-28
+sanwa-cr-pl41bk,CR-PL41BK,floor_caster,electric,32,43,630,500,500,542,1202,W630×D500×H542～1202mm,,,21.25,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL41BK,2026-11-28
+sanwa-cr-pl43bk,CR-PL43BK,wall_close,,60,86,1100,510,510,1512,1562,W1100×D510×H1512・1562mm / 棚板サイズ/W435×D250×T18mm,,,44,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL43BK,2026-11-28
+sanwa-cr-pl45bk,CR-PL45BK,floor_caster,manual,55,75,1000,710,710,1932,2220,W1000×D710×H1932～2220mm,1375,1663,42.6,,,,1,1,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL45BK,2026-11-28
+sanwa-cr-pl46w,CR-PL46W,,,32,55,500,440,440,1685,1885,W500×D440×H1685～1885mm,,,25.2,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL46W,2026-11-28
+sanwa-cr-pl48bk,CR-PL48BK,floor_caster,,24,43,1470,810,810,1925,1925,W1470×D810×H1925mm,,,46.25,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL48BK,2026-11-28
+sanwa-cr-pl54bk,CR-PL54BK,wall_close,electric,60,86,820,625,625,1159,2158,W820×D625×H1159～2158mm,,,60,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL54BK,2026-11-28
+sanwa-cr-pl57bk,CR-PL57BK,floor_caster,,50,86,1067,801,801,1725,1725,W1067×D801×H1725mm / 棚板サイズ/W1047×D192mm / ディスプレイ中心位置/1285・1410mm（2段階),1285,1410,19.4,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL57BK,2026-11-28
+sanwa-cr-pl59bk,CR-PL59BK,low,,32,60,685,773,773,681.5,841.5,W685×D773×H681.5～841.5mm,,,15.5,45〜70°（6段階）,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL59BK,2026-11-28
+sanwa-cr-pl60bk,CR-PL60BK,low,,32,55,650,444,444,1064,1226,W650×D444×H1064～1226mm,,,7.8,±10°,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL60BK,2026-11-28
+sanwa-cr-pl61bk,CR-PL61BK,floor_caster,manual,32,75,910,683,683,2333,2333,W910×D683×H2333mm,1195,1595,22,±10°,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL61BK,2026-11-28
+sanwa-cr-pl62bk,CR-PL62BK,floor_caster,steps,37,75,848,610,610,1470,1870,W848×D610×H1470～1870mm,,,18.78,＋5°〜−10°,,,1,,,ブラケット中心の高さは公式の記載が食い違うため空欄（商品名: 1200～1600mm／本文: 1200～1600mm／本文: 1250～1650mm）,https://www.sanwa.co.jp/product/syohin?code=CR-PL62BK,2026-11-28
+sanwa-cr-pl64,CR-PL64,floor_caster,,42,55,645,650,650,1395,1595,W645×D650×H1395～1595mm,,,19.8,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL64,2026-11-28
+sanwa-cr-pl66,CR-PL66,low,,40,65,500,490,490,692,904,W500×D490×H692～904mm,,,12,0〜2°,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL66,2026-11-28
+sanwa-cr-pl68bk,CR-PL68BK,floor_caster,electric,60,100,900,865,865,1256,1906,W900×D865×H1256～1906mm,,,47.2,,,,1,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL68BK,2026-11-28
+sanwa-cr-pl71bk,CR-PL71BK,floor_caster,steps,32,65,652,650,650,2028,2028,W652×D650×H2028mm,,,21,,,,1,1,,,https://www.sanwa.co.jp/product/syohin?code=CR-PL71BK,2026-11-28
+sanwa-cr-pld001,CR-PLD001,tabletop,steps,32,55,434,280,280,465,655,W434×D280×H465～655mm,,,8.1,,左右35°,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLD001,2026-11-28
+sanwa-cr-pld002,CR-PLD002,tabletop,steps,37,65,640,280,280,568,758,W640×D280×H568～758mm,,,9.6,,左右35°,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLD002,2026-11-28
+sanwa-cr-plkg10,CR-PLKG10,wall_tilt,,32,65,476,65.5,65.5,423,423,W476×D65.5×H423mm,,,1.6,±15°,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG10,2026-11-28
+sanwa-cr-plkg13,CR-PLKG13,wall_arm,,32,50,464,67,435,430,430,W464×D67～435×H430mm,,,5.08,上8°・下10°,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG13,2026-11-28
+sanwa-cr-plkg14,CR-PLKG14,wall_arm,,50,84,664,70,457,430,430,W664×D70～457×H430mm,,,6.5,上8°・下12°,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG14,2026-11-28
+sanwa-cr-plkg17bk,CR-PLKG17BK,wall_fixed,,19,43,350,51,51,286,286,W350×D51×H286mm,,,1.62,,,51,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG17BK,2026-11-28
+sanwa-cr-plkg18bk,CR-PLKG18BK,wall_fixed,,32,65,500,51,51,420,420,W500×D51×H420mm,,,2.81,,,51,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG18BK,2026-11-28
+sanwa-cr-plkg19bk,CR-PLKG19BK,wall_fixed,,50,100,750,51,51,420,420,W750×D51×H420mm,,,3.6,,,51,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG19BK,2026-11-28
+sanwa-cr-plkg20bk,CR-PLKG20BK,,,42,75,640,120,325,544,544,W640×D120～325×H544mm / ブラケットなしの場合/W460×D120～325×H544mm,,,13.2,,,,,,,,https://www.sanwa.co.jp/product/syohin?code=CR-PLKG20BK,2026-11-28
+sanwa-100-lad001,100-LAD001,tabletop,steps,,55,420,260,260,325,425,約W42×D26×H32.5/37.5/42.5cm,,,6.85,,左右各45°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-LAD001,2026-11-28
+sanwa-100-lasm007,100-LASM007,wall_arm,,,43,345,64,554,290,290,約W345×D64～554×H290mm,,,3.5,−5°〜15°,,,,,,,https://direct.sanwa.co.jp/ItemPage/100-LASM007,2026-11-28
+sanwa-100-law003,100-LAW003,wall_arm,,,34,115,87,87,126.5,126.5,約W115×D87×H126.5mm,,,0.8,,,,,,,,https://direct.sanwa.co.jp/ItemPage/100-LAW003,2026-11-28
+sanwa-100-law008,100-LAW008,wall_arm,,,32,114,307,361,,,約W11.4×D30.7～36.1×H-8～20cm,,,1.4,,,,,,,,https://direct.sanwa.co.jp/ItemPage/100-LAW008,2026-11-28
+sanwa-100-pl002,100-PL002,wall_tilt,,32,70,850,85,85,430,430,W850×D85×H430mm,,,4.5,上5°・下15°,,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PL002,2026-11-28
+sanwa-100-pl005,100-PL005,wall_arm,,32,52,462,70,457,430,430,W462×D70～457×H430mm,,,5.2,上8°・下12°,左右各44°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PL005,2026-11-28
+sanwa-100-pl006,100-PL006,wall_arm,,43,80,900,55,450,630,630,W900×D55～450×H630mm,,,9.1,上2°・下10°,左右各45°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PL006,2026-11-28
+sanwa-100-pl008,100-PL008,floor_caster,steps,32,65,750,593,593,1106,1606,W750×D593×H1106～1606mm,,,12.5,,,,1,,,,https://direct.sanwa.co.jp/ItemPage/100-PL008,2026-11-28
+sanwa-100-pl019m,100-PL019M,wall_close,steps,32,55,600,400,400,999,1199,約W600×D400×H999～1199mm/録画用HDDホルダー無し / 約W690×D400×H999～1199mm/録画用HDDホルダーあり,,,20,,,,,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL019M,2026-11-28
+sanwa-100-pl028bk,100-PL028BK,floor_caster,steps,55,100,1250,760,760,,2333,約W1250×D760×最大H2333mm,,,34.9,手前10°・後ろ5°,,,1,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL028BK,2026-11-28
+sanwa-100-pl029,100-PL029,floor_caster,,50,86,1067,801,801,1725,1725,約W1067×D801×H1725mm,,,19.4,,,,1,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL029,2026-11-28
+sanwa-100-pl034m,100-PL034M,wall_close,steps,32,65,730,400,400,1290,1290,約W73×D40×H129cm,,,14.1,＋5°〜−10°,,,,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL034M,2026-11-28
+sanwa-100-pl035,100-PL035,floor_caster,steps,32,75,805,640,640,1835,1835,"幅805x奥行640x高さ1,835mm/約16kg",,,16,,,,1,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL035,2026-11-28
+sanwa-100-pl039,100-PL039,wall_close,steps,37,65,660,400,400,1388,1388,"約W660×D400×H1,388mm",,,17.5,,左右各35°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PL039,2026-11-28
+sanwa-100-pl040bk,100-PL040BK,floor_caster,electric,37,86,760,505,505,1648,2293,幅76×奥行50.5×高さ164.8～229.3cm,1248,1648,17.5,,,,1,,,,https://direct.sanwa.co.jp/ItemPage/100-PL040BK,2026-11-28
+sanwa-100-pl041,100-PL041,floor_caster,manual,60,100,1220,710,710,1578,1978,"約幅1,220×奥行710×高さ1,578～1,978mm",,,40.4,＋5°〜−10°,,,1,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL041,2026-11-28
+sanwa-100-pld001,100-PLD001,tabletop,steps,42,75,667,280,280,516.5,816.5,約W66.7×D28×H51.65～81.65cm（5cmピッチ）,,,10,,左右45°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PLD001,2026-11-28
+sanwa-100-plw001,100-PLW001,wall_tilt,,55,100,1075,90,600,630,630,約W1075×D90～600×H630mm,,,14.5,上9°・下13°,左右各45°,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PLW001,2026-11-28
+sanwa-100-plw003,100-PLW003,wall_fixed,,47,90,912,30,30,630,630,約W912×D30×H630mm,,,2.4,,,,,,,,https://direct.sanwa.co.jp/ItemPage/100-PLW003,2026-11-28
+sanwa-100-pl012,100-PL012,floor_caster,manual,32,75,910,683,683,1380,1730,約W910×D683×H1380～1730mm（※W・Dはキャスター中央まで、Hはブラケット上部まで）,1175,1575,22,,,,1,1,,,https://direct.sanwa.co.jp/ItemPage/100-PL012,2026-11-28
